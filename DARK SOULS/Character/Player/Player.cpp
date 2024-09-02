@@ -1234,6 +1234,12 @@ void Player::HitObj(Map& map)
 					//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
 					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed));
 
+					//回避中だった場合
+					if (m_avoidance == true)
+					{
+
+					}
+
 					//移動した上で壁ポリゴンと接触しているかどうかを判定
 					for (j = 0; j < m_WallNum; j++)
 					{
@@ -1362,6 +1368,15 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 		//回避行動だった場合
 		//m_posが動いている
 		if (m_avoidance == true)
+		{
+			//当たっていたら規定距離分プレイヤーを法線方向に移動させる
+			m_pos.x -= m_moveVector.x + m_bounceDis;
+			m_pos.z -= m_moveVector.z + m_bounceDis;
+			m_drawPos.x -= m_moveVector.x + m_bounceDis;
+			m_drawPos.z -= m_moveVector.z + m_bounceDis;
+		}
+		//攻撃中だった場合
+		if (m_moveAttack == true)
 		{
 			//当たっていたら規定距離分プレイヤーを法線方向に移動させる
 			m_pos.x -= m_moveVector.x + m_bounceDis;

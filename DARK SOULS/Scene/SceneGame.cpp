@@ -33,8 +33,8 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	enemy->isSphereBossHit(player->GetSphereCol(), player->GetDamage());
 	enemy->isSeachHit(player->GetCapsuleCol());
 	enemy->isDistanceHit(player->GetCapsuleCol());
-	//enemy->isBossDistanceHit(player->GetCapsuleCol());
-	//map->CapsuleIsHit(player->GetCapsuleCol());
+	enemy->isBossDistanceHit(player->GetCapsuleCol());
+	map->CapsuleIsHit(player->GetCapsuleCol());
 	map->CapsuleSaveHit(player->GetCapsuleCol());
 
 	//‹x‘§‚·‚éê‡

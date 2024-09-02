@@ -16,8 +16,10 @@ public:
 	virtual void Draw() = 0;
 	virtual void End() = 0;
 
+	int MyLoadGraph(const char* FileName, int XSize, int YSize);
+
 protected:
 	//•Ï”‚ğ“ü‚ê‚é
-
+	int m_backScene = 0;
 };
 

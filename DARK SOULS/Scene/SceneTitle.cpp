@@ -12,6 +12,7 @@ SceneTitle::~SceneTitle()
 
 void SceneTitle::Init()
 {
+	m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitle.png", 30, 30);
 }
 
 std::shared_ptr<SceneBase> SceneTitle::Update()
@@ -30,6 +31,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
+	DrawGraph(0, 0, m_backScene, false);
+
 	DrawString(240, 300, "Title", 0xffffff);
 }
 
