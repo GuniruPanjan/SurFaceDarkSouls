@@ -13,6 +13,10 @@ SceneTitle::~SceneTitle()
 void SceneTitle::Init()
 {
 	m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitle.png", 30, 30);
+
+	//通常の描画結果を書き込むスクリーンと、フィルターの処理結果を書き込むスクリーンの作成
+	ColorScreeen = MakeScreen(SCREEN_W, SCREEN_H, FALSE);
+	HighBringhtScreen = MakeScreen(SCREEN_W, SCREEN_H, FALSE);
 }
 
 std::shared_ptr<SceneBase> SceneTitle::Update()
@@ -31,7 +35,9 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
-	DrawGraph(0, 0, m_backScene, false);
+	//DrawCube3D(VGet(0.0f, 0.0f, 0.0f), VGet(700.0f, 300.0f, 300.0f), 0xffffff, 0xffffff, TRUE);
+
+	DrawGraph(-50, 0, m_backScene, false);
 
 	DrawString(240, 300, "Title", 0xffffff);
 }
