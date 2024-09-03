@@ -7,6 +7,7 @@ BossEnemy::BossEnemy():
 	m_bossDistance(false),
 	m_bossBattle(false),
 	m_bossMoveAttack(false),
+	m_bossMoveAttackPattern(false),
 	m_bossAttack(-1),
 	m_bossAttackRadius1(0.0f),
 	m_bossAttackRadius2(0.0f),
@@ -21,7 +22,7 @@ BossEnemy::~BossEnemy()
 void BossEnemy::Init()
 {
 	//敵のHP初期化
-	m_hp = 10.0f;
+	m_hp = 1200.0f;
 
 	//敵の攻撃力初期化
 	m_attack = 30.0f;
@@ -76,7 +77,8 @@ void BossEnemy::Update(Player& player, Map& map)
 		float X = m_pos.x - player.GetPosX();
 		float Z = m_pos.z - player.GetPosZ();
 
-		if (m_bossBattle == true && m_bossMoveAttack == false)
+		//攻撃パターン1の時はプレイヤーの方を向く
+		if (m_bossBattle == true && m_bossMoveAttack == false || m_bossMoveAttackPattern == true)
 		{
 			//プレイヤーの方を向く
 			m_angle = atan2f(X, Z);
@@ -145,8 +147,15 @@ void BossEnemy::Action(Player& player)
 
 			m_bossMoveAttack = true;
 		}
+		//攻撃の当たり判定
 		if (m_bossAttack == 0)
 		{
+			//一定時間をすぎると向かない
+			if (m_playTime >= 38.0f)
+			{
+				m_bossMoveAttackPattern = false;
+			}
+
 			if (m_playTime >= 38.0f && m_playTime <= 44.0f)
 			{
 				m_colBossAttackSphere1.Update(m_colBossAttackPos1);
@@ -242,6 +251,8 @@ void BossEnemy::Animation(float& time)
 			if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[5] != -1 ||
 				m_bossAnimation[6] != -1)
 			{
+				m_bossMoveAttackPattern = true;
+
 				//アニメーションデタッチ
 				MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
 				MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
@@ -405,7 +416,10 @@ void BossEnemy::Draw()
 
 	//DrawFormatString(0, 240, 0xffffff, "m_bosshp : %f", m_hp);
 
-	//DrawFormatString(0, 260, 0xffffff, "m_colPos.x : %f", m_colPos.x);
+	DrawFormatString(0, 80, 0xffffff, "m_Pos.x : %f", m_pos.x);
+	DrawFormatString(0, 100, 0xffffff, "m_Pos.y : %f", m_pos.y);
+	DrawFormatString(0, 120, 0xffffff, "m_Pos.z : %f", m_pos.z);
+
 	//DrawFormatString(0, 280, 0xffffff, "m_colPos.y : %f", m_colPos.y);
 	//DrawFormatString(0, 300, 0xffffff, "m_colPos.z : %f", m_colPos.z);
 

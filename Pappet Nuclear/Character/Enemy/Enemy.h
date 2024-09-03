@@ -21,6 +21,11 @@ public:
 	float GetPosX() { return enemy->GetPosX(); }
 	float GetPosY() { return enemy->GetPosY(); }
 	float GetPosZ() { return enemy->GetPosZ(); }
+	VECTOR GetBossPos() { return boss->GetPos(); }
+	float GetBossPosX() { return boss->GetPosX(); }
+	float GetBossPosY() { return boss->GetPosY(); }
+	float GetBossPosZ() { return boss->GetPosZ(); }
+	float GetBossHp() { return boss->GetHp(); }
 	float GetDamage() { return enemy->GetDamage(); }
 	float BossGetDamage() { return boss->GetDamage(); }
 	CapsuleCol GetCol() const { return enemy->GetCol(); }
@@ -35,6 +40,7 @@ public:
 	bool isDistanceHit(CapsuleCol col) { return enemy->isDistanceHit(col); }
 	bool isBossDistanceHit(CapsuleCol col) { return boss->isCapsuleHit(col); }
 	bool GameClear() { return boss->GameClear(); }
+	bool GetBattale() { return boss->GetBattle(); }
 
 private:
 	//“G‚Ì\‘¢‘Ì‚ğ”z—ñ‚Å“Ç‚İ‚İ

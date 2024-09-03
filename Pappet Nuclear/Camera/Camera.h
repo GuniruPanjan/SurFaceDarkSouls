@@ -30,5 +30,7 @@ private:
 
 	//ƒJƒƒ‰‚ÌƒAƒ“ƒOƒ‹
 	VECTOR m_cameraAngle = VGet(0.0f, 0.0f, 0.0f);
+
+	float m_x, m_z;
 };
 

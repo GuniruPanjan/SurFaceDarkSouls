@@ -28,7 +28,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	player->HitObj(*map);
 
 	player->IsCapsuleHit(enemy->GetCol(), enemy->GetBossCol());
-	player->isSphereHit(enemy->GetAttackCol(), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
+	//player->isSphereHit(enemy->GetAttackCol(), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
 	enemy->isSphereHit(player->GetSphereCol(), player->GetDamage());
 	enemy->isSphereBossHit(player->GetSphereCol(), player->GetDamage());
 	enemy->isSeachHit(player->GetCapsuleCol());
@@ -66,8 +66,8 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 
 void SceneGame::Draw()
 {
-	camera->Draw();
 	map->Draw();
+	camera->Draw();
 	player->Draw();
 	enemy->Draw();
 	ui->Draw(*player, *enemy);

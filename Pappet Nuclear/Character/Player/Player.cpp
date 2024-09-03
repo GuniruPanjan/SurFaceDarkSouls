@@ -1316,13 +1316,12 @@ void Player::Draw()
 		DrawFormatString(0, 80, 0xffffff, "回復できる");
 	}
 
-	DrawFormatString(0, 120, 0xffffff, "HitPoly : %d", HitDim.HitNum);
+	//DrawFormatString(0, 120, 0xffffff, "HitPoly : %d", HitDim.HitNum);
 	DrawFormatString(0, 0, 0xffffff, "playTime : %f", m_playTime);
-	DrawFormatString(0, 30, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
-	DrawFormatString(0, 50, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
+	DrawFormatString(0, 40, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
+	DrawFormatString(0, 60, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
 	//バグで攻撃状態になるがモーションが入らない
-	DrawFormatString(0, 180, 0xffffff, "m_attack : %d", m_moveAttack);
-	DrawFormatString(0, 200, 0xffffff, "m_stamina : %f", m_stamina);
+	DrawFormatString(0, 200, 0xffffff, "m_attack : %d", m_moveAttack);
 	DrawFormatString(0, 220, 0xffffff, "アニメ0 : %d", m_animation[0]);
 	DrawFormatString(0, 240, 0xffffff, "アニメ1 : %d", m_animation[1]);
 	DrawFormatString(0, 260, 0xffffff, "アニメ2 : %d", m_animation[2]);

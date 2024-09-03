@@ -19,6 +19,12 @@ public:
 
 	float GetDamage() { return m_attack; }
 	bool GameClear() { return m_gameClear; }
+	bool GetBattle() { return m_bossBattle; }
+	VECTOR GetPos() { return m_pos; }
+	float GetPosX() { return m_pos.x; }
+	float GetPosY() { return m_pos.y; }
+	float GetPosZ() { return m_pos.z; }
+	float GetHp() { return m_hp; }
 
 	CapsuleCol GetCol() const { return m_capsuleCol; }
 	SphereCol GetAttackCol1() { return m_colBossAttackSphere1; }
@@ -31,6 +37,7 @@ private:
 	bool m_bossDistance;     //ボスが離れていたときの判断
 	bool m_bossBattle;       //ボスの臨戦態勢判定
 	bool m_bossMoveAttack;   //ボスの攻撃行動判定
+	bool m_bossMoveAttackPattern;    //ボスのパターン2の攻撃判定
 	int m_bossAttack;     //ボスの攻撃パターン
 	unsigned int m_color = 0xffffff;
 	unsigned int m_seachColor = 0xffffff;
