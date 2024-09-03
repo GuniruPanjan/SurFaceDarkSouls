@@ -38,6 +38,9 @@ private:
 	bool m_bossBattle;       //ボスの臨戦態勢判定
 	bool m_bossMoveAttack;   //ボスの攻撃行動判定
 	bool m_bossMoveAttackPattern;    //ボスのパターン2の攻撃判定
+	bool m_bossAttack1;           //ボスの攻撃1の判断
+	bool m_bossAttack2;           //ボスの攻撃2の判断
+	bool m_bossAttack3;           //ボスの攻撃3の判断
 	int m_bossAttack;     //ボスの攻撃パターン
 	unsigned int m_color = 0xffffff;
 	unsigned int m_seachColor = 0xffffff;

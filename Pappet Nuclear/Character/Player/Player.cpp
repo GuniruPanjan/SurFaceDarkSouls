@@ -67,6 +67,9 @@ void Player::Init()
 	//プレイヤーの攻撃力初期化
 	m_attack = 10.0f;
 
+	//プレイヤーのロックオン初期化
+	m_lockonTarget = false;
+
 	//回復関係の初期化
 	m_recoberyAmount = 100.0f;
 	m_heel = 0.0f;
@@ -551,13 +554,13 @@ void Player::Action()
 	}
 
 	//回避中に攻撃するため
-	if (m_avoidance == true)
-	{
-		if (m_pad & PAD_INPUT_6)
-		{
-			m_moveAttack = true;
-		}
-	}
+	//if (m_avoidance == true)
+	//{
+	//	if (m_pad & PAD_INPUT_6)
+	//	{
+	//		m_moveAttack = true;
+	//	}
+	//}
 
 	if (m_moveAttack == false)
 	{
@@ -586,7 +589,7 @@ void Player::Action()
 	}
 	else if (m_lockonTarget == true)
 	{
-		DrawString(0, 100, "ロックオン", 0xffffff);
+		//DrawString(0, 100, "ロックオン", 0xffffff);
 
 		if (m_xpad.Buttons[7] == 1 && m_pushButton == true)
 		{
@@ -1238,19 +1241,13 @@ void Player::HitObj(Map& map)
 					if (m_avoidance == true)
 					{
 						//当たっていたら規定距離分プレイヤーを法線方向に移動させる
-						m_pos.x -= m_moveVector.x + m_bounceDis;
-						m_pos.z -= m_moveVector.z + m_bounceDis;
-						m_drawPos.x -= m_moveVector.x + m_bounceDis;
-						m_drawPos.z -= m_moveVector.z + m_bounceDis;
+						m_drawPos = VAdd(m_drawPos, VScale(m_Poly->Normal, m_speed));
 					}
 					//攻撃中だった場合
 					if (m_moveAttack == true)
 					{
 						//当たっていたら規定距離分プレイヤーを法線方向に移動させる
-						m_pos.x -= m_moveVector.x + m_bounceDis;
-						m_pos.z -= m_moveVector.z + m_bounceDis;
-						m_drawPos.x -= m_moveVector.x + m_bounceDis;
-						m_drawPos.z -= m_moveVector.z + m_bounceDis;
+						m_drawPos = VAdd(m_drawPos, VScale(m_Poly->Normal, m_speed));
 					}
 
 					//移動した上で壁ポリゴンと接触しているかどうかを判定

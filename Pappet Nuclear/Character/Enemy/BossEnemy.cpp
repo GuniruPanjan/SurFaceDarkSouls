@@ -8,6 +8,9 @@ BossEnemy::BossEnemy():
 	m_bossBattle(false),
 	m_bossMoveAttack(false),
 	m_bossMoveAttackPattern(false),
+	m_bossAttack1(false),
+	m_bossAttack2(false),
+	m_bossAttack3(false),
 	m_bossAttack(-1),
 	m_bossAttackRadius1(0.0f),
 	m_bossAttackRadius2(0.0f),
@@ -22,7 +25,7 @@ BossEnemy::~BossEnemy()
 void BossEnemy::Init()
 {
 	//敵のHP初期化
-	m_hp = 1200.0f;
+	m_hp = 100.0f;
 
 	//敵の攻撃力初期化
 	m_attack = 30.0f;
@@ -40,6 +43,10 @@ void BossEnemy::Init()
 
 	m_bossMoveAttack = false;
 	m_bossAttack = -1;
+
+	m_bossAttack1 = false;
+	m_bossAttack2 = false;
+	m_bossAttack3 = false;
 
 	//当たり判定
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
@@ -68,7 +75,14 @@ void BossEnemy::Update(Player& player, Map& map)
 	m_colDistance.Update(m_colPos);
 
 	//アニメーション再生速度
-	m_playTime += 0.5f;
+	if (m_bossAttack1 == true || m_bossAttack2 == true)
+	{
+		m_playTime += 0.3f;
+	}
+	else
+	{
+		m_playTime += 0.5f;
+	}
 
 	//ボスの部屋に入った
 	if (map.GetRoomEntered() == true)
@@ -150,7 +164,7 @@ void BossEnemy::Action(Player& player)
 			m_bossMoveAttack = true;
 		}
 		//攻撃の当たり判定
-		if (m_bossAttack == 0)
+		if (m_bossAttack == 0 && m_bossAttack1 == true)
 		{
 			//一定時間をすぎると向かない
 			if (m_playTime >= 38.0f)
@@ -158,7 +172,7 @@ void BossEnemy::Action(Player& player)
 				m_bossMoveAttackPattern = false;
 			}
 
-			if (m_playTime >= 38.0f && m_playTime <= 44.0f)
+			if (m_playTime >= 38.0f && m_playTime <= 43.0f)
 			{
 				m_colBossAttackSphere1.Update(m_colBossAttackPos1);
 			}
@@ -167,8 +181,14 @@ void BossEnemy::Action(Player& player)
 				m_colBossAttackSphere1.Update(m_initializationPos);
 			}
 		}
-		if (m_bossAttack == 1)
+		if (m_bossAttack == 1 && m_bossAttack2 == true)
 		{
+			//一定時間をすぎると向かない
+			if (m_playTime >= 1.0f)
+			{
+				m_bossMoveAttackPattern = false;
+			}
+
 			if (m_playTime >= 7.0f && m_playTime <= 11.0f)
 			{
 				m_colBossAttackSphere2.Update(m_colBossAttackPos2);
@@ -178,9 +198,10 @@ void BossEnemy::Action(Player& player)
 				m_colBossAttackSphere2.Update(m_initializationPos);
 			}
 		}
-		if (m_bossAttack == 2)
+		if (m_bossAttack == 2 && m_bossAttack3 == true)
 		{
-			if (m_playTime >= 58.0f && m_playTime <= 65.0f)
+
+			if (m_playTime >= 58.0f && m_playTime <= 63.0f)
 			{
 				m_colBossAttackSphere3.Update(m_colBossAttackPos3);
 			}
@@ -200,6 +221,11 @@ void BossEnemy::Animation(float& time)
 		if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[4] != -1 ||
 			m_bossAnimation[5] != -1 || m_bossAnimation[6] != -1)
 		{
+			m_bossAttack1 = false;
+			m_bossAttack2 = false;
+			m_bossAttack3 = false;
+
+
 			//アニメーションデタッチ
 			MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
 			MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
@@ -229,6 +255,10 @@ void BossEnemy::Animation(float& time)
 			if (m_bossAnimation[0] != -1 || m_bossAnimation[4] != -1 || m_bossAnimation[5] != -1 ||
 				m_bossAnimation[6] != -1)
 			{
+				m_bossAttack1 = false;
+				m_bossAttack2 = false;
+				m_bossAttack3 = false;
+
 				//アニメーションデタッチ
 				MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
 				MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
@@ -253,6 +283,10 @@ void BossEnemy::Animation(float& time)
 			if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[5] != -1 ||
 				m_bossAnimation[6] != -1)
 			{
+				m_bossAttack1 = true;
+				m_bossAttack2 = false;
+				m_bossAttack3 = false;
+
 				m_bossMoveAttackPattern = true;
 
 				//アニメーションデタッチ
@@ -282,6 +316,12 @@ void BossEnemy::Animation(float& time)
 			if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[4] != -1 ||
 				m_bossAnimation[6] != -1)
 			{
+				m_bossAttack1 = false;
+				m_bossAttack2 = true;
+				m_bossAttack3 = false;
+
+				m_bossMoveAttackPattern = true;
+
 				//アニメーションデタッチ
 				MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
 				MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
@@ -308,6 +348,10 @@ void BossEnemy::Animation(float& time)
 			if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[4] != -1 ||
 				m_bossAnimation[5] != -1)
 			{
+				m_bossAttack1 = false;
+				m_bossAttack2 = false;
+				m_bossAttack3 = true;
+
 				//アニメーションデタッチ
 				MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
 				MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
@@ -352,17 +396,23 @@ void BossEnemy::Animation(float& time)
 	{
 		m_bossMoveAttack = false;
 
+		m_bossAttack1 = false;
+
 		time = 0.0f;
 	}
 	if (time >= m_bossTotalAnimTime[5] && m_bossAnimation[5] != -1)
 	{
 		m_bossMoveAttack = false;
 
+		m_bossAttack2 = false;
+
 		time = 0.0f;
 	}
 	if (time >= m_bossTotalAnimTime[6] && m_bossAnimation[6] != -1)
 	{
 		m_bossMoveAttack = false;
+
+		m_bossAttack3 = false;
 
 		time = 0.0f;
 	}
