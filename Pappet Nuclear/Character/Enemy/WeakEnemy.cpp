@@ -51,6 +51,20 @@ void WeakEnemy::Init()
 		m_oneInit = true;
 	}
 	
+	//エネミーが死んだアニメーションだった場合
+	if (m_animation[2] != -1)
+	{
+		//アニメーションデタッチ
+		MV1DetachAnim(m_handle, m_animation[2]);
+
+		//アニメーションアタッチ
+		m_animation[0] = MV1AttachAnim(m_handle, 0, m_animStand, TRUE);
+
+		m_playTime = 0.0f;
+
+		m_animation[2] = -1;
+	}
+
 }
 
 void WeakEnemy::Update(Player& player)
@@ -130,7 +144,7 @@ void WeakEnemy::Action(Player& player)
 		MATRIX mtx = MGetRotY(D2R(m_moveTurning) + DX_PI_F / 2);
 		MATRIX mtxR = MGetRotY(D2R(m_moveReverseTurning) - DX_PI_F / 2);
 
-		if (m_enemyWait == false)
+		if (m_enemyWait == false && m_moveAttack == false)
 		{
 			m_speed = 0.01f;
 
@@ -174,11 +188,6 @@ void WeakEnemy::Action(Player& player)
 
 				m_moveAttack = true;
 			}
-			if (m_randomAction != 0 && m_randomAction != 1 && m_randomAction != 2)
-			{
-				m_moveAttack = false;
-			}
-			
 		}
 		
 	}
@@ -228,7 +237,7 @@ void WeakEnemy::Animation(float& time)
 		}
 	}
 	//敵がプレイヤーを見つけた時(臨戦態勢)
-	if (m_enemySearchFlag == true && m_enemyWait == false)
+	if (m_enemySearchFlag == true && m_enemyWait == false && m_moveAttack == false)
 	{
 		if (m_animation[0] != -1 || m_animation[4] != -1 || m_animation[5] != -1 ||
 			m_animation[6] != -1)
@@ -377,6 +386,8 @@ void WeakEnemy::Animation(float& time)
 	}
 	if (time >= m_totalAnimTime[6] && m_animation[6] != -1)
 	{
+		m_moveAttack = false;
+
 		m_randomNextActionTime = 50.0f;
 
 		time = 0.0f;
@@ -419,16 +430,16 @@ void WeakEnemy::Draw()
 
 	if (m_hp > 0.0f)
 	{
-		DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+		//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
-		//索敵範囲円の3D描画
-		DrawSphere3D(m_colSearchPos.GetVector(), m_searchRadius, 16, m_seachColor, m_seachColor, false);
+		////索敵範囲円の3D描画
+		//DrawSphere3D(m_colSearchPos.GetVector(), m_searchRadius, 16, m_seachColor, m_seachColor, false);
 
-		//一定距離の範囲描画
-		DrawSphere3D(m_colDistancePos.GetVector(), m_distanceRadius, 16, m_distanceColor, m_distanceColor, false);
+		////一定距離の範囲描画
+		//DrawSphere3D(m_colDistancePos.GetVector(), m_distanceRadius, 16, m_distanceColor, m_distanceColor, false);
 
-		//攻撃判定描画
-		DrawSphere3D(m_colAttackPos.GetVector(), m_attackRadius, 16, 0xffffff, 0xffffff, false);
+		////攻撃判定描画
+		//DrawSphere3D(m_colAttackPos.GetVector(), m_attackRadius, 16, 0xffffff, 0xffffff, false);
 	}
 
 	//3Dモデルポジション設定
@@ -446,10 +457,10 @@ void WeakEnemy::Draw()
 	//DrawFormatString(0, 160, 0xffffff, "m_randomAction : %f", m_randomAction);
 	//DrawFormatString(0, 140, 0xffffff, "m_playTime : %f", m_playTime);
 
-	if (m_enemySearchFlag == true)
-	{
-		DrawFormatString(0, 250, 0xffffff, "発見された");
-	}
+	//if (m_enemySearchFlag == true)
+	//{
+	//	DrawFormatString(0, 250, 0xffffff, "発見された");
+	//}
 }
 
 void WeakEnemy::End()

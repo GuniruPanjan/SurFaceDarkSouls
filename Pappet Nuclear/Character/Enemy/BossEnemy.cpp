@@ -71,29 +71,31 @@ void BossEnemy::Update(Player& player, Map& map)
 	m_playTime += 0.5f;
 
 	//ボスの部屋に入った
-	if (m_bossDistance == false && map.GetRoomEntered() == true)
+	if (map.GetRoomEntered() == true)
 	{
-
-		float X = m_pos.x - player.GetPosX();
-		float Z = m_pos.z - player.GetPosZ();
-
-		//攻撃パターン1の時はプレイヤーの方を向く
-		if (m_bossBattle == true && m_bossMoveAttack == false || m_bossMoveAttackPattern == true)
+		if (m_bossDistance == false || m_bossMoveAttackPattern == true)
 		{
-			//プレイヤーの方を向く
-			m_angle = atan2f(X, Z);
-		}
 
-		//ボスの戦闘状態移行
-		m_bossBattle = true;
+			float X = m_pos.x - player.GetPosX();
+			float Z = m_pos.z - player.GetPosZ();
+
+			//攻撃パターン1の時はプレイヤーの方を向く
+			if (m_bossBattle == true && m_bossMoveAttack == false || m_bossMoveAttackPattern == true)
+			{
+				//プレイヤーの方を向く
+				m_angle = atan2f(X, Z);
+			}
+
+			//ボスの戦闘状態移行
+			m_bossBattle = true;
+		}
 	}
+	
 
 	if (m_bossDistance == false && m_bossBattle == true && m_bossMoveAttack == false)
 	{
 		//敵が移動する
 		m_pos = VAdd(m_pos, m_move);
-
-		
 	}
 
 	//敵が死亡したら
@@ -402,23 +404,23 @@ void BossEnemy::Draw()
 	//敵が生きている時は描画
 	if (m_hp > 0.0f)
 	{
-		DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+		//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
-		//攻撃の範囲描画
-		DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
+		////攻撃の範囲描画
+		//DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
 
-		//攻撃判定描画
-		DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
-		DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
-		DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
+		////攻撃判定描画
+		//DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
+		//DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
+		//DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
 
 	}
 
 	//DrawFormatString(0, 240, 0xffffff, "m_bosshp : %f", m_hp);
 
-	DrawFormatString(0, 80, 0xffffff, "m_Pos.x : %f", m_pos.x);
-	DrawFormatString(0, 100, 0xffffff, "m_Pos.y : %f", m_pos.y);
-	DrawFormatString(0, 120, 0xffffff, "m_Pos.z : %f", m_pos.z);
+	//DrawFormatString(0, 80, 0xffffff, "m_Pos.x : %f", m_pos.x);
+	//DrawFormatString(0, 100, 0xffffff, "m_Pos.y : %f", m_pos.y);
+	//DrawFormatString(0, 120, 0xffffff, "m_Pos.z : %f", m_pos.z);
 
 	//DrawFormatString(0, 280, 0xffffff, "m_colPos.y : %f", m_colPos.y);
 	//DrawFormatString(0, 300, 0xffffff, "m_colPos.z : %f", m_colPos.z);

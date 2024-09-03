@@ -88,22 +88,22 @@ void Map::Draw()
 	float back = m_rectPos.z + halfD;
 
 	// 横の線
-	DrawLine3D(VGet(left, bottom, front), VGet(right, bottom, front), m_color);
-	DrawLine3D(VGet(left, top, front), VGet(right, top, front), m_color);
-	DrawLine3D(VGet(left, bottom, back), VGet(right, bottom, back), m_color);
-	DrawLine3D(VGet(left, top, back), VGet(right, top, back), m_color);
-	// 縦の線
-	DrawLine3D(VGet(left, top, front), VGet(left, bottom, front), m_color);
-	DrawLine3D(VGet(right, top, front), VGet(right, bottom, front), m_color);
-	DrawLine3D(VGet(left, top, back), VGet(left, bottom, back), m_color);
-	DrawLine3D(VGet(right, top, back), VGet(right, bottom, back), m_color);
-	// 前後の線
-	DrawLine3D(VGet(left, top, front), VGet(left, top, back), m_color);
-	DrawLine3D(VGet(left, bottom, front), VGet(left, bottom, back), m_color);
-	DrawLine3D(VGet(right, top, front), VGet(right, top, back), m_color);
-	DrawLine3D(VGet(right, bottom, front), VGet(right, bottom, back), m_color);
+	//DrawLine3D(VGet(left, bottom, front), VGet(right, bottom, front), m_color);
+	//DrawLine3D(VGet(left, top, front), VGet(right, top, front), m_color);
+	//DrawLine3D(VGet(left, bottom, back), VGet(right, bottom, back), m_color);
+	//DrawLine3D(VGet(left, top, back), VGet(right, top, back), m_color);
+	//// 縦の線
+	//DrawLine3D(VGet(left, top, front), VGet(left, bottom, front), m_color);
+	//DrawLine3D(VGet(right, top, front), VGet(right, bottom, front), m_color);
+	//DrawLine3D(VGet(left, top, back), VGet(left, bottom, back), m_color);
+	//DrawLine3D(VGet(right, top, back), VGet(right, bottom, back), m_color);
+	//// 前後の線
+	//DrawLine3D(VGet(left, top, front), VGet(left, top, back), m_color);
+	//DrawLine3D(VGet(left, bottom, front), VGet(left, bottom, back), m_color);
+	//DrawLine3D(VGet(right, top, front), VGet(right, top, back), m_color);
+	//DrawLine3D(VGet(right, bottom, front), VGet(right, bottom, back), m_color);
 
-	DrawSphere3D(m_spherePos.GetVector(), m_sphereRadius, 16, m_sphereColor, m_sphereColor, false);
+	//DrawSphere3D(m_spherePos.GetVector(), m_sphereRadius, 16, m_sphereColor, m_sphereColor, false);
 
 	//3Dモデルのポジション設定
 	MV1SetPosition(m_handle, m_MapPosition);

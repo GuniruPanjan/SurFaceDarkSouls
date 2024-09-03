@@ -1234,10 +1234,23 @@ void Player::HitObj(Map& map)
 					//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
 					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed));
 
-					//回避中だった場合
+					//回避行動だった場合
 					if (m_avoidance == true)
 					{
-
+						//当たっていたら規定距離分プレイヤーを法線方向に移動させる
+						m_pos.x -= m_moveVector.x + m_bounceDis;
+						m_pos.z -= m_moveVector.z + m_bounceDis;
+						m_drawPos.x -= m_moveVector.x + m_bounceDis;
+						m_drawPos.z -= m_moveVector.z + m_bounceDis;
+					}
+					//攻撃中だった場合
+					if (m_moveAttack == true)
+					{
+						//当たっていたら規定距離分プレイヤーを法線方向に移動させる
+						m_pos.x -= m_moveVector.x + m_bounceDis;
+						m_pos.z -= m_moveVector.z + m_bounceDis;
+						m_drawPos.x -= m_moveVector.x + m_bounceDis;
+						m_drawPos.z -= m_moveVector.z + m_bounceDis;
 					}
 
 					//移動した上で壁ポリゴンと接触しているかどうかを判定
@@ -1292,10 +1305,10 @@ void Player::Draw()
 	Pos3 pos2 = m_colPos - vec;
 
 	//カプセル3Dの描画
-	DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+	//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
-	//円の3D描画
-	DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
+	////円の3D描画
+	//DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
 	//DrawSphere3D(map->GetVectorMapPos(), 1500.0f, 16, 0xffffff, 0xffffff, false);
 
 	//3Dモデルのポジション設定
@@ -1307,31 +1320,31 @@ void Player::Draw()
 	//3Dモデル描画
 	MV1DrawModel(m_handle);
 
-	if (m_HitFlag == true)
-	{
-		DrawFormatString(0, 100, 0xffffff, "壁に当たった");
-	}
-	if (m_restAction == true)
-	{
-		DrawFormatString(0, 80, 0xffffff, "回復できる");
-	}
+	//if (m_HitFlag == true)
+	//{
+	//	DrawFormatString(0, 100, 0xffffff, "壁に当たった");
+	//}
+	//if (m_restAction == true)
+	//{
+	//	DrawFormatString(0, 80, 0xffffff, "回復できる");
+	//}
 
-	//DrawFormatString(0, 120, 0xffffff, "HitPoly : %d", HitDim.HitNum);
-	DrawFormatString(0, 0, 0xffffff, "playTime : %f", m_playTime);
-	DrawFormatString(0, 40, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
-	DrawFormatString(0, 60, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
-	//バグで攻撃状態になるがモーションが入らない
-	DrawFormatString(0, 200, 0xffffff, "m_attack : %d", m_moveAttack);
-	DrawFormatString(0, 220, 0xffffff, "アニメ0 : %d", m_animation[0]);
-	DrawFormatString(0, 240, 0xffffff, "アニメ1 : %d", m_animation[1]);
-	DrawFormatString(0, 260, 0xffffff, "アニメ2 : %d", m_animation[2]);
-	DrawFormatString(0, 280, 0xffffff, "アニメ3 : %d", m_animation[3]);
-	DrawFormatString(0, 300, 0xffffff, "アニメ4 : %d", m_animation[4]);
-	DrawFormatString(0, 320, 0xffffff, "アニメ5 : %d", m_animation[5]);
-	DrawFormatString(0, 340, 0xffffff, "アニメ6 : %d", m_animation[6]);
-	DrawFormatString(0, 360, 0xffffff, "アニメ7 : %d", m_animation[7]);
-	DrawFormatString(0, 380, 0xffffff, "アニメ8 : %d", m_animation[8]);
-	DrawFormatString(0, 400, 0xffffff, "回復数 : %d", m_recoveryNumber);
+	////DrawFormatString(0, 120, 0xffffff, "HitPoly : %d", HitDim.HitNum);
+	//DrawFormatString(0, 0, 0xffffff, "playTime : %f", m_playTime);
+	//DrawFormatString(0, 40, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
+	//DrawFormatString(0, 60, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
+	////バグで攻撃状態になるがモーションが入らない
+	//DrawFormatString(0, 200, 0xffffff, "m_attack : %d", m_moveAttack);
+	//DrawFormatString(0, 220, 0xffffff, "アニメ0 : %d", m_animation[0]);
+	//DrawFormatString(0, 240, 0xffffff, "アニメ1 : %d", m_animation[1]);
+	//DrawFormatString(0, 260, 0xffffff, "アニメ2 : %d", m_animation[2]);
+	//DrawFormatString(0, 280, 0xffffff, "アニメ3 : %d", m_animation[3]);
+	//DrawFormatString(0, 300, 0xffffff, "アニメ4 : %d", m_animation[4]);
+	//DrawFormatString(0, 320, 0xffffff, "アニメ5 : %d", m_animation[5]);
+	//DrawFormatString(0, 340, 0xffffff, "アニメ6 : %d", m_animation[6]);
+	//DrawFormatString(0, 360, 0xffffff, "アニメ7 : %d", m_animation[7]);
+	//DrawFormatString(0, 380, 0xffffff, "アニメ8 : %d", m_animation[8]);
+	//DrawFormatString(0, 400, 0xffffff, "回復数 : %d", m_recoveryNumber);
 
 
 }
