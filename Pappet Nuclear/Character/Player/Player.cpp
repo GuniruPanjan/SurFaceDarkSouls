@@ -622,7 +622,7 @@ void Player::Action()
 	if (m_recoveryNumber >= 0 && m_recoberyAction == true && m_moveAttack == false && m_avoidance == false)
 	{
 		//HP回復
-		if (m_hp < 150.0f && m_heel < m_recoberyAmount)
+		if (m_hp < 150.0f && m_heel < 100.0f)
 		{
 			m_heel += 0.1f;
 
@@ -1328,7 +1328,7 @@ void Player::Draw()
 
 	////DrawFormatString(0, 120, 0xffffff, "HitPoly : %d", HitDim.HitNum);
 	//DrawFormatString(0, 0, 0xffffff, "playTime : %f", m_playTime);
-	//DrawFormatString(0, 40, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
+	DrawFormatString(0, 40, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
 	//DrawFormatString(0, 60, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
 	////バグで攻撃状態になるがモーションが入らない
 	//DrawFormatString(0, 200, 0xffffff, "m_attack : %d", m_moveAttack);

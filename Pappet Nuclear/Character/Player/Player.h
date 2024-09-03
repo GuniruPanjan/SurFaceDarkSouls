@@ -28,6 +28,7 @@ public:
 	float GetPosY() { return m_pos.y; }
 	float GetPosZ() { return m_pos.z; }
 	float GetDamage() { return m_attack; }
+	float GetAngle() { return m_angle; }
 	CapsuleCol GetCapsuleCol() { return m_capsuleCol; }
 	SphereCol GetSphereCol() { return m_sphereCol; }
 
@@ -39,6 +40,7 @@ public:
 	//UI‚É•K—v‚È•Ï”
 	float GetHp() { return m_hp; }
 	float GetStamina() { return m_stamina; }
+	int GetRecoveryNumber() { return m_recoveryNumber; }
 
 private:
 	float m_cameraAngle;  //ƒJƒƒ‰î•ñ

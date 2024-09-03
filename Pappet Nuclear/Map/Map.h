@@ -3,6 +3,8 @@
 #include "Col/RectCol.h"
 #include "Col/SphereCol.h"
 
+class Player;
+
 class Map
 {
 public:
@@ -10,7 +12,7 @@ public:
 	virtual ~Map();
 
 	void Init();
-	void Update();
+	void Update(Player& player);
 	void Draw();
 	void End();
 
@@ -25,6 +27,7 @@ public:
 private:
 	int m_handle;   //マップのデータを入れる変数
 	int m_collisionHandle;   //マップのコリジョンのデータを入れる変数
+	int m_right;    //ライトを作る変数
 	float m_size;   //モデルのサイズ変数
 	float m_Xposition;    //Xポジション
 	float m_Yposition;    //Yポジション

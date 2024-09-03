@@ -25,7 +25,7 @@ BossEnemy::~BossEnemy()
 void BossEnemy::Init()
 {
 	//“G‚ÌHP‰Šú‰»
-	m_hp = 100.0f;
+	m_hp = 1200.0f;
 
 	//“G‚ÌUŒ‚—Í‰Šú‰»
 	m_attack = 30.0f;
@@ -167,7 +167,7 @@ void BossEnemy::Action(Player& player)
 		if (m_bossAttack == 0 && m_bossAttack1 == true)
 		{
 			//ˆê’èŠÔ‚ğ‚·‚¬‚é‚ÆŒü‚©‚È‚¢
-			if (m_playTime >= 38.0f)
+			if (m_playTime >= 30.0f)
 			{
 				m_bossMoveAttackPattern = false;
 			}
@@ -456,13 +456,13 @@ void BossEnemy::Draw()
 	{
 		//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
-		////UŒ‚‚Ì”ÍˆÍ•`‰æ
-		//DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
+		//UŒ‚‚Ì”ÍˆÍ•`‰æ
+		DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
 
-		////UŒ‚”»’è•`‰æ
-		//DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
-		//DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
-		//DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
+		//UŒ‚”»’è•`‰æ
+		DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
+		DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
+		DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
 
 	}
 

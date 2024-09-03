@@ -24,7 +24,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	player->Update();
 	enemy->Update(*player, *map);
 	camera->Update(*player, *enemy);
-	map->Update();
+	map->Update(*player);
 	player->HitObj(*map);
 
 	player->IsCapsuleHit(enemy->GetCol(), enemy->GetBossCol());

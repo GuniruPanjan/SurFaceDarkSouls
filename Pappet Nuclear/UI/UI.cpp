@@ -51,7 +51,7 @@ UI::~UI()
 
 void UI::Init(Player& player, Enemy& enemy)
 {
-	m_heelStone = LoadGraph("Data/UI/HeelStone.png");
+	m_heelStone = LoadGraph("Data/UI/HeelStoneMini.png");
 
 	m_hpExpressionDivide1 = 0.9f;
 	m_hpExpressionDivide2 = 0.89f;
@@ -71,12 +71,12 @@ void UI::Init(Player& player, Enemy& enemy)
 	m_staminaPosY4 = 34.0f;
 
 	m_ItemColumn1X1 = 20.0f;
-	m_ItemColumn1Y1 = 330.0f;
-	m_ItemColumn1X2 = 70.0f;
-	m_ItemColumn1Y2 = 390.0f;
+	m_ItemColumn1Y1 = 310.0f;
+	m_ItemColumn1X2 = 80.0f;
+	m_ItemColumn1Y2 = 380.0f;
 	m_ItemColumn2X1 = 20.0f;
-	m_ItemColumn2Y1 = 400.0f;
-	m_ItemColumn2X2 = 70.0f;
+	m_ItemColumn2Y1 = 390.0f;
+	m_ItemColumn2X2 = 80.0f;
 	m_ItemColumn2Y2 = 460.0f;
 
 	m_hpCover = player.GetHp() * m_hpExpressionDivide1;
@@ -86,8 +86,8 @@ void UI::Init(Player& player, Enemy& enemy)
 
 	m_enemyBossHpExpressionDivide1 = 0.392f;
 	m_enemyBossHpExpressionDivide2 = 0.39f;
-	m_enemyBossHpPosX1 = 50.0f;
-	m_enemyBossHpPosX2 = 51.0f;
+	m_enemyBossHpPosX1 = 100.0f;
+	m_enemyBossHpPosX2 = 101.0f;
 	m_enemyBossHpPosY1 = 335.0f;
 	m_enemyBossHpPosY2 = 336.0f;
 	m_enemyBossHpPosY3 = 350.0f;
@@ -106,6 +106,8 @@ void UI::Draw(Player& player, Enemy& enemy)
 	//ƒAƒCƒeƒ€—“UI
 	DrawBox(m_ItemColumn1X1, m_ItemColumn1Y1, m_ItemColumn1X2, m_ItemColumn1Y2, 0xffffff, TRUE);
 	DrawBox(m_ItemColumn2X1, m_ItemColumn2Y1, m_ItemColumn2X2, m_ItemColumn2Y2, 0xffffff, TRUE);
+	DrawGraph(-3, 385, m_heelStone, TRUE);
+	DrawFormatString(70, 445, 0x000000, "%d", player.GetRecoveryNumber());
 
 	//BossHP
 	if (enemy.GetBattale() == true)

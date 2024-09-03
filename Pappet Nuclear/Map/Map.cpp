@@ -3,6 +3,7 @@
 Map::Map():
 	m_handle(0),
 	m_collisionHandle(0),
+	m_right(0),
 	m_size(0.0f),
 	m_Xposition(0.0f),
 	m_Yposition(0.0f),
@@ -32,7 +33,7 @@ void Map::Init()
 	if (m_oneInit == false)
 	{
 		//モデル読み込み
-		m_handle = MV1LoadModel("Data/Map/Map.mv1");
+		m_handle = MV1LoadModel("Data/Map/MapNew.mv1");
 		m_collisionHandle = MV1LoadModel("Data/Map/Collision.mv1");
 
 		//モデルのサイズ
@@ -69,9 +70,9 @@ void Map::Init()
 	
 }
 
-void Map::Update()
+void Map::Update(Player& player)
 {
-	
+	ChangeLightTypeDir(VGet(-1.0f, 0.0f, 0.0f));
 }
 
 void Map::Draw()
