@@ -106,8 +106,14 @@ void UI::Draw(Player& player, Enemy& enemy)
 	//アイテム欄UI
 	DrawBox(m_ItemColumn1X1, m_ItemColumn1Y1, m_ItemColumn1X2, m_ItemColumn1Y2, 0xffffff, TRUE);
 	DrawBox(m_ItemColumn2X1, m_ItemColumn2Y1, m_ItemColumn2X2, m_ItemColumn2Y2, 0xffffff, TRUE);
-	DrawGraph(-3, 385, m_heelStone, TRUE);
-	DrawFormatString(70, 445, 0x000000, "%d", player.GetRecoveryNumber());
+
+	//回復アイテムが0以上だと
+	if (player.GetRecoveryNumber() > 0)
+	{
+		DrawGraph(-3, 385, m_heelStone, TRUE);
+
+		DrawFormatString(70, 445, 0x000000, "%d", player.GetRecoveryNumber());
+	}
 
 	//BossHP
 	if (enemy.GetBattale() == true)

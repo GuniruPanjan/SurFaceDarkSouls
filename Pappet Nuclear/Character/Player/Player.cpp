@@ -10,6 +10,8 @@ Player::Player():
 	m_stamina(0.0f),
 	m_lockonTarget(false),
 	m_moveAnimFrameIndex(0),
+	m_moveAnimFrameRight(0),
+	m_moveAnimFrameRigthPosition(VGet(0.0f,0.0f,0.0f)),
 	m_moveAnimShieldFrameIndex(0),
 	m_a(0),
 	m_pad(0),
@@ -148,6 +150,8 @@ void Player::Init()
 		m_animation[8] = -1;
 		m_animation[9] = -1;
 
+		weapon->Init();
+
 		m_oneInit = true;
 	}
 
@@ -198,9 +202,12 @@ void Player::Update()
 {
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 
-
 	//アニメーションで移動しているフレームの番号を検索する
 	m_moveAnimFrameIndex = MV1SearchFrame(m_handle, "mixamorig:Hips");
+	m_moveAnimFrameRight = MV1SearchFrame(m_handle, "mixamorig:RightHandThumb1");
+
+	//武器をアタッチするフレームのローカル→ワールド変換行列を取得する
+	m_moveWeaponFrameMatrix = MV1GetFrameLocalMatrix(m_handle, 35);
 
 	//盾を構えるときのアニメーションのフレーム所得
 	m_moveAnimShieldFrameIndex = MV1SearchFrame(m_handle, "mixamorig:LeftHand");
@@ -294,6 +301,9 @@ void Player::Update()
 
 	//アニメーション時間を進める前のアニメーションで移動をしているフレームの座標取得
 	m_prevPos = MV1GetFramePosition(m_handle, m_moveAnimFrameIndex);
+
+	//アタッチするモデルのフレーム座標を取得する
+	m_moveAnimFrameRigthPosition = MV1GetFramePosition(m_handle, m_moveAnimFrameRight);
 
 	//攻撃していない時のアニメーション速度
 	if(m_moveAttack == false)
@@ -402,6 +412,8 @@ void Player::Update()
 			m_stamina += 0.3f;
 		}
 	}
+
+	weapon->Update(m_moveWeaponFrameMatrix);
 
 	Animation(m_playTime, m_pos);
 
@@ -1317,6 +1329,8 @@ void Player::Draw()
 	//3Dモデル描画
 	MV1DrawModel(m_handle);
 
+	weapon->Draw(m_moveAnimFrameRigthPosition);
+
 	//if (m_HitFlag == true)
 	//{
 	//	DrawFormatString(0, 100, 0xffffff, "壁に当たった");
@@ -1359,7 +1373,7 @@ void Player::End()
 	MV1DeleteModel(m_animAttack3);
 	MV1DeleteModel(m_animDeath);
 	MV1DeleteModel(m_animHeel);
-
+	weapon->End();
 }
 
 bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)

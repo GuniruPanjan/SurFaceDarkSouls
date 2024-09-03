@@ -10,13 +10,11 @@ SceneTitle::SceneTitle():
 SceneTitle::~SceneTitle()
 {
 	DeleteGraph(m_backScene);
-	DeleteGraph(m_right);
 }
 
 void SceneTitle::Init()
 {
 	m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitle.png", 30, 30);
-	m_right = MyLoadGraph("Data/SceneBack/A.png", 12, 12);
 }
 
 std::shared_ptr<SceneBase> SceneTitle::Update()
@@ -37,27 +35,9 @@ void SceneTitle::Draw()
 {
 	//DrawCube3D(VGet(0.0f, 0.0f, 0.0f), VGet(700.0f, 300.0f, 300.0f), 0xffffff, 0xffffff, TRUE);
 
-	//•`‰æ‹P“x‚ğ—ÎF‚É‚·‚é
-	SetDrawBright(255, 255, 255);
-
-	//‰æ‘œ‚ÌRGB¬•ª‚ğ–³‹‚·‚é
-	SetIgnoreDrawGraphColor(TRUE);
-
-	//‰æ‘œ•`‰æ
-	DrawGraph(5, 5, m_right, TRUE);
-
-	//‰æ‘œ‚ÌRGB¬•ª‚ğ–³‹‚·‚éİ’è‚ğ‰ğœ‚·‚é
-	SetIgnoreDrawGraphColor(FALSE);
-
-	//•`‰æ‹P“x‚à‚à‚Æ‚É–ß‚·
-	SetDrawBright(255, 255, 255);
-
 	DrawGraph(-50, 0, m_backScene, TRUE);
 
-	DrawString(240, 300, "Title", 0x000000);
-
-	
-
+	DrawString(240, 300, "Title", 0xffffff);
 	
 }
 

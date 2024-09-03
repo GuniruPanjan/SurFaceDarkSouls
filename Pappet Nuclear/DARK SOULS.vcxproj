@@ -147,6 +147,7 @@
     <ClCompile Include="Character\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Character\Enemy\WeakEnemy.cpp" />
     <ClCompile Include="Character\Player\Player.cpp" />
+    <ClCompile Include="Character\Player\Weapon\Weapon.cpp" />
     <ClCompile Include="Col\CapsuleCol.cpp" />
     <ClCompile Include="Col\Matrix3.cpp" />
     <ClCompile Include="Col\RectCol.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Character\Enemy\EnemyBase.h" />
     <ClInclude Include="Character\Enemy\WeakEnemy.h" />
     <ClInclude Include="Character\Player\Player.h" />
+    <ClInclude Include="Character\Player\Weapon\Weapon.h" />
     <ClInclude Include="Col\CapsuleCol.h" />
     <ClInclude Include="Col\Matrix3.h" />
     <ClInclude Include="Col\RectCol.h" />

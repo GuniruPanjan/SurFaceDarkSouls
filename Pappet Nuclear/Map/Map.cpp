@@ -73,6 +73,7 @@ void Map::Init()
 void Map::Update(Player& player)
 {
 	ChangeLightTypeDir(VGet(-1.0f, 0.0f, 0.0f));
+	//CreateDirLightHandle(VGet(1.0f, 0.0f, 0.0f));
 }
 
 void Map::Draw()

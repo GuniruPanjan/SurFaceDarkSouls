@@ -1,5 +1,6 @@
 #pragma once
 #include "Character/CharacterBase.h"
+#include "Character/Player/Weapon/Weapon.h"
 
 
 class Player : public CharacterBase
@@ -55,7 +56,10 @@ private:
 	bool m_recoberyAction;    //回復中の判定
 	bool m_lockonTarget;  //ターゲットロックオン判定
 	int m_moveAnimFrameIndex;  //フレームを検索する
+	int m_moveAnimFrameRight;   //右手のフレームを検索する
+	VECTOR m_moveAnimFrameRigthPosition;  //右手のフレームのポジション
 	int m_moveAnimShieldFrameIndex;  //ガードするときのフレーム検索
+	MATRIX m_moveWeaponFrameMatrix;   //武器をアタッチするフレームのローカル座標
 	int m_a;  //長押し確認変数
 	int m_pad;  //パッド入力所得変数
 	XINPUT_STATE m_xpad;  //パッド入力
@@ -76,5 +80,7 @@ private:
 	//レベル関係
 	int m_hpLevel;       //HPレベル
 	int m_staminaLevel;    //スタミナレベル
+
+	std::shared_ptr<Weapon> weapon = std::make_shared<Weapon>();
 };
 
