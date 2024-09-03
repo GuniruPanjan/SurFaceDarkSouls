@@ -31,16 +31,28 @@ UI::UI():
 	m_enemyBossHpPosY2(0.0f),
 	m_enemyBossHpPosY3(0.0f),
 	m_enemyBossHpPosY4(0.0f),
+	m_ItemColumn1X1(0.0f),
+	m_ItemColumn1X2(0.0f),
+	m_ItemColumn1Y1(0.0f),
+	m_ItemColumn1Y2(0.0f),
+	m_ItemColumn2X1(0.0f),
+	m_ItemColumn2X2(0.0f),
+	m_ItemColumn2Y1(0.0f),
+	m_ItemColumn2Y2(0.0f),
+	m_heelStone(0),
 	m_enemyBossName(0)
 {
 }
 
 UI::~UI()
 {
+	DeleteGraph(m_heelStone);
 }
 
 void UI::Init(Player& player, Enemy& enemy)
 {
+	m_heelStone = LoadGraph("Data/UI/HeelStone.png");
+
 	m_hpExpressionDivide1 = 0.9f;
 	m_hpExpressionDivide2 = 0.89f;
 	m_staminaExpressionDivide1 = 0.9f;
@@ -57,6 +69,15 @@ void UI::Init(Player& player, Enemy& enemy)
 	m_staminaPosY2 = 21.0f;
 	m_staminaPosY3 = 35.0f;
 	m_staminaPosY4 = 34.0f;
+
+	m_ItemColumn1X1 = 20.0f;
+	m_ItemColumn1Y1 = 330.0f;
+	m_ItemColumn1X2 = 70.0f;
+	m_ItemColumn1Y2 = 390.0f;
+	m_ItemColumn2X1 = 20.0f;
+	m_ItemColumn2Y1 = 400.0f;
+	m_ItemColumn2X2 = 70.0f;
+	m_ItemColumn2Y2 = 460.0f;
 
 	m_hpCover = player.GetHp() * m_hpExpressionDivide1;
 	m_staminaCover = player.GetStamina() * m_staminaExpressionDivide1;
@@ -81,6 +102,10 @@ void UI::Draw(Player& player, Enemy& enemy)
 	DrawBox(m_hpPosX2, m_hpPosY2, m_hpPosX2 + (player.GetHp() * m_hpExpressionDivide2), m_hpPosY4, m_hpColor, TRUE);
 	DrawBox(m_staminaPosX1, m_staminaPosY1, m_staminaCover, m_staminaPosY3, 0xffffff, TRUE);
 	DrawBox(m_staminaPosX2, m_staminaPosY2, player.GetStamina() * m_staminaExpressionDivide2, m_staminaPosY4, m_staminaColor, TRUE);
+
+	//ƒAƒCƒeƒ€—“UI
+	DrawBox(m_ItemColumn1X1, m_ItemColumn1Y1, m_ItemColumn1X2, m_ItemColumn1Y2, 0xffffff, TRUE);
+	DrawBox(m_ItemColumn2X1, m_ItemColumn2Y1, m_ItemColumn2X2, m_ItemColumn2Y2, 0xffffff, TRUE);
 
 	//BossHP
 	if (enemy.GetBattale() == true)

@@ -34,6 +34,15 @@ private:
 	float m_staminaPosY2;
 	float m_staminaPosY3;
 	float m_staminaPosY4;
+	float m_ItemColumn1X1;
+	float m_ItemColumn1X2;
+	float m_ItemColumn1Y1;
+	float m_ItemColumn1Y2;
+	float m_ItemColumn2X1;
+	float m_ItemColumn2X2;
+	float m_ItemColumn2Y1;
+	float m_ItemColumn2Y2;
+	int m_heelStone;
 
 	//“G‚ÌUI•Ï”
 	float m_enemyBossHpCover;
