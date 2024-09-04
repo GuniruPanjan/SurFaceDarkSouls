@@ -43,6 +43,7 @@ private:
 	float m_ItemColumn2Y1;
 	float m_ItemColumn2Y2;
 	int m_heelStone;
+	int m_fist;
 
 	//“G‚ÌUI•Ï”
 	float m_enemyBossHpCover;

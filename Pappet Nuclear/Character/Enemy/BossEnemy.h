@@ -15,6 +15,7 @@ public:
 	void End();
 
 	bool isSphereHit(const SphereCol& col, float damage);
+	bool isPlayerHit(const CapsuleCol& col, VECTOR vec,float bounce);
 	bool isCapsuleHit(const CapsuleCol& col);
 
 	float GetDamage() { return m_attack; }
@@ -24,6 +25,7 @@ public:
 	float GetPosX() { return m_pos.x; }
 	float GetPosY() { return m_pos.y; }
 	float GetPosZ() { return m_pos.z; }
+	VECTOR GetOutPush() { return m_outPush; }
 	float GetHp() { return m_hp; }
 
 	CapsuleCol GetCol() const { return m_capsuleCol; }
@@ -54,7 +56,7 @@ private:
 	SphereCol m_colBossAttackSphere1;    //UŒ‚‚Ì“–‚½‚è”»’èCol1
 	SphereCol m_colBossAttackSphere2;    //UŒ‚‚Ì“–‚½‚è”»’èCol2  
 	SphereCol m_colBossAttackSphere3;    //UŒ‚‚Ì“–‚½‚è”»’èCol3  
-
+	VECTOR m_outPush;    //ƒLƒƒƒ‰‚ğ‰Ÿ‚µo‚·
 
 
 	std::shared_ptr<Map> map = std::make_shared<Map>();

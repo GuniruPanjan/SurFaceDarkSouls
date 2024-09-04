@@ -1,6 +1,6 @@
 #pragma once
 #include "Character/CharacterBase.h"
-#define ENEMY_NOW 1  //敵の配列で出す数
+#define ENEMY_NOW 5  //敵の配列で出す数
 class Player;
 
 class EnemyBase : public CharacterBase

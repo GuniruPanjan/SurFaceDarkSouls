@@ -27,7 +27,7 @@ public:
 private:
 	int m_handle;   //マップのデータを入れる変数
 	int m_collisionHandle;   //マップのコリジョンのデータを入れる変数
-	int m_right;    //ライトを作る変数
+	int m_light;    //ライトを作る変数
 	float m_size;   //モデルのサイズ変数
 	float m_Xposition;    //Xポジション
 	float m_Yposition;    //Yポジション

@@ -10,7 +10,7 @@ Enemy::~Enemy()
 
 void Enemy::Init()
 {
-	enemy->Init();
+	enemy->Init(500.0f, 0.0f, 0.0f);
 	boss->Init();
 }
 

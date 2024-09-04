@@ -14,7 +14,8 @@ BossEnemy::BossEnemy():
 	m_bossAttack(-1),
 	m_bossAttackRadius1(0.0f),
 	m_bossAttackRadius2(0.0f),
-	m_bossAttackRadius3(0.0f)
+	m_bossAttackRadius3(0.0f),
+	m_outPush(VGet(0.0f, 0.0f, 0.0f))
 {
 }
 
@@ -55,7 +56,7 @@ void BossEnemy::Init()
 	m_colBossAttackPos3 = Pos3(m_pos.x, m_pos.y + 35.0f, m_pos.z);
 	m_initializationPos = Pos3(0.0f, -1000.0f, 0.0f);
 	m_vec = Vec3(0.0f, m_pos.y + 2.0f, 0.0f);
-	m_len = 80.0f;
+	m_len = 40.0f;
 	m_capsuleRadius = 35.0f;
 	m_sphereRadius = 120.0f;
 	m_bossAttackRadius1 = 60.0f;
@@ -454,7 +455,7 @@ void BossEnemy::Draw()
 	//敵が生きている時は描画
 	if (m_hp > 0.0f)
 	{
-		//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+		DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
 		//攻撃の範囲描画
 		DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
@@ -510,6 +511,28 @@ bool BossEnemy::isSphereHit(const SphereCol& col, float damage)
 	else
 	{
 		m_damageReceived = false;
+
+		m_color = 0xffffff;
+	}
+
+	return isHit;
+}
+
+bool BossEnemy::isPlayerHit(const CapsuleCol& col, VECTOR vec, float bounce)
+{
+	bool isHit = m_capsuleCol.IsHitCapsule(col);
+
+	//プレイヤーと当たった時
+	if (isHit)
+	{
+		m_color = 0xffff00;
+
+		//法線ベクトルをとれるようにしておく
+		m_outPush = VAdd(m_outPush, VScale(vec, bounce));
+	}
+	else
+	{
+		m_outPush = VGet(0.0f, 0.0f, 0.0f);
 
 		m_color = 0xffffff;
 	}

@@ -34,13 +34,16 @@ public:
 	SphereCol GetBossAttackCol1() const { return boss->GetAttackCol1(); }
 	SphereCol GetBossAttackCol2() const { return boss->GetAttackCol2(); }
 	SphereCol GetBossAttackCol3() const { return boss->GetAttackCol3(); }
+	VECTOR GetOutPush() { return boss->GetOutPush(); }
 	bool isSphereHit(SphereCol col, float damage) { return enemy->isSphereHit(col, damage); }
 	bool isSphereBossHit(SphereCol col, float damage) { return boss->isSphereHit(col, damage); }
 	bool isSeachHit(CapsuleCol col) { return enemy->isSeachHit(col); }
 	bool isDistanceHit(CapsuleCol col) { return enemy->isDistanceHit(col); }
+	bool isBossPlayerHit(CapsuleCol col, VECTOR vec, float bounce) { return boss->isPlayerHit(col, vec, bounce); }
 	bool isBossDistanceHit(CapsuleCol col) { return boss->isCapsuleHit(col); }
 	bool GameClear() { return boss->GameClear(); }
 	bool GetBattale() { return boss->GetBattle(); }
+
 
 private:
 	//“G‚Ì\‘¢‘Ì‚ğ”z—ñ‚Å“Ç‚İ‚İ

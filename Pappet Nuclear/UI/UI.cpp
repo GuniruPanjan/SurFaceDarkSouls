@@ -40,6 +40,7 @@ UI::UI():
 	m_ItemColumn2Y1(0.0f),
 	m_ItemColumn2Y2(0.0f),
 	m_heelStone(0),
+	m_fist(0),
 	m_enemyBossName(0)
 {
 }
@@ -52,6 +53,7 @@ UI::~UI()
 void UI::Init(Player& player, Enemy& enemy)
 {
 	m_heelStone = LoadGraph("Data/UI/HeelStoneMini.png");
+	m_fist = LoadGraph("Data/UI/FistUi.png");
 
 	m_hpExpressionDivide1 = 0.9f;
 	m_hpExpressionDivide2 = 0.89f;
@@ -106,6 +108,8 @@ void UI::Draw(Player& player, Enemy& enemy)
 	//アイテム欄UI
 	DrawBox(m_ItemColumn1X1, m_ItemColumn1Y1, m_ItemColumn1X2, m_ItemColumn1Y2, 0xffffff, TRUE);
 	DrawBox(m_ItemColumn2X1, m_ItemColumn2Y1, m_ItemColumn2X2, m_ItemColumn2Y2, 0xffffff, TRUE);
+
+	DrawGraph(-3, 305, m_fist, TRUE);
 
 	//回復アイテムが0以上だと
 	if (player.GetRecoveryNumber() > 0)

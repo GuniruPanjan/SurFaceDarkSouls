@@ -9,7 +9,7 @@ public:
 	WeakEnemy();
 	virtual ~WeakEnemy();
 
-	void Init();
+	void Init(float x, float y, float z);
 	void Update(Player& player);
 	void Action(Player& player);
 	void Animation(float& time);

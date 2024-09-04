@@ -11,6 +11,7 @@ public:
 
 	void Init();
 	void Update();
+	void OtherInfluence(VECTOR outpush);
 	void Action();
 	void Animation(float& time, VECTOR& pos);
 	void HitObj(Map& map);
@@ -30,6 +31,8 @@ public:
 	float GetPosZ() { return m_pos.z; }
 	float GetDamage() { return m_attack; }
 	float GetAngle() { return m_angle; }
+	float GetBounceDis() { return m_bounceDis; }
+	VECTOR GetBounceMove() { return m_bounceMove; }
 	CapsuleCol GetCapsuleCol() { return m_capsuleCol; }
 	SphereCol GetSphereCol() { return m_sphereCol; }
 

@@ -1,9 +1,9 @@
 #include "Map.h"
 
-Map::Map():
+Map::Map() :
 	m_handle(0),
 	m_collisionHandle(0),
-	m_right(0),
+	m_light(0),
 	m_size(0.0f),
 	m_Xposition(0.0f),
 	m_Yposition(0.0f),
@@ -24,6 +24,8 @@ Map::~Map()
 {
 	//ƒƒ‚ƒŠ‰ğ•ú
 	MV1DeleteModel(m_handle);
+	MV1DeleteModel(m_collisionHandle);
+	DeleteLightHandle(m_light);
 }
 
 void Map::Init()
@@ -64,6 +66,10 @@ void Map::Init()
 		m_rectCol.Init(m_rectPos, m_rectSize);
 		m_sphereCol.Init(m_spherePos, m_sphereRadius);
 
+		//ƒ‰ƒCƒgŠÖŒW
+		ChangeLightTypeDir(VGet(-1.0f, 0.0f, 0.0f));
+		m_light = CreateDirLightHandle(VGet(1.0f, 0.0f, 0.0f));
+
 		m_oneInit = true;
 	}
 
@@ -72,8 +78,7 @@ void Map::Init()
 
 void Map::Update(Player& player)
 {
-	ChangeLightTypeDir(VGet(-1.0f, 0.0f, 0.0f));
-	//CreateDirLightHandle(VGet(1.0f, 0.0f, 0.0f));
+	
 }
 
 void Map::Draw()
@@ -121,6 +126,7 @@ void Map::End()
 	//ƒƒ‚ƒŠ‰ğ•ú
 	MV1DeleteModel(m_handle);
 	MV1DeleteModel(m_collisionHandle);
+	DeleteLightHandle(m_light);
 }
 
 bool Map::CapsuleIsHit(const CapsuleCol& col)

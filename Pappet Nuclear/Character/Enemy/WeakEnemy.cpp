@@ -9,7 +9,7 @@ WeakEnemy::~WeakEnemy()
 {
 }
 
-void WeakEnemy::Init()
+void WeakEnemy::Init(float x, float y, float z)
 {
 	//敵のHP初期化
 	m_hp = 200.0f;
@@ -20,9 +20,9 @@ void WeakEnemy::Init()
 	//敵のスピード初期化
 	m_speed = 0.01f;
 
-	m_posX = 500.0f;
-	m_posY = 0.0f;
-	m_posZ = 0.0f;
+	m_posX = x;
+	m_posY = y;
+	m_posZ = z;
 
 	m_pos = VGet(m_posX, m_posY, m_posZ);
 

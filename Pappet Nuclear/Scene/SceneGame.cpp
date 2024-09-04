@@ -22,6 +22,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 {
 	player->SetCameraAngle(camera->GetAngleY());
 	player->Update();
+	player->OtherInfluence(enemy->GetOutPush());
 	enemy->Update(*player, *map);
 	camera->Update(*player, *enemy);
 	map->Update(*player);
@@ -33,6 +34,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	enemy->isSphereBossHit(player->GetSphereCol(), player->GetDamage());
 	enemy->isSeachHit(player->GetCapsuleCol());
 	enemy->isDistanceHit(player->GetCapsuleCol());
+	enemy->isBossPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetBounceDis());
 	enemy->isBossDistanceHit(player->GetCapsuleCol());
 	map->CapsuleIsHit(player->GetCapsuleCol());
 	map->CapsuleSaveHit(player->GetCapsuleCol());
