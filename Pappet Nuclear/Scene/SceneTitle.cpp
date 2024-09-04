@@ -10,6 +10,8 @@ SceneTitle::SceneTitle():
 	m_button(0),
 	m_one(false),
 	m_blend(false),
+	m_setButton(false),
+	m_waitTime(0),
 	m_analog(VGet(0.0f,0.0f,0.0f)),
 	m_cameraPos(VGet(0.0f,0.0f,0.0f)),
 	m_playerHandle(0),
@@ -29,7 +31,11 @@ SceneTitle::SceneTitle():
 SceneTitle::~SceneTitle()
 {
 	DeleteGraph(m_backScene);
+	DeleteGraph(m_start);
+	DeleteGraph(m_setting);
+	DeleteGraph(m_end);
 	MV1DeleteModel(m_playerHandle);
+	MV1DeleteModel(m_anim);
 }
 
 void SceneTitle::Init()
@@ -47,9 +53,9 @@ void SceneTitle::Init()
 	//時間
 	m_totalAnimationTime = MV1GetAttachAnimTotalTime(m_playerHandle, m_animation);
 
-	m_playTime = 0.0f;
+	m_playTime = 28.0f;
 
-	m_pos = VGet()
+	m_pos = VGet(485.0f, 0.0f, -800.0f);
 
 	m_select[0] = 1;
 	m_select[1] = 0;
@@ -65,13 +71,15 @@ void SceneTitle::Init()
 
 	map->Init();
 
+	setting->Init();
+
 	m_one = false;
 	m_blend = false;
 }
 
 std::shared_ptr<SceneBase> SceneTitle::Update()
 {
-	if (m_settingScene == false)
+	if (setting->GetSettingScene() == false)
 	{
 		//パッド入力所得
 		GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
@@ -94,6 +102,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			m_one = false;
 		}
 
+		m_playTime += 0.5f;
+
 		//DrawFormatString(0, 0, 0xffffff, "m_select0 : %d", m_select[0]);
 		//DrawFormatString(0, 20, 0xffffff, "m_select1 : %d", m_select[1]);
 		//DrawFormatString(0, 40, 0xffffff, "m_select2 : %d", m_select[2]);
@@ -104,6 +114,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			m_select[2] = 1;
 			m_select[0] = 0;
 
+			m_blend = false;
+
 			m_one = true;
 		}
 		if (m_select[1] == 1 && m_button > 0 && m_one == false)
@@ -111,12 +123,16 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			m_select[0] = 1;
 			m_select[1] = 0;
 
+			m_blend = false;
+
 			m_one = true;
 		}
 		if (m_select[2] == 1 && m_button > 0 && m_one == false)
 		{
 			m_select[1] = 1;
 			m_select[2] = 0;
+
+			m_blend = false;
 
 			m_one = true;
 		}
@@ -150,23 +166,138 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			m_one = true;
 		}
 
-		//Aボタン押したら
-		if (m_xpad.Buttons[12] == 1 && m_select[0] == 1)
+		if (m_waitTime > 10)
 		{
-			return std::make_shared<SceneGame>();
+			//Aボタン押したら
+			if (m_xpad.Buttons[12] == 1 && m_select[0] == 1)
+			{
+				return std::make_shared<SceneGame>();
 
-			map->End();
+				map->End();
+			}
+			//設定シーン
+			if (m_xpad.Buttons[12] == 1 && m_select[1] == 1)
+			{
+				m_setButton = true;
+
+				m_waitTime = 0;
+
+				setting->SetSettingScene(m_setButton);
+			}
+			//終了
+			if (m_xpad.Buttons[12] == 1 && m_select[2] == 1)
+			{
+				DxLib_End();
+			}
 		}
-		//設定シーン
-		if (m_xpad.Buttons[12] == 1 && m_select[1] == 1)
+		else
 		{
-			m_settingScene = true;
+			m_waitTime++;
 		}
-		//終了
-		if (m_xpad.Buttons[12] == 1 && m_select[2] == 1)
+
+		if (m_select[0] == 1)
 		{
-			DxLib_End();
+			if (m_blend == false)
+			{
+				if (m_pal[0] < 256)
+				{
+					m_pal[0] += 2;
+				}
+				else
+				{
+					m_blend = true;
+				}
+
+			}
+			if (m_blend == true)
+			{
+				if (m_pal[0] > 125)
+				{
+					m_pal[0] -= 2;
+				}
+				else
+				{
+					m_blend = false;
+				}
+			}
+
+
+			m_pal[1] = 255;
+			m_pal[2] = 255;
 		}
+		if (m_select[1] == 1)
+		{
+			if (m_blend == false)
+			{
+				if (m_pal[1] < 256)
+				{
+					m_pal[1] += 2;
+				}
+				else
+				{
+					m_blend = true;
+				}
+			}
+			if (m_blend == true)
+			{
+				if (m_pal[1] > 125)
+				{
+					m_pal[1] -= 2;
+				}
+				else
+				{
+					m_blend = false;
+				}
+			}
+
+			m_pal[0] = 255;
+			m_pal[2] = 255;
+		}
+		if (m_select[2] == 1)
+		{
+			if (m_blend == false)
+			{
+				if (m_pal[2] < 256)
+				{
+					m_pal[2] += 2;
+				}
+				else
+				{
+					m_blend = true;
+				}
+			}
+			if (m_blend == true)
+			{
+				if (m_pal[2] > 125)
+				{
+					m_pal[2] -= 2;
+				}
+				else
+				{
+					m_blend = false;
+				}
+			}
+
+
+			m_pal[1] = 255;
+			m_pal[0] = 255;
+		}
+
+
+	}
+	//設定を開く
+	if (setting->GetSettingScene() == true)
+	{
+		setting->Update();
+	}
+
+	if (m_playTime >= m_totalAnimationTime && m_animation != -1)
+	{
+		m_playTime = 80.0f;
+	}
+	if (m_animation != -1)
+	{
+		MV1SetAttachAnimTime(m_playerHandle, m_animation, m_playTime);
 	}
 
 	SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
@@ -178,97 +309,14 @@ void SceneTitle::Draw()
 {
 	//DrawCube3D(VGet(0.0f, 0.0f, 0.0f), VGet(700.0f, 300.0f, 300.0f), 0xffffff, 0xffffff, TRUE);
 
-
-
-	if (m_select[0] == 1)
-	{
-		if (m_blend == false)
-		{
-			if (m_pal[0] < 256)
-			{
-				m_pal[0] += 2;
-			}
-			else
-			{
-				m_blend = true;
-			}
-			
-		}
-		if (m_blend == true)
-		{
-			if (m_pal[0] > 125)
-			{
-				m_pal[0] -= 2;
-			}
-			else
-			{
-				m_blend = false;
-			}
-		}
-		
-
-		m_pal[1] = 255;
-		m_pal[2] = 255;
-	}
-	if (m_select[1] == 1)
-	{
-		if (m_blend == false)
-		{
-			if (m_pal[1] < 256)
-			{
-				m_pal[1] += 2;
-			}
-			else
-			{
-				m_blend = true;
-			}
-		}
-		if (m_blend == true)
-		{
-			if (m_pal[1] > 125)
-			{
-				m_pal[1] -= 2;
-			}
-			else
-			{
-				m_blend = false;
-			}
-		}
-
-		m_pal[0] = 255;
-		m_pal[2] = 255;
-	}
-	if (m_select[2] == 1)
-	{
-		if (m_blend == false)
-		{
-			if (m_pal[2] < 256)
-			{
-				m_pal[2] += 2;
-			}
-			else
-			{
-				m_blend = true;
-			}
-		}
-		if (m_blend == true)
-		{
-			if (m_pal[2] > 125)
-			{
-				m_pal[2] -= 2;
-			}
-			else
-			{
-				m_blend = false;
-			}
-		}
-		
-
-		m_pal[1] = 255;
-		m_pal[0] = 255;
-	}
-
 	map->Draw();
+
+	MV1SetPosition(m_playerHandle, m_pos);
+
+	MV1DrawModel(m_playerHandle);
+
+	//3Dモデルの回転地をセットする
+	MV1SetRotationXYZ(m_playerHandle, VGet(0.0f, 160.0f, 0.0f));
 
 	DrawGraph(-50, 0, m_backScene, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[0]);
@@ -280,7 +328,16 @@ void SceneTitle::Draw()
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[2]);
 	DrawGraph(200, 340, m_end, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	
+
+	DrawFormatString(0, 0, 0xffffff, "setting : %d", setting->GetSettingScene());
+
+	//設定画面を描画
+	if (setting->GetSettingScene() == true)
+	{
+		setting->Draw();
+	}
+
+	setting->SettingDraw();
 
 	//DrawString(240, 300, "Title", 0xffffff);
 	

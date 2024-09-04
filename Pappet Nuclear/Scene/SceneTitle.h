@@ -27,6 +27,8 @@ private:
 	int m_pal[3];      //ブレンド描画用
 	bool m_one;      //単発入力
 	bool m_blend;    //ブレンド判定
+	bool m_setButton;    //設定の判定
+	int m_waitTime;      //待つための時間
 	VECTOR m_analog;
 	VECTOR m_cameraPos;    //カメラポジション
 	VECTOR m_cameraTarget;     //カメラのターゲットポジション

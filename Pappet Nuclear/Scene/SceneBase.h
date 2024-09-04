@@ -1,13 +1,12 @@
 #pragma once
 #include "DxLib.h"
+#include "UI/Setting.h"
 #include<memory>
 
 class SceneBase : public std::enable_shared_from_this<SceneBase>
 {
 public:
-	SceneBase():
-		m_settingScene(false)
-	{}
+	SceneBase(){}
 
 	virtual ~SceneBase(){}
 
@@ -23,6 +22,7 @@ public:
 protected:
 	//•Ï”‚ğ“ü‚ê‚é
 	int m_backScene = 0;
-	bool m_settingScene;    //İ’è‚·‚é‚½‚ß‚Ì‰æ–Ê‚ğŒÄ‚Ô•Ï”
+
+	std::shared_ptr<Setting> setting = std::make_shared<Setting>();
 };
 
