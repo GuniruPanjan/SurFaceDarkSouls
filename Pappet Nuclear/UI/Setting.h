@@ -28,6 +28,9 @@ private:
 	int m_whitePal;
 	int m_button;    //押した時間を得る
 	int m_waitTime;    //入力を待つための時間
+	int m_brightnessColor;    //明るさの色
+	int m_bgmColor;          //音量の色
+	int m_returnColor;       //戻るの色
 	bool m_one;      //単発入力
 	bool m_settingScene;    //設定するための画面を呼ぶ変数
 };

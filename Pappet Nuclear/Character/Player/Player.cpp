@@ -81,6 +81,9 @@ void Player::Init()
 	//一回だけ初期化
 	if (m_oneInit == false)
 	{
+		//武器初期化
+		weapon->Init();
+
 		//レベル初期化
 		m_hpLevel = 1;
 		m_staminaLevel = 1;
@@ -150,8 +153,6 @@ void Player::Init()
 		m_animation[8] = -1;
 		m_animation[9] = -1;
 
-		//weapon->Init();
-
 		m_oneInit = true;
 	}
 
@@ -204,10 +205,10 @@ void Player::Update()
 
 	//アニメーションで移動しているフレームの番号を検索する
 	m_moveAnimFrameIndex = MV1SearchFrame(m_handle, "mixamorig:Hips");
-	m_moveAnimFrameRight = MV1SearchFrame(m_handle, "mixamorig:RightHandThumb1");
+	m_moveAnimFrameRight = MV1SearchFrame(m_handle, "mixamorig:RightHandMiddle4");
 
 	//武器をアタッチするフレームのローカル→ワールド変換行列を取得する
-	m_moveWeaponFrameMatrix = MV1GetFrameLocalMatrix(m_handle, 35);
+	m_moveWeaponFrameMatrix = MV1GetFrameLocalMatrix(m_handle, m_moveAnimFrameRight);
 
 	//盾を構えるときのアニメーションのフレーム所得
 	m_moveAnimShieldFrameIndex = MV1SearchFrame(m_handle, "mixamorig:LeftHand");
@@ -412,7 +413,7 @@ void Player::Update()
 		}
 	}
 
-	//weapon->Update(m_moveWeaponFrameMatrix);
+	weapon->Update(m_moveWeaponFrameMatrix);
 
 	Animation(m_playTime, m_pos);
 
@@ -1364,7 +1365,7 @@ void Player::Draw()
 	Pos3 pos2 = m_colPos - vec;
 
 	//カプセル3Dの描画
-	DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+	//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
 	////円の3D描画
 	//DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
@@ -1379,7 +1380,7 @@ void Player::Draw()
 	//3Dモデル描画
 	MV1DrawModel(m_handle);
 
-	//weapon->Draw(m_moveAnimFrameRigthPosition);
+	weapon->Draw(m_moveAnimFrameRigthPosition);
 
 	//if (m_HitFlag == true)
 	//{
@@ -1428,7 +1429,7 @@ void Player::End()
 	MV1DeleteModel(m_animAttack3);
 	MV1DeleteModel(m_animDeath);
 	MV1DeleteModel(m_animHeel);
-	//weapon->End();
+	weapon->End();
 }
 
 bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)

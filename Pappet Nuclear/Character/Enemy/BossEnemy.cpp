@@ -12,11 +12,23 @@ BossEnemy::BossEnemy():
 	m_bossAttack2(false),
 	m_bossAttack3(false),
 	m_bossAttack(-1),
+	m_one(false),
 	m_bossAttackRadius1(0.0f),
 	m_bossAttackRadius2(0.0f),
 	m_bossAttackRadius3(0.0f),
-	m_outPush(VGet(0.0f, 0.0f, 0.0f))
+	m_outPush(VGet(0.0f, 0.0f, 0.0f)),
+	m_moveRightFrameIndex(0),
+	m_moveRightFramePosition(VGet(0.0f,0.0f,0.0f)),
+	m_moveLeftFrameIndex(0),
+	m_moveLeftFramePosition(VGet(0.0f,0.0f,0.0f)),
+	m_effectActivation(false),
+	m_rightArmPosition(VGet(0.0f,0.0f,0.0f)),
+	m_leftArmPosition(VGet(0.0f,0.0f,0.0f))
 {
+	for (int i = 0; i < 3; i++)
+	{
+		m_effect[i] = 0;
+	}
 }
 
 BossEnemy::~BossEnemy()
@@ -68,12 +80,28 @@ void BossEnemy::Init()
 	m_colBossAttackSphere2.Init(m_initializationPos, m_bossAttackRadius2);
 	m_colBossAttackSphere3.Init(m_initializationPos, m_bossAttackRadius3);
 
+	//一回だけ初期化する
+	if (m_one == false)
+	{
+		effect->BossInit();
+
+		m_one = true;
+	}
+	
 }
 
 void BossEnemy::Update(Player& player, Map& map)
 {
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 	m_colDistance.Update(m_colPos);
+
+	//アニメーションで移動しているフレームを検索
+	m_moveRightFrameIndex = MV1SearchFrame(m_bossModelHandle, "mixamorig:RightHandMiddle2");
+	m_moveLeftFrameIndex = MV1SearchFrame(m_bossModelHandle, "mixamorig:LeftHandMiddle2");
+
+	//アタッチするモデルのフレーム座標を取得する
+	m_moveRightFramePosition = MV1GetFramePosition(m_bossModelHandle, m_moveRightFrameIndex);
+	m_moveLeftFramePosition = MV1GetFramePosition(m_bossModelHandle, m_moveLeftFrameIndex);
 
 	//アニメーション再生速度
 	if (m_bossAttack1 == true || m_bossAttack2 == true)
@@ -105,7 +133,6 @@ void BossEnemy::Update(Player& player, Map& map)
 			m_bossBattle = true;
 		}
 	}
-	
 
 	if (m_bossDistance == false && m_bossBattle == true && m_bossMoveAttack == false)
 	{
@@ -116,7 +143,6 @@ void BossEnemy::Update(Player& player, Map& map)
 	//敵が死亡したら
 	if (m_hp <= 0.0f)
 	{
-
 	}
 	else
 	{
@@ -167,10 +193,25 @@ void BossEnemy::Action(Player& player)
 		//攻撃の当たり判定
 		if (m_bossAttack == 0 && m_bossAttack1 == true)
 		{
+			if (m_effectActivation == false)
+			{
+				m_effect[0] = PlayEffekseer3DEffect(effect->GetBossAttackEffect1());
+
+				SetPosPlayingEffekseer3DEffect(m_effect[0], m_leftArmPosition.x, m_leftArmPosition.y, m_leftArmPosition.z);
+
+				m_effectActivation = true;
+			}
+			
+
 			//一定時間をすぎると向かない
 			if (m_playTime >= 30.0f)
 			{
 				m_bossMoveAttackPattern = false;
+			}
+			else
+			{
+				//エフェクトの回転
+				SetRotationPlayingEffekseer3DEffect(m_effect[0], 0.0f, -m_angle, 126.0f);
 			}
 
 			if (m_playTime >= 38.0f && m_playTime <= 43.0f)
@@ -182,12 +223,32 @@ void BossEnemy::Action(Player& player)
 				m_colBossAttackSphere1.Update(m_initializationPos);
 			}
 		}
+		else
+		{
+			//代入
+			m_leftArmPosition = VGet(m_moveLeftFramePosition.x, m_moveLeftFramePosition.y, m_moveLeftFramePosition.z);
+		}
 		if (m_bossAttack == 1 && m_bossAttack2 == true)
 		{
+			if (m_effectActivation == false)
+			{
+				m_effect[1] = PlayEffekseer3DEffect(effect->GetBossAttackEffect2());
+
+				SetPosPlayingEffekseer3DEffect(m_effect[1], m_rightArmPosition.x, m_rightArmPosition.y, m_rightArmPosition.z);
+
+				m_effectActivation = true;
+			}
+			
+
 			//一定時間をすぎると向かない
 			if (m_playTime >= 1.0f)
 			{
 				m_bossMoveAttackPattern = false;
+			}
+			else
+			{
+				//エフェクトの回転
+				SetRotationPlayingEffekseer3DEffect(m_effect[1], 0.0f, m_angle, 0.0f);
 			}
 
 			if (m_playTime >= 7.0f && m_playTime <= 11.0f)
@@ -199,8 +260,21 @@ void BossEnemy::Action(Player& player)
 				m_colBossAttackSphere2.Update(m_initializationPos);
 			}
 		}
+		else
+		{
+			m_rightArmPosition = VGet(m_moveRightFramePosition.x, m_moveRightFramePosition.y, m_moveRightFramePosition.z);
+		}
 		if (m_bossAttack == 2 && m_bossAttack3 == true)
 		{
+			if (m_effectActivation == false)
+			{
+				m_effect[2] = PlayEffekseer3DEffect(effect->GetBossAttackEffect3());
+
+				SetPosPlayingEffekseer3DEffect(m_effect[2], m_pos.x, 0.0f, m_pos.z);
+
+				m_effectActivation = true;
+			}
+			
 
 			if (m_playTime >= 58.0f && m_playTime <= 63.0f)
 			{
@@ -212,6 +286,12 @@ void BossEnemy::Action(Player& player)
 			}
 		}
 	}
+
+	SetSpeedPlayingEffekseer3DEffect(m_effect[0], 0.1f);
+	SetSpeedPlayingEffekseer3DEffect(m_effect[1], 0.1f);
+
+	//エフェクト更新
+	effect->Update();
 }
 
 void BossEnemy::Animation(float& time)
@@ -399,6 +479,8 @@ void BossEnemy::Animation(float& time)
 
 		m_bossAttack1 = false;
 
+		m_effectActivation = false;
+
 		time = 0.0f;
 	}
 	if (time >= m_bossTotalAnimTime[5] && m_bossAnimation[5] != -1)
@@ -407,6 +489,8 @@ void BossEnemy::Animation(float& time)
 
 		m_bossAttack2 = false;
 
+		m_effectActivation = false;
+
 		time = 0.0f;
 	}
 	if (time >= m_bossTotalAnimTime[6] && m_bossAnimation[6] != -1)
@@ -414,6 +498,8 @@ void BossEnemy::Animation(float& time)
 		m_bossMoveAttack = false;
 
 		m_bossAttack3 = false;
+
+		m_effectActivation = false;
 
 		time = 0.0f;
 	}
@@ -455,26 +541,21 @@ void BossEnemy::Draw()
 	//敵が生きている時は描画
 	if (m_hp > 0.0f)
 	{
-		DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+		//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
-		//攻撃の範囲描画
-		DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
+		////攻撃の範囲描画
+		//DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
 
-		//攻撃判定描画
-		DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
-		DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
-		DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
+		////攻撃判定描画
+		//DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
+		//DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
+		//DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
 
+		//エフェクトの描画
+		effect->Draw();
 	}
 
-	//DrawFormatString(0, 240, 0xffffff, "m_bosshp : %f", m_hp);
-
-	//DrawFormatString(0, 80, 0xffffff, "m_Pos.x : %f", m_pos.x);
-	//DrawFormatString(0, 100, 0xffffff, "m_Pos.y : %f", m_pos.y);
-	//DrawFormatString(0, 120, 0xffffff, "m_Pos.z : %f", m_pos.z);
-
-	//DrawFormatString(0, 280, 0xffffff, "m_colPos.y : %f", m_colPos.y);
-	//DrawFormatString(0, 300, 0xffffff, "m_colPos.z : %f", m_colPos.z);
+	DrawFormatString(150, 300, 0xffffff, "エフェクト : %d", IsEffekseer3DEffectPlaying(effect->GetBossAttackEffect3()));
 
 	//3Dモデルポジション設定
 	MV1SetPosition(m_bossModelHandle, m_pos);
@@ -488,6 +569,8 @@ void BossEnemy::Draw()
 
 void BossEnemy::End()
 {
+	//メモリ解放
+	effect->End();
 }
 
 bool BossEnemy::isSphereHit(const SphereCol& col, float damage)

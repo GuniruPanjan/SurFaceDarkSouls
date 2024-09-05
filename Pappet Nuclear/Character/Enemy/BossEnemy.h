@@ -44,6 +44,7 @@ private:
 	bool m_bossAttack2;           //ボスの攻撃2の判断
 	bool m_bossAttack3;           //ボスの攻撃3の判断
 	int m_bossAttack;     //ボスの攻撃パターン
+	bool m_one;           //一回だけ初期化する
 	unsigned int m_color = 0xffffff;
 	unsigned int m_seachColor = 0xffffff;
 	unsigned int m_distanceColor = 0xffffff;
@@ -57,8 +58,19 @@ private:
 	SphereCol m_colBossAttackSphere2;    //攻撃の当たり判定Col2  
 	SphereCol m_colBossAttackSphere3;    //攻撃の当たり判定Col3  
 	VECTOR m_outPush;    //キャラを押し出す
+	int m_moveRightFrameIndex;        //右手のフレーム検索
+	VECTOR m_moveRightFramePosition;       //右手のフレームポジション
+	int m_moveLeftFrameIndex;        //左手のフレーム検索
+	VECTOR m_moveLeftFramePosition;       //左手のフレームポジション
+
+	//エフェクトに関する変数
+	bool m_effectActivation;     //エフェクトを発動する
+	int m_effect[3];             //エフェクトの配列
+	VECTOR m_leftArmPosition;    //ポジション代入
+	VECTOR m_rightArmPosition;   //ポジション代入
 
 
 	std::shared_ptr<Map> map = std::make_shared<Map>();
+	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 };
 

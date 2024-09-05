@@ -1,7 +1,11 @@
 #pragma once
 #include "Character/CharacterBase.h"
-#include "Character/Player/Weapon/Weapon.h"
+#include "Character/Player/WeaponSummary.h"
 
+struct Weapon
+{
+
+};
 
 class Player : public CharacterBase
 {
@@ -84,6 +88,7 @@ private:
 	int m_hpLevel;       //HPレベル
 	int m_staminaLevel;    //スタミナレベル
 
-	std::shared_ptr<Weapon> weapon = std::make_shared<Weapon>();
+	//スマートポインタ
+	std::shared_ptr<WeaponSummary> weapon = std::make_shared<WeaponSummary>();
 };
 

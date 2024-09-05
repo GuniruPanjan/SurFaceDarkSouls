@@ -1,11 +1,11 @@
 #pragma once
 #include "DxLib.h"
 
-class Weapon
+class WeaponSummary
 {
 public:
-	Weapon();
-	virtual ~Weapon();
+	WeaponSummary();
+	virtual ~WeaponSummary();
 
 	void Init();
 	void Update(MATRIX& matrix);

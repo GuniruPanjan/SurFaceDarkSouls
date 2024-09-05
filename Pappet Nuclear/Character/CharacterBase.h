@@ -1,12 +1,13 @@
 #pragma once
 #include "DxLib.h"
+#include "Character/Effect/Effect.h"
 #include "Col/CapsuleCol.h"
 #include "Col/SphereCol.h"
 #include<memory>
 //だいたいのアニメーション
 #define  ANIMATION   30
 #define D2R(deg) ((deg)*DX_PI_F/180.0f)
-#define PLAYER_MAX_HITCOLL  252    //処理するコリジョンポリゴンの最大数
+#define PLAYER_MAX_HITCOLL  260    //処理するコリジョンポリゴンの最大数
 
 class Map;   //マップクラス
 
@@ -64,7 +65,6 @@ public:
 			m_animation[i] = -1;
 			m_totalAnimTime[i] = 0.0f;
 		}
-	
 	}
 
 	virtual ~CharacterBase(){}

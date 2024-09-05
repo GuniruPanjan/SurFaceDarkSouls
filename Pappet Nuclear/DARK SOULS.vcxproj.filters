@@ -67,11 +67,11 @@
     <Filter Include="ヘッダー ファイル\UI">
       <UniqueIdentifier>{bcd53bf1-6c3d-4d8a-a0be-52fccc4117ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Character\Player\Weapon">
-      <UniqueIdentifier>{883d3b80-e3aa-4190-982f-cd463c5d906b}</UniqueIdentifier>
+    <Filter Include="ヘッダー ファイル\Character\Effect">
+      <UniqueIdentifier>{1ee78cf8-89cb-4433-b67d-3c8c40f67eae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Character\Player\Weapon">
-      <UniqueIdentifier>{2ff1ced0-9167-453e-8cee-c1a21b65fbe7}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\Character\Effect">
+      <UniqueIdentifier>{e55bbe72-e660-4d35-a241-69f757cb95e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -138,11 +138,14 @@
     <ClCompile Include="UI\UI.cpp">
       <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Character\Player\Weapon\Weapon.cpp">
-      <Filter>ソース ファイル\Character\Player\Weapon</Filter>
-    </ClCompile>
     <ClCompile Include="UI\Setting.cpp">
       <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Effect\Effect.cpp">
+      <Filter>ソース ファイル\Character\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\WeaponSummary.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -206,11 +209,14 @@
     <ClInclude Include="UI\UI.h">
       <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Character\Player\Weapon\Weapon.h">
-      <Filter>ヘッダー ファイル\Character\Player\Weapon</Filter>
-    </ClInclude>
     <ClInclude Include="UI\Setting.h">
       <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Effect\Effect.h">
+      <Filter>ヘッダー ファイル\Character\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\WeaponSummary.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -329,8 +329,6 @@ void SceneTitle::Draw()
 	DrawGraph(200, 340, m_end, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawFormatString(0, 0, 0xffffff, "setting : %d", setting->GetSettingScene());
-
 	//Ý’è‰æ–Ê‚ð•`‰æ
 	if (setting->GetSettingScene() == true)
 	{
@@ -345,4 +343,10 @@ void SceneTitle::Draw()
 
 void SceneTitle::End()
 {
+	DeleteGraph(m_backScene);
+	DeleteGraph(m_start);
+	DeleteGraph(m_setting);
+	DeleteGraph(m_end);
+	MV1DeleteModel(m_playerHandle);
+	MV1DeleteModel(m_anim);
 }

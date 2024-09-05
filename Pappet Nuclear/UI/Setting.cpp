@@ -8,6 +8,9 @@ Setting::Setting():
 	m_whitePal(0),
 	m_button(0),
 	m_waitTime(0),
+	m_brightnessColor(0),
+	m_bgmColor(0),
+	m_returnColor(0),
 	m_one(false),
 	m_settingScene(false)
 {
@@ -37,6 +40,10 @@ void Setting::Init()
 	m_button = 0;
 	m_one = false;
 	m_settingScene = false;
+
+	m_brightnessColor = 0xffffff;
+	m_bgmColor = 0xffffff;
+	m_returnColor = 0xffffff;
 
 	m_blackPal = 0;
 	m_whitePal = 0;
@@ -144,6 +151,28 @@ void Setting::Draw()
 	DrawGraph(30, 30, m_back, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
+	//選択中の色を変える
+	if (m_select[0] == 1)
+	{
+		m_brightnessColor = 0xffff00;
+		m_bgmColor = 0xffffff;
+		m_returnColor = 0xffffff;
+
+	}
+	if (m_select[1] == 1)
+	{
+		m_brightnessColor = 0xffffff;
+		m_bgmColor = 0xffff00;
+		m_returnColor = 0xffffff;
+	}
+	if (m_select[2] == 1)
+	{
+		m_brightnessColor = 0xffffff;
+		m_bgmColor = 0xffffff;
+		m_returnColor = 0xffff00;
+	}
+
+
 	//フォントのサイズ変更
 	SetFontSize(50);
 
@@ -151,16 +180,12 @@ void Setting::Draw()
 
 	SetFontSize(35);
 
-	DrawString(50, 180, "明るさ", 0xffffff);
-	DrawString(50, 240, "音量", 0xffffff);
-	DrawString(50, 300, "戻る", 0xffffff);
+	DrawString(50, 180, "明るさ", m_brightnessColor);
+	DrawString(50, 240, "音量", m_bgmColor);
+	DrawString(50, 300, "戻る", m_returnColor);
 
 	//フォントのサイズを戻す
 	SetFontSize(20);
-
-	DrawFormatString(0, 0, 0xffffff, "m_select0 : %d", m_select[0]);
-	DrawFormatString(0, 20, 0xffffff, "m_select1 : %d", m_select[1]);
-	DrawFormatString(0, 40, 0xffffff, "m_select1 : %d", m_select[2]);
 }
 
 void Setting::SettingDraw()
