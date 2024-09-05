@@ -18,6 +18,7 @@ Map::Map() :
 {
 	m_MapPosition = VGet(0.0f, 0.0, 0.0f);
 	m_collisionMapPosition = VGet(0.0f, 0.0f, 0.0f);
+	m_restPos = VGet(0.0f, 0.0f, 0.0f);
 }
 
 Map::~Map()
@@ -50,6 +51,8 @@ void Map::Init()
 		m_YCollisionposition = -277.0f;
 		m_ZCollisionposition = -173.0f;
 
+		m_restPos = VGet(100.0f, 50.0f, -75.0f);
+
 		//モデルのサイズ変更
 		MV1SetScale(m_handle, VGet(m_size, m_size, m_size));
 		MV1SetScale(m_collisionHandle, VGet(m_size, m_size, m_size));
@@ -60,7 +63,7 @@ void Map::Init()
 
 		//RectColの設定
 		m_rectPos = Pos3(-10.0f, 50.0f, 0.0f);
-		m_spherePos = Pos3(100.0f, 50.0f, -75.0f);
+		m_spherePos = Pos3(m_restPos.x, m_restPos.y, m_restPos.z);
 		m_rectSize = Size(5.0f, 50.0f, 70.0f);
 		m_sphereRadius = 50.0f;
 		m_rectCol.Init(m_rectPos, m_rectSize);

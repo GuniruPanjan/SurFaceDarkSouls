@@ -56,18 +56,15 @@ private:
 	float m_bossAttackRadius3;     //攻撃の当たり判定半径3
 	SphereCol m_colBossAttackSphere1;    //攻撃の当たり判定Col1
 	SphereCol m_colBossAttackSphere2;    //攻撃の当たり判定Col2  
-	SphereCol m_colBossAttackSphere3;    //攻撃の当たり判定Col3  
+	SphereCol m_colBossAttackSphere3;    //攻撃の当たり判定Col3
+	VECTOR m_outVec;     //押し出すベクトル方向
 	VECTOR m_outPush;    //キャラを押し出す
-	int m_moveRightFrameIndex;        //右手のフレーム検索
-	VECTOR m_moveRightFramePosition;       //右手のフレームポジション
-	int m_moveLeftFrameIndex;        //左手のフレーム検索
-	VECTOR m_moveLeftFramePosition;       //左手のフレームポジション
+	VECTOR m_distanceVec;   //2人のベクトル間
+	float m_length;      
 
 	//エフェクトに関する変数
 	bool m_effectActivation;     //エフェクトを発動する
-	int m_effect[3];             //エフェクトの配列
-	VECTOR m_leftArmPosition;    //ポジション代入
-	VECTOR m_rightArmPosition;   //ポジション代入
+	int m_effect;             //エフェクトの配列
 
 
 	std::shared_ptr<Map> map = std::make_shared<Map>();

@@ -413,7 +413,7 @@ void Player::Update()
 		}
 	}
 
-	weapon->Update(m_moveWeaponFrameMatrix);
+	weapon->Update(m_moveAnimFrameRight);
 
 	Animation(m_playTime, m_pos);
 
@@ -1455,7 +1455,7 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 			m_drawPos.z -= m_moveVector.z + m_bounceDis;
 		}
 		//攻撃中だった場合
-		if (m_moveAttack == true)
+		else if (m_moveAttack == true)
 		{
 			//当たっていたら規定距離分プレイヤーを法線方向に移動させる
 			m_pos.x -= m_moveVector.x + m_bounceDis;

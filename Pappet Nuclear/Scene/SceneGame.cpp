@@ -27,9 +27,10 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	camera->Update(*player, *enemy);
 	map->Update(*player);
 	player->HitObj(*map);
+	//camera->HitObj(*map);
 
 	player->IsCapsuleHit(enemy->GetCol(), enemy->GetBossCol());
-	player->isSphereHit(enemy->GetAttackCol(), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
+	//player->isSphereHit(enemy->GetAttackCol(), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
 	enemy->isSphereHit(player->GetSphereCol(), player->GetDamage());
 	enemy->isSphereBossHit(player->GetSphereCol(), player->GetDamage());
 	enemy->isSeachHit(player->GetCapsuleCol());

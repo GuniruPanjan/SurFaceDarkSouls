@@ -23,6 +23,7 @@ public:
 	bool GetRoomEntered() { return m_bossRoomEntered; }
 	bool GetSavePossible() { return m_saveSpot; }
 	VECTOR GetVectorMapPos() { return m_MapPosition; }
+	VECTOR GetRestPos() { return m_restPos; }
 
 private:
 	int m_handle;   //マップのデータを入れる変数
@@ -40,6 +41,7 @@ private:
 	bool m_oneInit;         //一回だけ初期化する
 	VECTOR m_MapPosition;   //マップのポジション
 	VECTOR m_collisionMapPosition;   //コリジョンのポジション設定
+	VECTOR m_restPos;        //休息するポジション
 
 	//Colの当たり判定
 	float m_sphereRadius;

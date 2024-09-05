@@ -1,8 +1,6 @@
 #include "Effect.h"
 
 Effect::Effect():
-	m_effectClaw1(0),
-	m_effectClaw2(0),
 	m_effectJump(0)
 {
 }
@@ -19,8 +17,6 @@ void Effect::PlayerInit()
 
 void Effect::BossInit()
 {
-	m_effectClaw1 = LoadEffekseerEffect("Data/Effect/Claw1.efkefc", 10.0f);
-	m_effectClaw2 = LoadEffekseerEffect("Data/Effect/Claw2.efkefc", 10.0f);
 	m_effectJump = LoadEffekseerEffect("Data/Effect/BloodLance.efkefc", 10.0f);
 }
 
