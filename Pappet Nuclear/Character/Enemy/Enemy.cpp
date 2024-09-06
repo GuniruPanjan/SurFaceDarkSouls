@@ -10,14 +10,18 @@ Enemy::~Enemy()
 
 void Enemy::Init(int max)
 {
-	enemy->Init(max);
+	for (int i = 0; i < max; i++)
+	{
+		enemy->Init(i);
+	}
+	
 
 	boss->Init();
 }
 
 void Enemy::Update(Player& player, Map& map, int max)
 {
-	enemy->Update(player,max);
+	enemy->Update(player, max);
 	
 	boss->Update(player, map);
 }
@@ -31,7 +35,11 @@ void Enemy::Draw(int max)
 
 void Enemy::End(int max)
 {
-	enemy->End(max);
+	for (int i = 0; i < max; i++)
+	{
+		enemy->End(i);
+	}
+	
 
 	boss->End();
 }

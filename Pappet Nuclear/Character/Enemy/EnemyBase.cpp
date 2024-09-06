@@ -38,13 +38,24 @@ EnemyBase::EnemyBase():
 	m_bossAnimAttack3 = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack3.mv1");
 
 	//アニメーションアタッチ
-	m_animation[0] = MV1AttachAnim(m_handle, 0, m_animStand, TRUE);
-	m_animation[1] = MV1AttachAnim(m_handle, 0, m_animHit, TRUE);
-	m_animation[2] = MV1AttachAnim(m_handle, 0, m_animDeath, TRUE);
-	m_animation[3] = MV1AttachAnim(m_handle, 0, m_animWalk, TRUE);
-	m_animation[4] = MV1AttachAnim(m_handle, 0, m_animLeftWalking, TRUE);
-	m_animation[5] = MV1AttachAnim(m_handle, 0, m_animRightWalking, TRUE);
-	m_animation[6] = MV1AttachAnim(m_handle, 0, m_animAttack1, TRUE);
+	//m_animation[0] = MV1AttachAnim(m_handle, 0, m_animStand, TRUE);
+	//m_animation[1] = MV1AttachAnim(m_handle, 0, m_animHit, TRUE);
+	//m_animation[2] = MV1AttachAnim(m_handle, 0, m_animDeath, TRUE);
+	//m_animation[3] = MV1AttachAnim(m_handle, 0, m_animWalk, TRUE);
+	//m_animation[4] = MV1AttachAnim(m_handle, 0, m_animLeftWalking, TRUE);
+	//m_animation[5] = MV1AttachAnim(m_handle, 0, m_animRightWalking, TRUE);
+	//m_animation[6] = MV1AttachAnim(m_handle, 0, m_animAttack1, TRUE);
+	for (int i = 0; i < ENEMY_NOW; i++)
+	{
+		m_weakEnemyAnimation[0][i] = MV1AttachAnim(m_handle, 0, m_animStand, TRUE);
+		m_weakEnemyAnimation[1][i] = MV1AttachAnim(m_handle, 0, m_animHit, TRUE);
+		m_weakEnemyAnimation[2][i] = MV1AttachAnim(m_handle, 0, m_animDeath, TRUE);
+		m_weakEnemyAnimation[3][i] = MV1AttachAnim(m_handle, 0, m_animWalk, TRUE);
+		m_weakEnemyAnimation[4][i] = MV1AttachAnim(m_handle, 0, m_animLeftWalking, TRUE);
+		m_weakEnemyAnimation[5][i] = MV1AttachAnim(m_handle, 0, m_animRightWalking, TRUE);
+		m_weakEnemyAnimation[6][i] = MV1AttachAnim(m_handle, 0, m_animAttack1, TRUE);
+
+	}
 	m_bossAnimation[0] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimStand, TRUE);
 	m_bossAnimation[1] = MV1AttachAnim(m_bossModelHandle, 0, m_bossModelHandle, TRUE);
 	m_bossAnimation[2] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimDeath, TRUE);
@@ -54,13 +65,27 @@ EnemyBase::EnemyBase():
 	m_bossAnimation[6] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimAttack3, TRUE);
 
 	//アタッチしたアニメーションの総再生時間を取得する
-	m_totalAnimTime[0] = MV1GetAttachAnimTotalTime(m_handle, m_animation[0]);
-	m_totalAnimTime[1] = MV1GetAttachAnimTotalTime(m_handle, m_animation[1]);
-	m_totalAnimTime[2] = MV1GetAttachAnimTotalTime(m_handle, m_animation[2]);
-	m_totalAnimTime[3] = MV1GetAttachAnimTotalTime(m_handle, m_animation[3]);
-	m_totalAnimTime[4] = MV1GetAttachAnimTotalTime(m_handle, m_animation[4]);
-	m_totalAnimTime[5] = MV1GetAttachAnimTotalTime(m_handle, m_animation[5]);
-	m_totalAnimTime[6] = MV1GetAttachAnimTotalTime(m_handle, m_animation[6]);
+	//m_totalAnimTime[0] = MV1GetAttachAnimTotalTime(m_handle, m_animation[0]);
+	//m_totalAnimTime[1] = MV1GetAttachAnimTotalTime(m_handle, m_animation[1]);
+	//m_totalAnimTime[2] = MV1GetAttachAnimTotalTime(m_handle, m_animation[2]);
+	//m_totalAnimTime[3] = MV1GetAttachAnimTotalTime(m_handle, m_animation[3]);
+	//m_totalAnimTime[4] = MV1GetAttachAnimTotalTime(m_handle, m_animation[4]);
+	//m_totalAnimTime[5] = MV1GetAttachAnimTotalTime(m_handle, m_animation[5]);
+	//m_totalAnimTime[6] = MV1GetAttachAnimTotalTime(m_handle, m_animation[6]);
+
+	for (int i = 0; i < ENEMY_NOW; i++)
+	{
+		m_weakEnemyTotalAnimationTime[0][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[0][i]);
+		m_weakEnemyTotalAnimationTime[1][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[1][i]);
+		m_weakEnemyTotalAnimationTime[2][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[2][i]);
+		m_weakEnemyTotalAnimationTime[3][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[3][i]);
+		m_weakEnemyTotalAnimationTime[4][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[4][i]);
+		m_weakEnemyTotalAnimationTime[5][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[5][i]);
+		m_weakEnemyTotalAnimationTime[6][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[6][i]);
+
+	}
+
+	
 	m_bossTotalAnimTime[0] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[0]);
 	m_bossTotalAnimTime[1] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[1]);
 	m_bossTotalAnimTime[2] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[2]);
@@ -72,18 +97,35 @@ EnemyBase::EnemyBase():
 
 
 	//一旦待機以外のアニメーションをデタッチする
-	MV1DetachAnim(m_handle, m_animation[1]);
-	MV1DetachAnim(m_handle, m_animation[2]);
-	MV1DetachAnim(m_handle, m_animation[3]);
-	MV1DetachAnim(m_handle, m_animation[4]);
-	MV1DetachAnim(m_handle, m_animation[5]);
-	MV1DetachAnim(m_handle, m_animation[6]);
-	m_animation[1] = -1;
-	m_animation[2] = -1;
-	m_animation[3] = -1;
-	m_animation[4] = -1;
-	m_animation[5] = -1;
-	m_animation[6] = -1;
+	//MV1DetachAnim(m_handle, m_animation[1]);
+	//MV1DetachAnim(m_handle, m_animation[2]);
+	//MV1DetachAnim(m_handle, m_animation[3]);
+	//MV1DetachAnim(m_handle, m_animation[4]);
+	//MV1DetachAnim(m_handle, m_animation[5]);
+	//MV1DetachAnim(m_handle, m_animation[6]);
+	//m_animation[1] = -1;
+	//m_animation[2] = -1;
+	//m_animation[3] = -1;
+	//m_animation[4] = -1;
+	//m_animation[5] = -1;
+	//m_animation[6] = -1;
+
+	for (int i = 0; i < ENEMY_NOW; i++)
+	{
+		MV1DetachAnim(m_handle, m_weakEnemyAnimation[1][i]);
+		MV1DetachAnim(m_handle, m_weakEnemyAnimation[2][i]);
+		MV1DetachAnim(m_handle, m_weakEnemyAnimation[3][i]);
+		MV1DetachAnim(m_handle, m_weakEnemyAnimation[4][i]);
+		MV1DetachAnim(m_handle, m_weakEnemyAnimation[5][i]);
+		MV1DetachAnim(m_handle, m_weakEnemyAnimation[6][i]);
+		m_weakEnemyAnimation[1][i] = -1;
+		m_weakEnemyAnimation[2][i] = -1;
+		m_weakEnemyAnimation[3][i] = -1;
+		m_weakEnemyAnimation[4][i] = -1;
+		m_weakEnemyAnimation[5][i] = -1;
+		m_weakEnemyAnimation[6][i] = -1;
+	}
+
 	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[1]);
 	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[2]);
 	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
@@ -101,7 +143,6 @@ EnemyBase::EnemyBase():
 	//敵のサイズ変更
 	m_modelSize = 0.4f;
 	m_bossSize = 0.7f;
-	MV1SetScale(m_handle, VGet(m_modelSize, m_modelSize, m_modelSize));
 	MV1SetScale(m_bossModelHandle, VGet(m_bossSize, m_bossSize, m_bossSize));
 }
 

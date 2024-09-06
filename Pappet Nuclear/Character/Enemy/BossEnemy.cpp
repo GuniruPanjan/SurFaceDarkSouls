@@ -516,11 +516,11 @@ void BossEnemy::Draw()
 		//DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
 	}
 
-	DrawFormatString(0, 120, 0xffffff, "m_moveAttack1 : %d", m_bossAttack1);
-	DrawFormatString(0, 140, 0xffffff, "m_moveAttack1 : %d", m_bossAttack2);
-	DrawFormatString(0, 160, 0xffffff, "m_moveAttack1 : %d", m_bossAttack3);
-	DrawFormatString(0, 180, 0xffffff, "m_BossAttack : %d", m_bossAttack);
-	DrawFormatString(0, 200, 0xffffff, "m_effectAttack : %d", m_bossMoveAttack);
+	//DrawFormatString(0, 120, 0xffffff, "m_moveAttack1 : %d", m_bossAttack1);
+	//DrawFormatString(0, 140, 0xffffff, "m_moveAttack1 : %d", m_bossAttack2);
+	//DrawFormatString(0, 160, 0xffffff, "m_moveAttack1 : %d", m_bossAttack3);
+	//DrawFormatString(0, 180, 0xffffff, "m_BossAttack : %d", m_bossAttack);
+	//DrawFormatString(0, 200, 0xffffff, "m_effectAttack : %d", m_bossMoveAttack);
 
 	//3Dモデルポジション設定
 	MV1SetPosition(m_bossModelHandle, m_pos);

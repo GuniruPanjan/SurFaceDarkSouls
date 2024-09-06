@@ -23,27 +23,35 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	player->SetCameraAngle(camera->GetAngleY());
 	player->Update();
 	player->OtherInfluence(enemy->GetOutPush());
-	enemy->Update(*player, *map, ENEMY_NOW);
 	camera->Update(*player, *enemy, ENEMY_NOW);
 	map->Update(*player);
 	player->HitObj(*map);
 	//camera->HitObj(*map);
 
-	player->IsCapsuleHit(enemy->GetCol(ENEMY_NOW), enemy->GetBossCol());
 	//player->isSphereHit(enemy->GetAttackCol(), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
-	enemy->isSphereHit(player->GetSphereCol(), player->GetDamage(), ENEMY_NOW);
 	enemy->isSphereBossHit(player->GetSphereCol(), player->GetDamage());
-	enemy->isSeachHit(player->GetCapsuleCol(), ENEMY_NOW);
-	enemy->isDistanceHit(player->GetCapsuleCol(), ENEMY_NOW);
 	enemy->isBossPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetBounceDis());
 	enemy->isBossDistanceHit(player->GetCapsuleCol());
 	map->CapsuleIsHit(player->GetCapsuleCol());
 	map->CapsuleSaveHit(player->GetCapsuleCol());
 
+	for (int i = 0; i < ENEMY_NOW; i++)
+	{
+		enemy->Update(*player, *map, i);
+		enemy->isSeachHit(player->GetCapsuleCol(), i);
+		enemy->isDistanceHit(player->GetCapsuleCol(), i);
+		player->IsCapsuleHit(enemy->GetCol(i), enemy->GetBossCol());
+		enemy->isSphereHit(player->GetSphereCol(), player->GetDamage(), i);
+	}
+
 	//‹x‘§‚·‚éê‡
 	if (player->GetRest() == true)
 	{
-		enemy->Init(ENEMY_NOW);
+		for (int i = 0; i < ENEMY_NOW; i++)
+		{
+			enemy->Init(i);
+		}
+		
 		player->Init();
 		map->Init();
 
@@ -72,7 +80,11 @@ void SceneGame::Draw()
 	map->Draw();
 	camera->Draw();
 	player->Draw();
-	enemy->Draw(ENEMY_NOW);
+	for (int i = 0; i < ENEMY_NOW; i++)
+	{
+		enemy->Draw(i);
+	}
+	
 	ui->Draw(*player, *enemy);
 }
 
