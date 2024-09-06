@@ -14,8 +14,12 @@ public:
 	void End();
 
 	int GetBossAttackEffect3() { return m_effectJump; }    //ジャンプ攻撃
+	int GetRestEffect() { return m_effectRest; }    //休息
+	int GetHeelEffect() { return m_effectHeel; }    //回復
 
 private:
 	int m_effectJump;            //ジャンプ攻撃のエフェクト
+	int m_effectRest;            //休息するときのエフェクト
+	int m_effectHeel;            //回復するときのエフェクト
 };
 

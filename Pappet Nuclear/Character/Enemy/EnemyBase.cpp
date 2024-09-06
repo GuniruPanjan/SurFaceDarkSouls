@@ -1,19 +1,23 @@
 #include "EnemyBase.h"
 
 EnemyBase::EnemyBase():
-	m_enemySearchFlag(false),
-	m_enemyWait(false),
-	m_enemyWaitseeRandom(0),
-	m_randomAction(0),
 	m_bossModelHandle(0),
 	m_bossSize(0.0f),
 	m_searchRadius(0.0f),
 	m_distanceRadius(0.0f),
-	m_moveTurning(0.0f),
-	m_moveReverseTurning(0.0f),
-	m_randomNextActionTime(0.0f),
 	m_attackRadius(0.0f)
 {
+	for (int i = 0; i < ENEMY_NOW; i++)
+	{
+		m_enemySearchFlag[i] = false;
+		m_enemyWait[i] = false;
+		m_randomAction[i] = 0;
+		m_moveTurning[i] = 0.0f;
+		m_moveReverseTurning[i] = 0.0f;
+		m_randomNextActionTime[i] = 0.0f;
+	}
+
+
 	//“G‚Ìƒ‚ƒfƒ‹“Ç‚Ýž‚Ý
 	m_handle = MV1LoadModel("Data/Enemy/EnemyModel.mv1");
 	m_bossModelHandle = MV1LoadModel("Data/Enemy/BossEnemy.mv1");

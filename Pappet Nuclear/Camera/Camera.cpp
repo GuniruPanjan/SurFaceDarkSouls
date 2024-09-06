@@ -40,7 +40,7 @@ void Camera::Init()
 	SetCameraNearFar(1.0f, 1000.0f);
 }
 
-void Camera::Update(Player& player, Enemy& enemy)
+void Camera::Update(Player& player, Enemy& enemy, int max)
 {
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
 
@@ -155,37 +155,40 @@ void Camera::Update(Player& player, Enemy& enemy)
 		//ボス戦以外のターゲット
 		if (enemy.GetBattale() == false)
 		{
-			//注視点は敵の座標にする
-			m_cameraTarget = VAdd(enemy.GetPos(), VGet(0.0f, 20.0f, 0.0f));
+			for (int i = 0; i < max; i++)
+			{
+				//注視点は敵の座標にする
+				m_cameraTarget = VAdd(enemy.GetPos(max), VGet(0.0f, 20.0f, 0.0f));
 
-			//プレイヤーとエネミーのX座標の差を求める
-			float X = enemy.GetPosX() - player.GetPosX();
+				//プレイヤーとエネミーのX座標の差を求める
+				float X = enemy.GetPosX(max) - player.GetPosX();
 
-			//プレイヤーとエネミーのZ座標の差を求める
-			float Z = enemy.GetPosZ() - player.GetPosZ();
+				//プレイヤーとエネミーのZ座標の差を求める
+				float Z = enemy.GetPosZ(max) - player.GetPosZ();
 
-			//角度を出す
-			float angle = atan2f(X, Z);
+				//角度を出す
+				float angle = atan2f(X, Z);
 
-			m_x = X;
-			m_z = Z;
+				m_x = X;
+				m_z = Z;
 
-			//敵からプレイヤーに伸びる基準のベクトルを求める
-			VECTOR pos = VSub(player.GetPos(), enemy.GetPos());
+				//敵からプレイヤーに伸びる基準のベクトルを求める
+				VECTOR pos = VSub(player.GetPos(), enemy.GetPos(max));
 
-			//ベクトルの正規化
-			VECTOR posTarget = VNorm(pos);
+				//ベクトルの正規化
+				VECTOR posTarget = VNorm(pos);
 
-			posTarget.x *= 130.0f;
-			posTarget.z *= 130.0f;
+				posTarget.x *= 130.0f;
+				posTarget.z *= 130.0f;
 
-			//カメラがどれだけプレイヤーの座標より高いかを設定
-			posTarget.y = 80.0f;
+				//カメラがどれだけプレイヤーの座標より高いかを設定
+				posTarget.y = 80.0f;
 
-			m_cameraAngle.y = angle;
+				m_cameraAngle.y = angle;
 
-			//プレイヤーの座標に求めたベクトルを足して、カメラの座標とする
-			m_cameraPos = VAdd(player.GetPos(), posTarget);
+				//プレイヤーの座標に求めたベクトルを足して、カメラの座標とする
+				m_cameraPos = VAdd(player.GetPos(), posTarget);
+			}
 		}
 	}
 

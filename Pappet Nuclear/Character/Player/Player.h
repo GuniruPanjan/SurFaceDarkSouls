@@ -88,7 +88,12 @@ private:
 	int m_hpLevel;       //HPレベル
 	int m_staminaLevel;    //スタミナレベル
 
+	//エフェクト関係変数
+	int m_effectHeel;        //回復のエフェクト
+	bool m_effectOneHeel;    //回復のエフェクトを一回実行
+
 	//スマートポインタ
 	std::shared_ptr<WeaponSummary> weapon = std::make_shared<WeaponSummary>();
+	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 };
 

@@ -58,7 +58,9 @@ public:
 		m_HitFlag(false),
 		m_WallNum(0),
 		m_FloorNum(0),
-		m_HitDimNum(0)
+		m_HitDimNum(0),
+		m_effectActivation(false),
+		m_effect(0)
 	{
 		for (int i = 0; i < ANIMATION; i++)
 		{
@@ -112,6 +114,10 @@ protected:
 	VECTOR m_prevPos;  //キャラのアニメーションで移動しているフレームの座標取得
 	VECTOR m_nowPos;  //キャラのアニメーション後の座標を取得する
 	VECTOR m_moveVector;  //キャラのアニメーションでの座標移動値を入れる
+
+	//エフェクトに関する変数
+	bool m_effectActivation;     //エフェクトを発動する
+	int m_effect;             //エフェクトの配列
 
 	//当たり判定用のメンバ変数
 	Pos3 m_colPos; //当たり判定用のメンバ変数

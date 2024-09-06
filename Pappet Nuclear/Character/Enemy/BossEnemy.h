@@ -57,14 +57,7 @@ private:
 	SphereCol m_colBossAttackSphere1;    //攻撃の当たり判定Col1
 	SphereCol m_colBossAttackSphere2;    //攻撃の当たり判定Col2  
 	SphereCol m_colBossAttackSphere3;    //攻撃の当たり判定Col3
-	VECTOR m_outVec;     //押し出すベクトル方向
-	VECTOR m_outPush;    //キャラを押し出す
-	VECTOR m_distanceVec;   //2人のベクトル間
-	float m_length;      
-
-	//エフェクトに関する変数
-	bool m_effectActivation;     //エフェクトを発動する
-	int m_effect;             //エフェクトの配列
+	VECTOR m_outPush;        //押し出す方向ベクトル
 
 
 	std::shared_ptr<Map> map = std::make_shared<Map>();

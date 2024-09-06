@@ -8,26 +8,30 @@ Enemy::~Enemy()
 {
 }
 
-void Enemy::Init()
+void Enemy::Init(int max)
 {
-	enemy->Init(500.0f, 0.0f, 0.0f);
+	enemy->Init(max);
+
 	boss->Init();
 }
 
-void Enemy::Update(Player& player, Map& map)
+void Enemy::Update(Player& player, Map& map, int max)
 {
-	enemy->Update(player);
+	enemy->Update(player,max);
+	
 	boss->Update(player, map);
 }
 
-void Enemy::Draw()
+void Enemy::Draw(int max)
 {
-	enemy->Draw();
+	enemy->Draw(max);
+
 	boss->Draw();
 }
 
-void Enemy::End()
+void Enemy::End(int max)
 {
-	enemy->End();
+	enemy->End(max);
+
 	boss->End();
 }

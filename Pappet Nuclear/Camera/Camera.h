@@ -12,7 +12,7 @@ public:
 	virtual ~Camera();
 
 	void Init();
-	void Update(Player& player, Enemy& enemy);
+	void Update(Player& player, Enemy& enemy, int max);
 	void HitObj(Map& map);
 	void Draw();
 	void End();

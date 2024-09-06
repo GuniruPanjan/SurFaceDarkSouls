@@ -12,38 +12,51 @@ public:
 	Enemy();
 	virtual ~Enemy();
 
-	void Init();
-	void Update(Player& player, Map& map);
-	void Draw();
-	void End();
+	void Init(int max);
+	void Update(Player& player, Map& map, int max);
+	void Draw(int max);
+	void End(int max);
 
-	VECTOR GetPos() { return enemy->GetPos(); }
-	float GetPosX() { return enemy->GetPosX(); }
-	float GetPosY() { return enemy->GetPosY(); }
-	float GetPosZ() { return enemy->GetPosZ(); }
+	//ボスの取得変数
 	VECTOR GetBossPos() { return boss->GetPos(); }
 	float GetBossPosX() { return boss->GetPosX(); }
 	float GetBossPosY() { return boss->GetPosY(); }
 	float GetBossPosZ() { return boss->GetPosZ(); }
 	float GetBossHp() { return boss->GetHp(); }
-	float GetDamage() { return enemy->GetDamage(); }
 	float BossGetDamage() { return boss->GetDamage(); }
-	CapsuleCol GetCol() const { return enemy->GetCol(); }
 	CapsuleCol GetBossCol() const { return boss->GetCol(); }
-	SphereCol GetAttackCol() const { return enemy->GetAttackCol(); }
 	SphereCol GetBossAttackCol1() const { return boss->GetAttackCol1(); }
 	SphereCol GetBossAttackCol2() const { return boss->GetAttackCol2(); }
 	SphereCol GetBossAttackCol3() const { return boss->GetAttackCol3(); }
 	VECTOR GetOutPush() { return boss->GetOutPush(); }
-	bool isSphereHit(SphereCol col, float damage) { return enemy->isSphereHit(col, damage); }
 	bool isSphereBossHit(SphereCol col, float damage) { return boss->isSphereHit(col, damage); }
-	bool isSeachHit(CapsuleCol col) { return enemy->isSeachHit(col); }
-	bool isDistanceHit(CapsuleCol col) { return enemy->isDistanceHit(col); }
 	bool isBossPlayerHit(CapsuleCol col, VECTOR vec, float bounce) { return boss->isPlayerHit(col, vec, bounce); }
 	bool isBossDistanceHit(CapsuleCol col) { return boss->isCapsuleHit(col); }
 	bool GameClear() { return boss->GameClear(); }
 	bool GetBattale() { return boss->GetBattle(); }
 
+	//敵の取得変数
+	VECTOR GetPos(int max) { return enemy->GetPos(max); }
+	float GetPosX(int max) { return enemy->GetPosX(max); }
+	float GetPosY(int max) { return enemy->GetPosY(max); }
+	float GetPosZ(int max) { return enemy->GetPosZ(max); }
+	float GetDamage() { return enemy->GetDamage(); }
+	CapsuleCol GetCol(int max) const { return enemy->GetCol(max); }
+	SphereCol GetAttackCol(int max) const { return enemy->GetAttackCol(max); }
+	bool isSphereHit(SphereCol col, float damage, int max) { return enemy->isSphereHit(col, damage,max); }
+	bool isSeachHit(CapsuleCol col, int max) { return enemy->isSeachHit(col,max); }
+	bool isDistanceHit(CapsuleCol col, int max) { return enemy->isDistanceHit(col,max); }
+
+	//VECTOR GetPos() { return weakenemy[4]->GetPos(); }
+	//float GetPosX() { return weakenemy[4]->GetPosX(); }
+	//float GetPosY() { return weakenemy[4]->GetPosY(); }
+	//float GetPosZ() { return weakenemy[4]->GetPosZ(); }
+	//float GetDamage() { return weakenemy[4]->GetDamage(); }
+	//CapsuleCol GetCol() const { return weakenemy[4]->GetCol(); }
+	//SphereCol GetAttackCol() const { return weakenemy[4]->GetAttackCol(); }
+	//bool isSphereHit(SphereCol col, float damage) { return weakenemy[4]->isSphereHit(col, damage); }
+	//bool isSeachHit(CapsuleCol col) { return weakenemy[4]->isSeachHit(col); }
+	//bool isDistanceHit(CapsuleCol col) { return weakenemy[4]->isDistanceHit(col); }
 
 private:
 	//敵の構造体を配列で読み込み

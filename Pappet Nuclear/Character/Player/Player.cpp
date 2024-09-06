@@ -32,7 +32,9 @@ Player::Player():
 	m_recoveryNumber(0),
 	m_recoberyAmount(0.0f),
 	m_heel(0.0f),
-	m_recoberyAction(false)
+	m_recoberyAction(false),
+	m_effectHeel(0),
+	m_effectOneHeel(false)
 {
 }
 
@@ -89,6 +91,9 @@ void Player::Init()
 		m_staminaLevel = 1;
 
 		m_modelSize = 0.4f;
+
+		//エフェクト読み込み
+		effect->PlayerInit();
 
 		//プレイヤーもモデル読み込み
 		m_handle = MV1LoadModel("Data/Player/PlayerModel.mv1");
@@ -192,6 +197,8 @@ void Player::Init()
 		
 		m_animation[8] = -1;
 	}
+
+	m_effectOneHeel = false;
 
 	m_death = false;
 
@@ -314,7 +321,7 @@ void Player::Update()
 
 
 	//Aボタンが押されたら
-	if (m_xpad.Buttons[12] == 1 && m_staminaBroke == false && m_recoberyAction == false)
+	if (m_xpad.Buttons[12] == 1 && m_staminaBroke == false && m_recoberyAction == false && m_moveAttack == false)
 	{
 		if (m_a > 50 && m_stamina >= 0.1f)
 		{
@@ -459,6 +466,8 @@ void Player::Update()
 
 		m_moveAttack = false;
 	}
+
+	
 }
 
 void Player::OtherInfluence(VECTOR outpush)
@@ -485,7 +494,7 @@ void Player::Action()
 	//一段階目の攻撃
 	if (m_hp > 0.0f)
 	{
-		if (m_xpad.Buttons[9] == 1 && m_staminaBroke == false && m_recoberyAction == false)
+		if (m_xpad.Buttons[9] == 1 && m_staminaBroke == false && m_recoberyAction == false && m_avoidance == false)
 		{
 			if (m_attackNumber == 0 && m_stamina >= 10.0f)
 			{
@@ -662,20 +671,30 @@ void Player::Action()
 		}
 	}
 
-	
-
 	//回復
 	//Xボタンが押されたら
 	if (m_xpad.Buttons[14] == 1)
 	{
 		if (m_moveAttack == false && m_avoidance == false)
 		{
+			//一回だけ実行
+			if (m_effectOneHeel == false)
+			{
+				m_effectHeel = PlayEffekseer3DEffect(effect->GetHeelEffect());
+
+				SetPosPlayingEffekseer3DEffect(m_effectHeel, m_pos.x, m_pos.y, m_pos.z);
+
+				m_effectOneHeel = true;
+			}
+
 			m_recoberyAction = true;
 		}
 		
 	}
 	else if(m_recoberyAction == false)
 	{
+		m_effectOneHeel = false;
+
 		m_heel = 0.0f;
 	}
 
@@ -1300,17 +1319,25 @@ void Player::HitObj(Map& map)
 					//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
 					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed));
 
+					////走っていた場合
+					//if (m_dashMove == true)
+					//{
+					//	//当たっていたら規定距離分プレイヤーを法線方向に移動させる
+					//	m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed / 2.0f));
+					//}
 					//回避行動だった場合
 					if (m_avoidance == true)
 					{
 						//当たっていたら規定距離分プレイヤーを法線方向に移動させる
 						m_drawPos = VAdd(m_drawPos, VScale(m_Poly->Normal, m_speed));
+						//m_pos = VAdd(m_pos, VScale(m_Poly->Normal, 1.0f));
 					}
 					//攻撃中だった場合
 					if (m_moveAttack == true)
 					{
 						//当たっていたら規定距離分プレイヤーを法線方向に移動させる
 						m_drawPos = VAdd(m_drawPos, VScale(m_Poly->Normal, m_speed));
+						//m_pos = VAdd(m_pos, VScale(m_Poly->Normal, 1.0f));
 					}
 
 					//移動した上で壁ポリゴンと接触しているかどうかを判定
@@ -1334,6 +1361,9 @@ void Player::HitObj(Map& map)
 
 	SaveAction(map);
 
+	//エフェクト更新
+	effect->Update();
+
 	//検出したプレイヤーの周囲のポリゴン情報を解放する
 	MV1CollResultPolyDimTerminate(HitDim);
 
@@ -1341,6 +1371,7 @@ void Player::HitObj(Map& map)
 
 void Player::SaveAction(Map& map)
 {
+
 	//休息が可能だったら
 	if (map.GetSavePossible() == true)
 	{	
@@ -1351,9 +1382,25 @@ void Player::SaveAction(Map& map)
 			m_updatePosY = 0.0f;
 			m_updatePosZ = -40.0f;
 
+			//一回だけ実行
+			if (m_effectActivation == false)
+			{
+				//エフェクトを入れる
+				m_effect = PlayEffekseer3DEffect(effect->GetRestEffect());
+
+				m_effectActivation = true;
+			}
+
 			m_restAction = true;
 		}
+
 	}
+	else
+	{
+		m_effectActivation = false;
+	}
+
+	SetPosPlayingEffekseer3DEffect(m_effect, map.GetRestPos().x, map.GetRestPos().y, map.GetRestPos().z);
 }
 
 void Player::Draw()
@@ -1396,24 +1443,24 @@ void Player::Draw()
 	DrawFormatString(0, 40, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
 	//DrawFormatString(0, 60, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
 	////バグで攻撃状態になるがモーションが入らない
-	DrawFormatString(0, 100, 0xffffff, "m_playTime : %f", m_playTime);
-	DrawFormatString(0, 120, 0xffffff, "m_dashMove : %d", m_dashMove);
-	DrawFormatString(0, 140, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
-	DrawFormatString(0, 160, 0xffffff, "m_moveflag : %d", m_moveflag);
-	DrawFormatString(0, 180, 0xffffff, "m_avoidance : %d", m_avoidance);
-	DrawFormatString(0, 200, 0xffffff, "m_attack : %d", m_moveAttack);
-	DrawFormatString(0, 220, 0xffffff, "アニメ0 : %d", m_animation[0]);
-	DrawFormatString(0, 240, 0xffffff, "アニメ1 : %d", m_animation[1]);
-	DrawFormatString(0, 260, 0xffffff, "アニメ2 : %d", m_animation[2]);
-	DrawFormatString(0, 280, 0xffffff, "アニメ3 : %d", m_animation[3]);
-	DrawFormatString(0, 300, 0xffffff, "アニメ4 : %d", m_animation[4]);
-	DrawFormatString(0, 320, 0xffffff, "アニメ5 : %d", m_animation[5]);
-	DrawFormatString(0, 340, 0xffffff, "アニメ6 : %d", m_animation[6]);
-	DrawFormatString(0, 360, 0xffffff, "アニメ7 : %d", m_animation[7]);
-	DrawFormatString(0, 380, 0xffffff, "アニメ8 : %d", m_animation[8]);
-	DrawFormatString(0, 400, 0xffffff, "アニメ9 : %d", m_animation[9]);
-
-
+	//DrawFormatString(0, 100, 0xffffff, "m_playTime : %f", m_playTime);
+	//DrawFormatString(0, 120, 0xffffff, "m_dashMove : %d", m_dashMove);
+	//DrawFormatString(0, 140, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
+	//DrawFormatString(0, 160, 0xffffff, "m_moveflag : %d", m_moveflag);
+	//DrawFormatString(0, 180, 0xffffff, "m_avoidance : %d", m_avoidance);
+	//DrawFormatString(0, 200, 0xffffff, "m_attack : %d", m_moveAttack);
+	//DrawFormatString(0, 220, 0xffffff, "アニメ0 : %d", m_animation[0]);
+	//DrawFormatString(0, 240, 0xffffff, "アニメ1 : %d", m_animation[1]);
+	//DrawFormatString(0, 260, 0xffffff, "アニメ2 : %d", m_animation[2]);
+	//DrawFormatString(0, 280, 0xffffff, "アニメ3 : %d", m_animation[3]);
+	//DrawFormatString(0, 300, 0xffffff, "アニメ4 : %d", m_animation[4]);
+	//DrawFormatString(0, 320, 0xffffff, "アニメ5 : %d", m_animation[5]);
+	//DrawFormatString(0, 340, 0xffffff, "アニメ6 : %d", m_animation[6]);
+	//DrawFormatString(0, 360, 0xffffff, "アニメ7 : %d", m_animation[7]);
+	//DrawFormatString(0, 380, 0xffffff, "アニメ8 : %d", m_animation[8]);
+	//DrawFormatString(0, 400, 0xffffff, "アニメ9 : %d", m_animation[9]);
+	//DrawFormatString(150, 300, 0xffffff, "エフェクト : %d", IsEffekseer3DEffectPlaying(m_effectHeel));
+	effect->Draw();
 }
 
 void Player::End()
@@ -1430,6 +1477,7 @@ void Player::End()
 	MV1DeleteModel(m_animDeath);
 	MV1DeleteModel(m_animHeel);
 	weapon->End();
+	effect->End();
 }
 
 bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)

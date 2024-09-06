@@ -9,10 +9,14 @@ Effect::~Effect()
 {
 	//ƒƒ‚ƒŠ‰ğ•ú
 	DeleteEffekseerEffect(m_effectJump);
+	DeleteEffekseerEffect(m_effectRest);
+	DeleteEffekseerEffect(m_effectHeel);
 }
 
 void Effect::PlayerInit()
 {
+	m_effectRest = LoadEffekseerEffect("Data/Effect/Benediction.efkefc", 10.0f);
+	m_effectHeel = LoadEffekseerEffect("Data/Effect/AnotherEffect/Sylph13.efkefc", 20.0f);
 }
 
 void Effect::BossInit()
@@ -39,4 +43,6 @@ void Effect::End()
 {
 	//ƒƒ‚ƒŠ‰ğ•ú
 	DeleteEffekseerEffect(m_effectJump);
+	DeleteEffekseerEffect(m_effectRest);
+	DeleteEffekseerEffect(m_effectHeel);
 }
