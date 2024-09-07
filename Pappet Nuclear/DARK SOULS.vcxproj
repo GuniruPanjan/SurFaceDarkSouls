@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BGM・SE\BgmAndSeManager.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Character\Animation\AnimationManager.cpp" />
     <ClCompile Include="Character\CharacterBase.cpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="UI\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BGM・SE\BgmAndSeManager.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Character\Animation\AnimationManager.h" />
     <ClInclude Include="Character\CharacterBase.h" />

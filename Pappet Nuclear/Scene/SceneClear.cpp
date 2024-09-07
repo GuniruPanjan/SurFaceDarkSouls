@@ -12,6 +12,7 @@ SceneClear::~SceneClear()
 
 void SceneClear::Init()
 {
+	setting->Init();
 }
 
 std::shared_ptr<SceneBase> SceneClear::Update()

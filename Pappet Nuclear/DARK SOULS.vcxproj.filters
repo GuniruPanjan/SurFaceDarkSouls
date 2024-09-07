@@ -73,6 +73,12 @@
     <Filter Include="ソース ファイル\Character\Effect">
       <UniqueIdentifier>{e55bbe72-e660-4d35-a241-69f757cb95e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\BGM・SE">
+      <UniqueIdentifier>{8500f496-c276-4011-ae3c-3380857d8d69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\BGM・SE">
+      <UniqueIdentifier>{b1811810-dbaf-4bbb-a31d-09e784e8ab66}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Template3D.cpp">
@@ -147,6 +153,9 @@
     <ClCompile Include="Character\Player\WeaponSummary.cpp">
       <Filter>ソース ファイル\Character\Player</Filter>
     </ClCompile>
+    <ClCompile Include="BGM・SE\BgmAndSeManager.cpp">
+      <Filter>ソース ファイル\BGM・SE</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneBase.h">
@@ -217,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="Character\Player\WeaponSummary.h">
       <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="BGM・SE\BgmAndSeManager.h">
+      <Filter>ヘッダー ファイル\BGM・SE</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

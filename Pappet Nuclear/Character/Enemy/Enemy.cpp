@@ -22,14 +22,20 @@ void Enemy::Init(int max)
 void Enemy::Update(Player& player, Map& map, int max)
 {
 	enemy->Update(player, max);
-	
+}
+
+void Enemy::BossUpdate(Player& player, Map& map)
+{
 	boss->Update(player, map);
 }
 
 void Enemy::Draw(int max)
 {
 	enemy->Draw(max);
+}
 
+void Enemy::BossDraw()
+{
 	boss->Draw();
 }
 

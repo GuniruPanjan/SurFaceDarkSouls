@@ -12,7 +12,8 @@ public:
 	virtual ~Camera();
 
 	void Init();
-	void Update(Player& player, Enemy& enemy, int max);
+	void Update(Player& player);
+	void LockUpdate(Player& player, Enemy& enemy, int max);
 	void HitObj(Map& map);
 	void Draw();
 	void End();

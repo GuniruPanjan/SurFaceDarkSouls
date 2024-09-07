@@ -1317,7 +1317,7 @@ void Player::HitObj(Map& map)
 					if (HitCheck_Capsule_Triangle(m_mapHitColl, VAdd(m_mapHitColl, VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == false) continue;
 
 					//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
-					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed));
+					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed / 2));
 
 					////走っていた場合
 					//if (m_dashMove == true)
@@ -1329,15 +1329,16 @@ void Player::HitObj(Map& map)
 					if (m_avoidance == true)
 					{
 						//当たっていたら規定距離分プレイヤーを法線方向に移動させる
-						m_drawPos = VAdd(m_drawPos, VScale(m_Poly->Normal, m_speed));
-						//m_pos = VAdd(m_pos, VScale(m_Poly->Normal, 1.0f));
+						m_drawPos = VAdd(m_drawPos, VScale(m_Poly->Normal, m_bounceDis));
+						m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed));
 					}
 					//攻撃中だった場合
 					if (m_moveAttack == true)
 					{
 						//当たっていたら規定距離分プレイヤーを法線方向に移動させる
-						m_drawPos = VAdd(m_drawPos, VScale(m_Poly->Normal, m_speed));
-						//m_pos = VAdd(m_pos, VScale(m_Poly->Normal, 1.0f));
+						m_drawPos = VAdd(m_drawPos, VScale(m_Poly->Normal, m_bounceDis));
+						m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed));
+
 					}
 
 					//移動した上で壁ポリゴンと接触しているかどうかを判定
@@ -1491,26 +1492,36 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 		m_color = 0xffff00;
 
 		//当たっていたら規定距離分プレイヤーを法線方向に移動させる
-		m_pos = VAdd(m_pos, VScale(m_bounceMove, m_bounceDis));
+		m_pos = VAdd(m_pos, VScale(m_bounceMove, m_speed / 2));
 
 		//回避行動だった場合
 		//m_posが動いている
 		if (m_avoidance == true)
 		{
 			//当たっていたら規定距離分プレイヤーを法線方向に移動させる
-			m_pos.x -= m_moveVector.x + m_bounceDis;
-			m_pos.z -= m_moveVector.z + m_bounceDis;
-			m_drawPos.x -= m_moveVector.x + m_bounceDis;
-			m_drawPos.z -= m_moveVector.z + m_bounceDis;
+			//m_pos.x -= m_moveVector.x + m_bounceDis;
+			//m_pos.z -= m_moveVector.z + m_bounceDis;
+			//m_drawPos.x -= m_moveVector.x + m_bounceDis;
+			//m_drawPos.z -= m_moveVector.z + m_bounceDis;
+			m_pos.x -= m_moveVector.x;
+			m_pos.z -= m_moveVector.z;
+			m_drawPos.x -= m_moveVector.x;
+			m_drawPos.z -= m_moveVector.z;
+
+
 		}
 		//攻撃中だった場合
 		else if (m_moveAttack == true)
 		{
 			//当たっていたら規定距離分プレイヤーを法線方向に移動させる
-			m_pos.x -= m_moveVector.x + m_bounceDis;
-			m_pos.z -= m_moveVector.z + m_bounceDis;
-			m_drawPos.x -= m_moveVector.x + m_bounceDis;
-			m_drawPos.z -= m_moveVector.z + m_bounceDis;
+			//m_pos.x -= m_moveVector.x + m_bounceDis;
+			//m_pos.z -= m_moveVector.z + m_bounceDis;
+			//m_drawPos.x -= m_moveVector.x + m_bounceDis;
+			//m_drawPos.z -= m_moveVector.z + m_bounceDis;
+			m_pos.x -= m_moveVector.x;
+			m_pos.z -= m_moveVector.z;
+			m_drawPos.x -= m_moveVector.x;
+			m_drawPos.z -= m_moveVector.z;
 		}
 	}
 	else

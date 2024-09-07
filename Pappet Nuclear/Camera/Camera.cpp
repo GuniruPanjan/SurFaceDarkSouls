@@ -3,6 +3,15 @@
 //度をラジアンに変換
 #define D2R(deg) ((deg)*DX_PI_F/180.0f)
 
+namespace
+{
+	//敵とプレイヤーの座標の差を求める
+	float difX[ENEMY_NOW];
+	float difZ[ENEMY_NOW];
+
+}
+
+
 Camera::Camera():
 	m_cameraAngle(VGet(0.0f,0.0f,0.0f)),
 	m_cameraPos(VGet(0.0f,0.0f,0.0f)),
@@ -40,7 +49,7 @@ void Camera::Init()
 	SetCameraNearFar(1.0f, 1000.0f);
 }
 
-void Camera::Update(Player& player, Enemy& enemy, int max)
+void Camera::Update(Player& player)
 {
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
 
@@ -114,8 +123,14 @@ void Camera::Update(Player& player, Enemy& enemy, int max)
 		//注視点の座標はプレイヤー座標の少し上
 		m_cameraTarget = VAdd(player.GetPos(), VGet(0.0f, 50.0f, 0.0f));
 	}
+
+	SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
+}
+
+void Camera::LockUpdate(Player& player, Enemy& enemy, int max)
+{
 	//ロックオンしたとき
-	else if (player.GetLock() == true)
+	if (player.GetLock() == true)
 	{
 		//ボス戦の時のカメラ
 		if (enemy.GetBattale() == true)
@@ -155,44 +170,45 @@ void Camera::Update(Player& player, Enemy& enemy, int max)
 		//ボス戦以外のターゲット
 		if (enemy.GetBattale() == false)
 		{
-			for (int i = 0; i < max; i++)
-			{
-				//注視点は敵の座標にする
-				m_cameraTarget = VAdd(enemy.GetPos(max), VGet(0.0f, 20.0f, 0.0f));
+			//敵の距離がプレイヤーに近いやつをロックするようにする
 
-				//プレイヤーとエネミーのX座標の差を求める
-				float X = enemy.GetPosX(max) - player.GetPosX();
+			//注視点は敵の座標にする
+			m_cameraTarget = VAdd(enemy.GetPos(max), VGet(0.0f, 20.0f, 0.0f));
 
-				//プレイヤーとエネミーのZ座標の差を求める
-				float Z = enemy.GetPosZ(max) - player.GetPosZ();
+			//プレイヤーとエネミーのX座標の差を求める
+			float X = enemy.GetPosX(max) - player.GetPosX();
 
-				//角度を出す
-				float angle = atan2f(X, Z);
+			//プレイヤーとエネミーのZ座標の差を求める
+			float Z = enemy.GetPosZ(max) - player.GetPosZ();
 
-				m_x = X;
-				m_z = Z;
+			//角度を出す
+			float angle = atan2f(X, Z);
 
-				//敵からプレイヤーに伸びる基準のベクトルを求める
-				VECTOR pos = VSub(player.GetPos(), enemy.GetPos(max));
+			m_x = X;
+			m_z = Z;
 
-				//ベクトルの正規化
-				VECTOR posTarget = VNorm(pos);
+			//敵からプレイヤーに伸びる基準のベクトルを求める
+			VECTOR pos = VSub(player.GetPos(), enemy.GetPos(max));
 
-				posTarget.x *= 130.0f;
-				posTarget.z *= 130.0f;
+			//ベクトルの正規化
+			VECTOR posTarget = VNorm(pos);
 
-				//カメラがどれだけプレイヤーの座標より高いかを設定
-				posTarget.y = 80.0f;
+			posTarget.x *= 130.0f;
+			posTarget.z *= 130.0f;
 
-				m_cameraAngle.y = angle;
+			//カメラがどれだけプレイヤーの座標より高いかを設定
+			posTarget.y = 80.0f;
 
-				//プレイヤーの座標に求めたベクトルを足して、カメラの座標とする
-				m_cameraPos = VAdd(player.GetPos(), posTarget);
-			}
+			m_cameraAngle.y = angle;
+
+			//プレイヤーの座標に求めたベクトルを足して、カメラの座標とする
+			m_cameraPos = VAdd(player.GetPos(), posTarget);
 		}
+
 	}
 
-	SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
+	difX[max] = enemy.GetPos(max).x - player.GetPos().x;
+	difZ[max] = enemy.GetPos(max).z - player.GetPos().z;
 }
 
 void Camera::HitObj(Map& map)
@@ -336,6 +352,12 @@ void Camera::HitObj(Map& map)
 
 void Camera::Draw()
 {
+	DrawFormatString(0, 240, 0xffffff, "dif1.x : %f,dif1.z : %f", difX[0], difZ[0]);
+	DrawFormatString(0, 260, 0xffffff, "dif2.x : %f,dif2.z : %f", difX[1], difZ[1]);
+	DrawFormatString(0, 280, 0xffffff, "dif3.x : %f,dif3.z : %f", difX[2], difZ[2]);
+	DrawFormatString(0, 300, 0xffffff, "dif4.x : %f,dif4.z : %f", difX[3], difZ[3]);
+	DrawFormatString(0, 320, 0xffffff, "dif5.x : %f,dif5.z : %f", difX[4], difZ[4]);
+
 }
 
 void Camera::End()

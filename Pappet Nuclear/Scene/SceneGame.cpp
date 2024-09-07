@@ -16,6 +16,7 @@ void SceneGame::Init()
 	map->Init();
 	player->Init();
 	ui->Init(*player, *enemy);
+	setting->Init();
 }
 
 std::shared_ptr<SceneBase> SceneGame::Update()
@@ -23,9 +24,10 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	player->SetCameraAngle(camera->GetAngleY());
 	player->Update();
 	player->OtherInfluence(enemy->GetOutPush());
-	camera->Update(*player, *enemy, ENEMY_NOW);
+	camera->Update(*player);
 	map->Update(*player);
 	player->HitObj(*map);
+	enemy->BossUpdate(*player, *map);
 	//camera->HitObj(*map);
 
 	//player->isSphereHit(enemy->GetAttackCol(), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
@@ -41,16 +43,14 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		enemy->isSeachHit(player->GetCapsuleCol(), i);
 		enemy->isDistanceHit(player->GetCapsuleCol(), i);
 		player->IsCapsuleHit(enemy->GetCol(i), enemy->GetBossCol());
+		camera->LockUpdate(*player, *enemy, i);
 		enemy->isSphereHit(player->GetSphereCol(), player->GetDamage(), i);
 	}
 
 	//‹x‘§‚·‚éê‡
 	if (player->GetRest() == true)
 	{
-		for (int i = 0; i < ENEMY_NOW; i++)
-		{
-			enemy->Init(i);
-		}
+		enemy->Init(ENEMY_NOW);
 		
 		player->Init();
 		map->Init();
@@ -84,8 +84,12 @@ void SceneGame::Draw()
 	{
 		enemy->Draw(i);
 	}
+
+	enemy->BossDraw();
 	
 	ui->Draw(*player, *enemy);
+
+	setting->SettingDraw();
 }
 
 void SceneGame::End()

@@ -72,6 +72,7 @@ void SceneTitle::Init()
 	map->Init();
 
 	setting->Init();
+	
 
 	m_one = false;
 	m_blend = false;

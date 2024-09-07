@@ -14,7 +14,9 @@ public:
 
 	void Init(int max);
 	void Update(Player& player, Map& map, int max);
+	void BossUpdate(Player& player, Map& map);
 	void Draw(int max);
+	void BossDraw();
 	void End(int max);
 
 	//ƒ{ƒX‚Ìæ“¾•Ï”
