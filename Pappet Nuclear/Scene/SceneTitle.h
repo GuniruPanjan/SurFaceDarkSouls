@@ -42,4 +42,5 @@ private:
 	VECTOR m_pos;
 
 	std::shared_ptr<Map> map = std::make_shared<Map>();
+	std::shared_ptr<SEManager> se = std::make_shared<SEManager>();
 };

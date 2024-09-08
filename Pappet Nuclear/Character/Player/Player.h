@@ -15,6 +15,7 @@ public:
 
 	void Init();
 	void Update();
+	void PlaySE(int volume);
 	void OtherInfluence(VECTOR outpush);
 	void Action();
 	void Animation(float& time, VECTOR& pos);
@@ -44,6 +45,8 @@ public:
 	bool GetRest() { return m_restAction; }
 	bool SetRest(bool rest) { return m_restAction = rest; }
 	bool GetDeath() { return m_death; }
+	bool GetReceived() { return m_damageReceived; }
+	bool SetReceived(bool recebived) { return m_damageReceived = recebived; }
 
 	//UIÇ…ïKóvÇ»ïœêî
 	float GetHp() { return m_hp; }

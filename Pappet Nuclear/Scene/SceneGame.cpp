@@ -1,7 +1,14 @@
 #include "SceneGame.h"
 #include "SceneClear.h"
 
-SceneGame::SceneGame()
+namespace
+{
+	int seSize;      //seの音量
+	int a;         //ブレンド率
+}
+
+SceneGame::SceneGame():
+	m_one(false)
 {
 }
 
@@ -11,26 +18,35 @@ SceneGame::~SceneGame()
 
 void SceneGame::Init()
 {
-	enemy->Init(ENEMY_NOW);
+	for (int i = 0; i < ENEMY_NOW; i++)
+	{
+		enemy->Init(i);
+	}
+	enemy->BossInit();
 	camera->Init();
 	map->Init();
 	player->Init();
 	ui->Init(*player, *enemy);
 	setting->Init();
+	bgmse->GameInit();
+	bgmse->GameBGM();
+
+	a = 0;
 }
 
 std::shared_ptr<SceneBase> SceneGame::Update()
 {
 	player->SetCameraAngle(camera->GetAngleY());
 	player->Update();
+	player->PlaySE(setting->GetVolume());
 	player->OtherInfluence(enemy->GetOutPush());
 	camera->Update(*player);
 	map->Update(*player);
 	player->HitObj(*map);
-	enemy->BossUpdate(*player, *map);
-	//camera->HitObj(*map);
+	enemy->MapHitBoss(*map);
+	enemy->BossUpdate(*player, *map, setting->GetVolume());
+	camera->HitObj(*map);
 
-	//player->isSphereHit(enemy->GetAttackCol(), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
 	enemy->isSphereBossHit(player->GetSphereCol(), player->GetDamage());
 	enemy->isBossPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetBounceDis());
 	enemy->isBossDistanceHit(player->GetCapsuleCol());
@@ -39,19 +55,26 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
-		enemy->Update(*player, *map, i);
+		enemy->Update(*player, *map, i, setting->GetVolume());
 		enemy->isSeachHit(player->GetCapsuleCol(), i);
 		enemy->isDistanceHit(player->GetCapsuleCol(), i);
-		player->IsCapsuleHit(enemy->GetCol(i), enemy->GetBossCol());
 		camera->LockUpdate(*player, *enemy, i);
 		enemy->isSphereHit(player->GetSphereCol(), player->GetDamage(), i);
+		enemy->MapHitWenemy(*map, i);
+		player->IsCapsuleHit(enemy->GetCol(i), enemy->GetBossCol());
+		//雑魚敵のアタックコルが問題
+		player->isSphereHit(enemy->GetAttackCol(i), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
 	}
+
 
 	//休息する場合
 	if (player->GetRest() == true)
 	{
-		enemy->Init(ENEMY_NOW);
-		
+		for (int i = 0; i < ENEMY_NOW; i++)
+		{
+			enemy->Init(i);
+		}
+		enemy->BossInit();
 		player->Init();
 		map->Init();
 
@@ -60,9 +83,36 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	//プレイヤーが死んだ場合
 	if (player->GetDeath() == true)
 	{
-		enemy->Init(ENEMY_NOW);
-		player->Init();
-		map->Init();
+		a++;
+
+		if (a > 300)
+		{
+			for (int i = 0; i < ENEMY_NOW; i++)
+			{
+				enemy->Init(i);
+			}
+
+			StopSoundMem(bgmse->GetBossBGM());  //サウンドを止める
+
+			enemy->BossInit();
+			map->Init();
+			bgmse->GameInit();
+			bgmse->GameBGM();
+			player->Init();
+
+			m_one = false;
+
+			a = 0;
+		}
+		
+	}
+	
+	//ボス部屋に入ったら
+	if (map->GetRoomEntered() == true && m_one == false)
+	{
+		bgmse->BossBGM();
+
+		m_one = true;
 	}
 
 
@@ -72,6 +122,8 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		return std::make_shared<SceneClear>();
 	}
 
+	bgmse->Update(setting->GetVolume());
+
 	return shared_from_this();  //自身のポインタを返す
 }
 
@@ -79,7 +131,6 @@ void SceneGame::Draw()
 {
 	map->Draw();
 	camera->Draw();
-	player->Draw();
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
 		enemy->Draw(i);
@@ -87,7 +138,35 @@ void SceneGame::Draw()
 
 	enemy->BossDraw();
 	
+	//ロックオン表示
+	if (player->GetLock() == true)
+	{
+		//DrawCircle(320, 200, 5, 0xffffff, true);
+
+		DrawCircle(800, 200 * 2, 10, 0xffffff, true);
+	}
+
+	player->Draw();
 	ui->Draw(*player, *enemy);
+
+	//プレイヤーが死んだ場合
+	if (player->GetDeath() == true)
+	{
+		//SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
+		//DrawBox(0, 170, 640, 260, 0x000000, true);
+		//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		//SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
+		//ui->DiedDraw();
+		//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
+		DrawBox(0, 170 * 2, 640 * 3, 260 * 2, 0x000000, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
+		ui->DiedDraw();
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	}
 
 	setting->SettingDraw();
 }
@@ -98,4 +177,7 @@ void SceneGame::End()
 	enemy->End(ENEMY_NOW);
 	camera->End();
 	map->End();
+
+	setting->End();
+	bgmse->End();
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "DxLib.h"
+#include "BGMÅESE/BgmAndSeManager.h"
 #include "UI/Setting.h"
 #include<memory>
 
@@ -24,5 +25,6 @@ protected:
 	int m_backScene = 0;
 
 	std::shared_ptr<Setting> setting = std::make_shared<Setting>();
+	std::shared_ptr<BgmAndSeManager> bgmse = std::make_shared<BgmAndSeManager>();
 };
 

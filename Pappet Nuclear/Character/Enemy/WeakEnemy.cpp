@@ -1,5 +1,16 @@
 #include "Character/Player/Player.h"
+#include "Map/Map.h"
 #include "WeakEnemy.h"
+
+namespace
+{
+	int walkTime;
+	bool oneInit[ENEMY_NOW];    //初期化一回
+	bool hitFlag[ENEMY_NOW];    //マップの当たったフラグ
+	bool  attack[ENEMY_NOW];    //敵の攻撃SEを一回流す
+	VECTOR mapHitCol[ENEMY_NOW];   //マップとの当たり判定
+	bool a[ENEMY_NOW];  //攻撃を一回だけ与える
+}
 
 WeakEnemy::WeakEnemy()
 {
@@ -11,6 +22,12 @@ WeakEnemy::WeakEnemy()
 		m_weakEnemyMove[i] = VGet(0.0f, 0.0f, 0.0f);
 		m_weakEnemyMoveAttack[i] = false;
 		m_weakEnemyAngle[i] = 0.0f;
+		m_hitSE[i] = 0;
+		m_attackSE[i] = 0;
+		m_walkSE[i] = 0;
+		m_diedSE[i] = 0;
+		oneInit[i] = false;
+		hitFlag[i] = false;
 	}
 }
 
@@ -37,7 +54,7 @@ void WeakEnemy::Init(int max)
 
 	m_weakEnemyPos[0] = VGet(500.0f, m_posY, m_posZ);
 	m_weakEnemyPos[1] = VGet(300.0f, m_posY, -500.0f);
-	m_weakEnemyPos[2] = VGet(700.0f, m_posY, -400.0f);
+	m_weakEnemyPos[2] = VGet(600.0f, m_posY, -400.0f);
 	m_weakEnemyPos[3] = VGet(650.0f, m_posY, -200.0f);
 	m_weakEnemyPos[4] = VGet(300.0f, m_posY, 100.0f);
 
@@ -47,10 +64,26 @@ void WeakEnemy::Init(int max)
 	//一回だけ実行
 	if (m_oneInit == false)
 	{
+		se->CharaInit();
+
+		m_oneInit = true;
+	}
+
+	//一回だけ実行
+	if (oneInit[max] == false)
+	{
 		//モデル複製
 		m_weakEnemyHandle[max] = MV1DuplicateModel(m_handle);
+
+		m_weakEnemyAnimation[0][max] = MV1AttachAnim(m_weakEnemyHandle[max], 0, m_animStand, TRUE);
+
+		oneInit[max] = true;
 	}
 	
+	for (int i = 0; i < max; i++)
+	{
+		a[i] = false;
+	}
 
 	//サイズ変更
 	MV1SetScale(m_weakEnemyHandle[max], VGet(m_modelSize, m_modelSize, m_modelSize));
@@ -74,25 +107,43 @@ void WeakEnemy::Init(int max)
 	m_colDistance[max].Init(m_colDistancePos[max], m_distanceRadius);
 	m_colAttack[max].Init(m_colAttackPos[max], m_attackRadius);
 
+	attack[max] = false;
 
-	//アニメーションアタッチ
-	m_weakEnemyAnimation[0][max] = MV1AttachAnim(m_weakEnemyHandle[max], 0, m_animStand, TRUE);
+	walkTime = 0;
 
 	//エネミーが死んだアニメーションだった場合
-	if (m_weakEnemyAnimation[2][max] != -1)
+	if (m_weakEnemyAnimation[1][max] != -1 || m_weakEnemyAnimation[2][max] != -1 || m_weakEnemyAnimation[3][max] != -1 ||
+		m_weakEnemyAnimation[4][max] != -1 || m_weakEnemyAnimation[5][max] != -1 || m_weakEnemyAnimation[6][max] != -1)
 	{
 		//アニメーションデタッチ
+		MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[1][max]);
 		MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[2][max]);
+		MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[3][max]);
+		MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[4][max]);
+		MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[5][max]);
+		MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[6][max]);
+
+		m_weakEnemyAnimation[0][max] = MV1AttachAnim(m_weakEnemyHandle[max], 0, m_animStand, TRUE);
 
 		m_weakPlayTime[max] = 0.0f;
 
+		m_weakEnemyAnimation[1][max] = -1;
 		m_weakEnemyAnimation[2][max] = -1;
+		m_weakEnemyAnimation[3][max] = -1;
+		m_weakEnemyAnimation[4][max] = -1;
+		m_weakEnemyAnimation[5][max] = -1;
+		m_weakEnemyAnimation[6][max] = -1;
+
 	}
-	
+
+	m_hitSE[max] = se->GetHitSE();
+	m_attackSE[max] = se->GetAttackSE();
+	m_walkSE[max] = se->GetWalkSE();
+	m_diedSE[max] = se->GetDiedSE();
 
 }
 
-void WeakEnemy::Update(Player& player, int max)
+void WeakEnemy::Update(Player& player, int max, int volume)
 {
 	m_oneInit = true;
 	
@@ -119,8 +170,21 @@ void WeakEnemy::Update(Player& player, int max)
 	//攻撃してないなら
 	if (m_weakEnemyMoveAttack[max] == false)
 	{
+		walkTime++;
+
 		//敵が移動する
 		m_weakEnemyPos[max] = VAdd(m_weakEnemyPos[max], m_weakEnemyMove[max]);
+
+		if (walkTime >= 30)
+		{
+			//PlaySoundMem(m_walkSE[max], DX_PLAYTYPE_BACK, true);
+
+			walkTime = 0;
+		}
+	}
+	else
+	{
+		walkTime = 0;
 	}
 
 	//攻撃判定を正面に持ってくる
@@ -130,7 +194,6 @@ void WeakEnemy::Update(Player& player, int max)
 	//敵が死亡したら
 	if (m_weakEnemyHp[max] <= 0.0f)
 	{
-		DrawFormatString(0, 240, 0xffffff, "敵が死んだ");
 
 		m_weakCapsuleCol[max].Update(m_colDeathPos, m_deathVec);
 
@@ -149,9 +212,14 @@ void WeakEnemy::Update(Player& player, int max)
 	m_colSearchPos[max].x = m_weakEnemyPos[max].x + sinf(m_weakEnemyAngle[max]) * -80.0f;
 	m_colSearchPos[max].z = m_weakEnemyPos[max].z - cosf(m_weakEnemyAngle[max]) * 80.0f;
 
+	//マップとの当たり判定
+	mapHitCol[max] = VGet(m_weakColPos[max].x, m_weakColPos[max].y, m_weakColPos[max].z);
+
 	Action(player, max);
 
 	Animation(m_weakPlayTime[max], max);
+
+	se->Update(volume);
 }
 
 /// <summary>
@@ -160,6 +228,7 @@ void WeakEnemy::Update(Player& player, int max)
 /// <param name="player"></param>
 void WeakEnemy::Action(Player& player, int max)
 {
+
 	//敵に発見された場合
 	if (m_enemySearchFlag[max] == true)
 	{
@@ -203,9 +272,23 @@ void WeakEnemy::Action(Player& player, int max)
 			if (m_randomAction[max] == 2)
 			{
 				//アニメーションフレーム中に攻撃判定をだす
-				if (m_weakPlayTime[max] >= 22 && m_weakPlayTime[max] <= 35)
+				if (m_weakPlayTime[max] >= 22 && m_weakPlayTime[max] <= 35 && a[max] == false)
 				{
 					m_colAttack[max].Update(m_colAttackPos[max]);
+
+					if (attack[max] == false)
+					{
+						PlaySoundMem(m_attackSE[max], DX_PLAYTYPE_BACK, true);
+
+						attack[max] = true;
+					}
+
+					a[max] = true;
+				}
+				else if (m_weakPlayTime[max] >= 35)
+				{
+					attack[max] = false;
+					a[max] = false;
 				}
 				else
 				{
@@ -446,6 +529,141 @@ void WeakEnemy::Animation(float& time, int max)
 	}
 }
 
+void WeakEnemy::HitMap(Map& map, int max)
+{
+	int j;
+
+	//プレイヤーの周囲にあるコリジョンのポリゴンを取得する
+	HitDim = MV1CollCheck_Sphere(map.GetCollisionMap(), -1, map.GetVectorMapPos(), 1500.0f);
+
+	//検出したプレイヤーの周囲のポリゴン情報を解放する
+	MV1CollResultPolyDimTerminate(HitDim);
+
+	for (int w = 0; w < max; w++)
+	{
+		//検出されたポリゴンが壁ポリゴン(XZ平面に垂直なポリゴン)か床ポリゴン(XZ平面に垂直ではないポリゴン)かを判断する
+		for (int i = 0; i < HitDim.HitNum; i++)
+		{
+			//XZ平面に垂直かどうかはポリゴンの法線のY成分が0に限りなく近いかどうかで判断する
+			if (HitDim.Dim[i].Normal.y < 0.000001f && HitDim.Dim[i].Normal.y > -0.0000001f)
+			{
+				if (HitDim.Dim[i].Position[0].y > m_weakEnemyPos[w].y + 1.0f ||
+					HitDim.Dim[i].Position[1].y > m_weakEnemyPos[w].y + 1.0f ||
+					HitDim.Dim[i].Position[2].y > m_weakEnemyPos[w].y + 1.0f)
+				{
+					//ポリゴンの数が列挙できる限界数に達していなかったらポリゴンを配列に追加
+					if (m_WallNum < PLAYER_MAX_HITCOLL)
+					{
+						//ポリゴンの構造体のアドレスを壁ポリゴンポインタ配列に保存する
+						m_Wall[m_WallNum] = &HitDim.Dim[i];
+
+						//壁ポリゴンの数を加算する
+						m_WallNum++;
+					}
+				}
+			}
+		}
+
+		//壁ポリゴンと当たり判定処理
+		if (m_WallNum != 0)
+		{
+			//壁に当たったかどうかのフラグは初期状態では「当たっていない」にしておく
+			hitFlag[w] = false;
+
+			//移動したかどうかで処理を分岐
+			if (m_moveflag == true)
+			{
+				//壁ポリゴンの数だけ繰り返し
+				for (int i = 0; i < m_WallNum; i++)
+				{
+					//i番目の壁ポリゴンのアドレスを壁ポリゴンポインタ配列から取得
+					m_Poly = m_Wall[i];
+
+					//ポリゴンとプレイヤーが当たっていなかったら次のカウントへ
+					if (HitCheck_Capsule_Triangle(mapHitCol[w], VAdd(mapHitCol[w], VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == false) continue;
+
+					//ここにきたらポリゴンとプレイヤーが当たっているということなので、ポリゴンに当たったフラグを立てる
+					hitFlag[w] = true;
+
+					//新たな移動座標で壁ポリゴンと当たっていないかどうかを判定する
+					for (j = 0; j < m_WallNum; j++)
+					{
+						//j番目の壁ポリゴンと当たっていないかどうかを判定する
+						m_Poly = m_Wall[j];
+
+						//当たっていたらループから抜ける
+						if (HitCheck_Capsule_Triangle(mapHitCol[w], VAdd(mapHitCol[w], VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == true) break;
+					}
+
+					//jがm_WallNumだった場合はどのポリゴンとも当たらなかったということなので
+					//壁に当たったフラグを倒したうえでループから抜ける
+					if (j == m_WallNum)
+					{
+						hitFlag[w] = false;
+						break;
+					}
+
+				}
+			}
+			else
+			{
+				//移動していない場合の処理
+
+				//壁ポリゴンの数だけ繰り返し
+				for (int i = 0; i < m_WallNum; i++)
+				{
+					//i番目の壁ポリゴンのアドレスを壁ポリゴンポインタ配列から取得
+					m_Poly = m_Wall[i];
+
+					//ポリゴンに当たっていたら当たったフラグを立てた上でループから抜ける
+					if (HitCheck_Capsule_Triangle(mapHitCol[w], VAdd(mapHitCol[w], VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == true)
+					{
+						hitFlag[w] = true;
+						break;
+					}
+
+				}
+			}
+
+			//壁に当たっていたら壁から押し出す処理を行う
+			if (hitFlag[w] == true)
+			{
+				//壁からの押し出し処理を試みる最大数だけ繰り返す
+				for (int i = 0; i < PLAYER_MAX_HITCOLL; i++)
+				{
+					//壁ポリゴンの数だけ繰り返し
+					for (int k = 0; k < m_WallNum; k++)
+					{
+						//j番目の壁ポリゴンのアドレスを壁ポリゴンポインタ配列から取得
+						m_Poly = m_Wall[k];
+
+						//プレイヤーと当たっているか判定
+						if (HitCheck_Capsule_Triangle(mapHitCol[w], VAdd(mapHitCol[w], VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == false) continue;
+
+						//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
+						m_weakEnemyPos[w] = VAdd(m_weakEnemyPos[w], VScale(m_Poly->Normal, m_speed / 2));
+
+						//移動した上で壁ポリゴンと接触しているかどうかを判定
+						for (j = 0; j < m_WallNum; j++)
+						{
+							//当たっていたらループを抜ける
+							m_Poly = m_Wall[j];
+							if (HitCheck_Capsule_Triangle(mapHitCol[w], VAdd(mapHitCol[w], VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == true) break;
+
+						}
+
+						//すべてのポリゴンと当たっていなかったらループ終了
+						if (j == m_WallNum) break;
+					}
+
+					//iがm_WallNumではない場合は全部のポリゴンで押し出しを試みる前にすべての壁ポリゴンと接触しなくなったということなのでループから抜ける
+					if (i != m_WallNum) break;
+				}
+			}
+		}
+	}
+}
+
 void WeakEnemy::Draw(int max)
 {
 	//方向ベクトル
@@ -506,6 +724,8 @@ bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max)
 		if (m_damageReceived == false)
 		{
 			m_weakEnemyHp[max] = m_weakEnemyHp[max] - damage;
+
+			PlaySoundMem(m_hitSE[max], DX_PLAYTYPE_BACK, true);
 
 			m_damageReceived = true;
 		}

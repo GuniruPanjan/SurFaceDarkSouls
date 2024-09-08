@@ -36,7 +36,7 @@ void Map::Init()
 	if (m_oneInit == false)
 	{
 		//モデル読み込み
-		m_handle = MV1LoadModel("Data/Map/MapNew.mv1");
+		m_handle = MV1LoadModel("Data/Map/Map.mv1");
 		m_collisionHandle = MV1LoadModel("Data/Map/Collision.mv1");
 
 		//モデルのサイズ

@@ -1,6 +1,15 @@
 #include "Player.h"
 #include "Map/Map.h"
+#include "UI/Setting.h"
 #include<math.h>
+
+namespace
+{
+	int walkTime;       //歩くSEを再生させる時間
+	int dashTime;       //走るSEを再生させる時間
+	bool attack;        //攻撃SEを再生させる時
+	int a;
+}
 
 Player::Player():
 	m_cameraAngle(0.0f),
@@ -158,6 +167,8 @@ void Player::Init()
 		m_animation[8] = -1;
 		m_animation[9] = -1;
 
+		se->CharaInit();
+
 		m_oneInit = true;
 	}
 
@@ -197,6 +208,8 @@ void Player::Init()
 		
 		m_animation[8] = -1;
 	}
+
+	attack = false;
 
 	m_effectOneHeel = false;
 
@@ -286,11 +299,44 @@ void Player::Update()
 
 		//プレイヤーが動いたら
 		m_moveflag = true;
+
+		//SE
+		//走っていなかったら
+		if (m_dashMove == false)
+		{
+			walkTime++;
+
+			if (walkTime >= 30)
+			{
+				//a = PlaySoundMem(se->GetWalkSE(), DX_PLAYTYPE_BACK, true);
+
+				walkTime = 0;
+			}
+			
+			dashTime = 0;
+		}
+		//走ったら
+		else if (m_dashMove == true)
+		{
+			dashTime++;
+
+			if (dashTime >= 20)
+			{
+				//PlaySoundMem(se->GetWalkSE(), DX_PLAYTYPE_BACK, true);
+
+				dashTime = 0;
+			}
+			
+			walkTime = 0;
+		}
 	}
 	//プレイヤーが動いてなかったら
 	else if (VSquareSize(m_move) <= 0.0f)
 	{
 		m_moveflag = false;
+
+		walkTime = 0;
+		dashTime = 0;
 	}
 
 	//プレイヤーが生きている時だけ
@@ -470,6 +516,11 @@ void Player::Update()
 	
 }
 
+void Player::PlaySE(int volume)
+{
+	se->Update(volume);
+}
+
 void Player::OtherInfluence(VECTOR outpush)
 {
 	//他のキャラクターなどの影響を受ける
@@ -561,11 +612,20 @@ void Player::Action()
 			//攻撃の当たり判定発生
 			if (m_playTime >= 25.0f && m_playTime <= 30.0f)
 			{
+				if (attack == false)
+				{
+					PlaySoundMem(se->GetAttackSE(), DX_PLAYTYPE_BACK, true);
+
+					attack = true;
+				}
+
 				m_sphereCol.Update(m_colAttackPos);
 			}
 			//攻撃の当たり判定を初期化する
 			else
 			{
+				attack = false;
+
 				m_sphereCol.Update(m_initializationPos);
 			}
 
@@ -584,11 +644,20 @@ void Player::Action()
 			//攻撃の当たり判定発生
 			if (m_playTime >= 10.0f && m_playTime <= 15.0f)
 			{
+				if (attack == false)
+				{
+					PlaySoundMem(se->GetAttackSE(), DX_PLAYTYPE_BACK, true);
+
+					attack = true;
+				}
+
 				m_sphereCol.Update(m_colAttackPos);
 			}
 			//攻撃の当たり判定を初期化する
 			else
 			{
+				attack = false;
+
 				m_sphereCol.Update(m_initializationPos);
 			}
 
@@ -606,11 +675,20 @@ void Player::Action()
 			//攻撃の当たり判定発生
 			if (m_playTime >= 20.0f && m_playTime <= 25.0f)
 			{
+				if (attack == false)
+				{
+					PlaySoundMem(se->GetAttackSE(), DX_PLAYTYPE_BACK, true);
+
+					attack = true;
+				}
+
 				m_sphereCol.Update(m_colAttackPos);
 			}
 			//攻撃の当たり判定を初期化する
 			else
 			{
+				attack = false;
+
 				m_sphereCol.Update(m_initializationPos);
 			}
 
@@ -682,7 +760,7 @@ void Player::Action()
 			{
 				m_effectHeel = PlayEffekseer3DEffect(effect->GetHeelEffect());
 
-				SetPosPlayingEffekseer3DEffect(m_effectHeel, m_pos.x, m_pos.y, m_pos.z);
+				PlaySoundMem(se->GetHeelSE(), DX_PLAYTYPE_BACK, true);
 
 				m_effectOneHeel = true;
 			}
@@ -709,6 +787,8 @@ void Player::Action()
 		}
 
 	}
+
+	SetPosPlayingEffekseer3DEffect(m_effectHeel, m_pos.x, m_pos.y, m_pos.z);
 	
 }
 
@@ -1389,6 +1469,8 @@ void Player::SaveAction(Map& map)
 				//エフェクトを入れる
 				m_effect = PlayEffekseer3DEffect(effect->GetRestEffect());
 
+				PlaySoundMem(se->GetRestSE(), DX_PLAYTYPE_BACK, true);
+
 				m_effectActivation = true;
 			}
 
@@ -1428,7 +1510,7 @@ void Player::Draw()
 	//3Dモデル描画
 	MV1DrawModel(m_handle);
 
-	weapon->Draw(m_moveAnimFrameRigthPosition);
+	//weapon->Draw(m_moveAnimFrameRigthPosition);
 
 	//if (m_HitFlag == true)
 	//{
@@ -1441,16 +1523,16 @@ void Player::Draw()
 
 	////DrawFormatString(0, 120, 0xffffff, "HitPoly : %d", HitDim.HitNum);
 	//DrawFormatString(0, 0, 0xffffff, "playTime : %f", m_playTime);
-	DrawFormatString(0, 40, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
+	//DrawFormatString(0, 40, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
 	//DrawFormatString(0, 60, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
 	////バグで攻撃状態になるがモーションが入らない
-	DrawFormatString(0, 100, 0xffffff, "m_playTime : %f", m_playTime);
-	DrawFormatString(0, 120, 0xffffff, "m_dashMove : %d", m_dashMove);
-	DrawFormatString(0, 140, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
-	DrawFormatString(0, 160, 0xffffff, "m_moveflag : %d", m_moveflag);
-	DrawFormatString(0, 180, 0xffffff, "m_avoidance : %d", m_avoidance);
-	DrawFormatString(0, 200, 0xffffff, "m_attack : %d", m_moveAttack);
-	DrawFormatString(0, 220, 0xffffff, "m_rest: %d", m_restAction);
+	//DrawFormatString(0, 100, 0xffffff, "m_playTime : %f", m_playTime);
+	//DrawFormatString(0, 120, 0xffffff, "m_dashMove : %d", m_dashMove);
+	//DrawFormatString(0, 140, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
+	//DrawFormatString(0, 160, 0xffffff, "m_moveflag : %d", m_moveflag);
+	//DrawFormatString(0, 180, 0xffffff, "m_avoidance : %d", m_avoidance);
+	//DrawFormatString(0, 200, 0xffffff, "m_attack : %d", m_moveAttack);
+	//DrawFormatString(0, 220, 0xffffff, "m_rest: %d", m_restAction);
 	//DrawFormatString(0, 220, 0xffffff, "アニメ0 : %d", m_animation[0]);
 	//DrawFormatString(0, 240, 0xffffff, "アニメ1 : %d", m_animation[1]);
 	//DrawFormatString(0, 260, 0xffffff, "アニメ2 : %d", m_animation[2]);
@@ -1461,7 +1543,7 @@ void Player::Draw()
 	//DrawFormatString(0, 360, 0xffffff, "アニメ7 : %d", m_animation[7]);
 	//DrawFormatString(0, 380, 0xffffff, "アニメ8 : %d", m_animation[8]);
 	//DrawFormatString(0, 400, 0xffffff, "アニメ9 : %d", m_animation[9]);
-	//DrawFormatString(150, 300, 0xffffff, "エフェクト : %d", IsEffekseer3DEffectPlaying(m_effectHeel));
+	//DrawFormatString(150, 400, 0xffffff, "SE : %d", a);
 	effect->Draw();
 }
 
@@ -1480,6 +1562,7 @@ void Player::End()
 	MV1DeleteModel(m_animHeel);
 	weapon->End();
 	effect->End();
+	se->End();
 }
 
 bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
@@ -1547,6 +1630,8 @@ bool Player::isSphereHit(const SphereCol& col, const SphereCol& col1, const Sphe
 		//ダメージを一回だけ与える
 		if (m_damageReceived == false)
 		{
+			PlaySoundMem(se->GetHitSE(), DX_PLAYTYPE_BACK, true);
+
 			//回避中のフレームだとダメージを受けない
 			if (m_avoidanceNow == false)
 			{
@@ -1564,6 +1649,8 @@ bool Player::isSphereHit(const SphereCol& col, const SphereCol& col1, const Sphe
 		//ダメージを一回だけ与える
 		if (m_damageReceived == false)
 		{
+			PlaySoundMem(se->GetPlayerHitSE(), DX_PLAYTYPE_BACK, true);
+
 			//回避中のフレームだとダメージを受けない
 			if (m_avoidanceNow == false)
 			{

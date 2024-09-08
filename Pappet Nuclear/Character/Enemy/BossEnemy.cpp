@@ -2,6 +2,12 @@
 #include "Character/Player/Player.h"
 #include "Map/Map.h"
 
+namespace
+{
+	bool attack;    //攻撃SEの判定
+	int walkTime;   //歩くSE間隔
+}
+
 BossEnemy::BossEnemy() :
 	m_gameClear(false),
 	m_bossDistance(false),
@@ -27,7 +33,7 @@ BossEnemy::~BossEnemy()
 void BossEnemy::Init()
 {
 	//敵のHP初期化
-	m_hp = 1200.0f;
+	m_hp = 10.0f;
 
 	//敵の攻撃力初期化
 	m_attack = 30.0f;
@@ -71,17 +77,25 @@ void BossEnemy::Init()
 
 	m_effectActivation = false;
 
+	walkTime = 0;
+
 	//一回だけ初期化する
 	if (m_one == false)
 	{
 		effect->BossInit();
 
+		se->BossInit();
+
 		m_one = true;
+		
 	}
 	
+	attack = false;
+
+	//se->Init();
 }
 
-void BossEnemy::Update(Player& player, Map& map)
+void BossEnemy::Update(Player& player, Map& map, int volume)
 {
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 	m_bossColDistance.Update(m_colPos);
@@ -120,8 +134,21 @@ void BossEnemy::Update(Player& player, Map& map)
 
 	if (m_bossDistance == false && m_bossBattle == true && m_bossMoveAttack == false)
 	{
+		walkTime++;
+
 		//敵が移動する
 		m_pos = VAdd(m_pos, m_move);
+
+		if (walkTime >= 30.0f)
+		{
+			PlaySoundMem(se->GetBossWalkSE(), DX_PLAYTYPE_BACK, true);
+
+			walkTime = 0;
+		}
+	}
+	else
+	{
+		walkTime = 0;
 	}
 
 	//敵が死亡したら
@@ -140,6 +167,9 @@ void BossEnemy::Update(Player& player, Map& map)
 		m_colBossAttackSphere3.Update(m_initializationPos);
 	}
 
+	//マップとの当たり判定用
+	m_mapHitColl = VGet(m_colPos.x, m_colPos.y, m_colPos.z);
+
 	//攻撃判定を正面に持っていく
 	m_colBossAttackPos1.x = m_pos.x + sinf(m_angle) * -75.0f;
 	m_colBossAttackPos1.z = m_pos.z - cosf(m_angle) * 75.0f;
@@ -150,6 +180,8 @@ void BossEnemy::Update(Player& player, Map& map)
 	Action(player);
 
 	Animation(m_playTime);
+
+	se->Update(volume);
 }
 
 void BossEnemy::Action(Player& player)
@@ -185,6 +217,13 @@ void BossEnemy::Action(Player& player)
 
 			if (m_playTime >= 38.0f && m_playTime <= 43.0f)
 			{
+				if (attack == false)
+				{
+					PlaySoundMem(se->GetBossAttackSE1(), DX_PLAYTYPE_BACK, true);
+
+					attack = true;
+				}
+
 				m_colBossAttackSphere1.Update(m_colBossAttackPos1);
 			}
 			else
@@ -202,8 +241,15 @@ void BossEnemy::Action(Player& player)
 
 			if (m_playTime >= 7.0f && m_playTime <= 11.0f)
 			{
+				if (attack == false)
+				{
+					PlaySoundMem(se->GetBossAttackSE2(), DX_PLAYTYPE_BACK, true);
+
+					attack = true;
+				}
+
 				m_colBossAttackSphere2.Update(m_colBossAttackPos2);
-			}
+			}	
 			else
 			{
 				m_colBossAttackSphere2.Update(m_initializationPos);
@@ -217,9 +263,14 @@ void BossEnemy::Action(Player& player)
 				{
 					m_effect = PlayEffekseer3DEffect(effect->GetBossAttackEffect3());
 
-					SetPosPlayingEffekseer3DEffect(m_effect, m_pos.x, 0.0f, m_pos.z);
-
 					m_effectActivation = true;
+				}
+
+				if (attack == false)
+				{
+					PlaySoundMem(se->GetBossAttackSE3(), DX_PLAYTYPE_BACK, true);
+
+					attack = true;
 				}
 			}
 
@@ -233,6 +284,9 @@ void BossEnemy::Action(Player& player)
 			}
 		}
 	}
+
+	//エフェクトポジション更新
+	SetPosPlayingEffekseer3DEffect(m_effect, m_pos.x, 0.0f, m_pos.z);
 
 	//エフェクト更新
 	effect->Update();
@@ -411,6 +465,8 @@ void BossEnemy::Animation(float& time)
 
 			m_bossAttack = -1;
 
+			PlaySoundMem(se->GetBossVoiceSE(), DX_PLAYTYPE_BACK, true);
+
 			//アニメーションアタッチ
 			m_bossAnimation[0] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimStand, TRUE);
 
@@ -447,6 +503,8 @@ void BossEnemy::Animation(float& time)
 
 		m_bossAttack1 = false;
 
+		attack = false;
+
 		time = 0.0f;
 	}
 	if (time >= m_bossTotalAnimTime[5] && m_bossAnimation[5] != -1)
@@ -454,6 +512,8 @@ void BossEnemy::Animation(float& time)
 		m_bossMoveAttack = false;
 
 		m_bossAttack2 = false;
+
+		attack = false;
 
 		time = 0.0f;
 	}
@@ -464,6 +524,8 @@ void BossEnemy::Animation(float& time)
 		m_bossAttack3 = false;
 
 		m_effectActivation = false;
+
+		attack = false;
 
 		time = 0.0f;
 	}
@@ -492,6 +554,138 @@ void BossEnemy::Animation(float& time)
 	{
 		MV1SetAttachAnimTime(m_bossModelHandle, m_bossAnimation[6], time);
 	}
+}
+
+void BossEnemy::MapHit(Map& map)
+{
+	int j;
+
+	//プレイヤーの周囲にあるコリジョンのポリゴンを取得する
+	HitDim = MV1CollCheck_Sphere(map.GetCollisionMap(), -1, map.GetVectorMapPos(), 1500.0f);
+
+	//検出されたポリゴンが壁ポリゴン(XZ平面に垂直なポリゴン)か床ポリゴン(XZ平面に垂直ではないポリゴン)かを判断する
+	for (int i = 0; i < HitDim.HitNum; i++)
+	{
+		//XZ平面に垂直かどうかはポリゴンの法線のY成分が0に限りなく近いかどうかで判断する
+		if (HitDim.Dim[i].Normal.y < 0.000001f && HitDim.Dim[i].Normal.y > -0.0000001f)
+		{
+			if (HitDim.Dim[i].Position[0].y > m_pos.y + 1.0f ||
+				HitDim.Dim[i].Position[1].y > m_pos.y + 1.0f ||
+				HitDim.Dim[i].Position[2].y > m_pos.y + 1.0f)
+			{
+				//ポリゴンの数が列挙できる限界数に達していなかったらポリゴンを配列に追加
+				if (m_WallNum < PLAYER_MAX_HITCOLL)
+				{
+					//ポリゴンの構造体のアドレスを壁ポリゴンポインタ配列に保存する
+					m_Wall[m_WallNum] = &HitDim.Dim[i];
+
+					//壁ポリゴンの数を加算する
+					m_WallNum++;
+				}
+			}
+		}
+	}
+
+	//壁ポリゴンと当たり判定処理
+	if (m_WallNum != 0)
+	{
+		//壁に当たったかどうかのフラグは初期状態では「当たっていない」にしておく
+		m_HitFlag = false;
+
+		//移動したかどうかで処理を分岐
+		if (m_moveflag == true)
+		{
+			//壁ポリゴンの数だけ繰り返し
+			for (int i = 0; i < m_WallNum; i++)
+			{
+				//i番目の壁ポリゴンのアドレスを壁ポリゴンポインタ配列から取得
+				m_Poly = m_Wall[i];
+
+				//ポリゴンとプレイヤーが当たっていなかったら次のカウントへ
+				if (HitCheck_Capsule_Triangle(m_mapHitColl, VAdd(m_mapHitColl, VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == false) continue;
+
+				//ここにきたらポリゴンとプレイヤーが当たっているということなので、ポリゴンに当たったフラグを立てる
+				m_HitFlag = true;
+
+				//新たな移動座標で壁ポリゴンと当たっていないかどうかを判定する
+				for (j = 0; j < m_WallNum; j++)
+				{
+					//j番目の壁ポリゴンと当たっていないかどうかを判定する
+					m_Poly = m_Wall[j];
+
+					//当たっていたらループから抜ける
+					if (HitCheck_Capsule_Triangle(m_mapHitColl, VAdd(m_mapHitColl, VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == true) break;
+				}
+
+				//jがm_WallNumだった場合はどのポリゴンとも当たらなかったということなので
+				//壁に当たったフラグを倒したうえでループから抜ける
+				if (j == m_WallNum)
+				{
+					m_HitFlag = false;
+					break;
+				}
+
+			}
+		}
+		else
+		{
+			//移動していない場合の処理
+
+			//壁ポリゴンの数だけ繰り返し
+			for (int i = 0; i < m_WallNum; i++)
+			{
+				//i番目の壁ポリゴンのアドレスを壁ポリゴンポインタ配列から取得
+				m_Poly = m_Wall[i];
+
+				//ポリゴンに当たっていたら当たったフラグを立てた上でループから抜ける
+				if (HitCheck_Capsule_Triangle(m_mapHitColl, VAdd(m_mapHitColl, VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == true)
+				{
+					m_HitFlag = true;
+					break;
+				}
+
+			}
+		}
+
+		//壁に当たっていたら壁から押し出す処理を行う
+		if (m_HitFlag == true)
+		{
+			//壁からの押し出し処理を試みる最大数だけ繰り返す
+			for (int i = 0; i < PLAYER_MAX_HITCOLL; i++)
+			{
+				//壁ポリゴンの数だけ繰り返し
+				for (int k = 0; k < m_WallNum; k++)
+				{
+					//j番目の壁ポリゴンのアドレスを壁ポリゴンポインタ配列から取得
+					m_Poly = m_Wall[k];
+
+					//プレイヤーと当たっているか判定
+					if (HitCheck_Capsule_Triangle(m_mapHitColl, VAdd(m_mapHitColl, VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == false) continue;
+
+					//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
+					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed));
+
+					//移動した上で壁ポリゴンと接触しているかどうかを判定
+					for (j = 0; j < m_WallNum; j++)
+					{
+						//当たっていたらループを抜ける
+						m_Poly = m_Wall[j];
+						if (HitCheck_Capsule_Triangle(m_mapHitColl, VAdd(m_mapHitColl, VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == true) break;
+
+					}
+
+					//すべてのポリゴンと当たっていなかったらループ終了
+					if (j == m_WallNum) break;
+				}
+
+				//iがm_WallNumではない場合は全部のポリゴンで押し出しを試みる前にすべての壁ポリゴンと接触しなくなったということなのでループから抜ける
+				if (i != m_WallNum) break;
+			}
+		}
+	}
+
+	//検出したプレイヤーの周囲のポリゴン情報を解放する
+	MV1CollResultPolyDimTerminate(HitDim);
 }
 
 void BossEnemy::Draw()

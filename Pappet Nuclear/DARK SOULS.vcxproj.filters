@@ -156,6 +156,9 @@
     <ClCompile Include="BGM・SE\BgmAndSeManager.cpp">
       <Filter>ソース ファイル\BGM・SE</Filter>
     </ClCompile>
+    <ClCompile Include="BGM・SE\SEManager.cpp">
+      <Filter>ソース ファイル\BGM・SE</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneBase.h">
@@ -228,6 +231,9 @@
       <Filter>ヘッダー ファイル\Character\Player</Filter>
     </ClInclude>
     <ClInclude Include="BGM・SE\BgmAndSeManager.h">
+      <Filter>ヘッダー ファイル\BGM・SE</Filter>
+    </ClInclude>
+    <ClInclude Include="BGM・SE\SEManager.h">
       <Filter>ヘッダー ファイル\BGM・SE</Filter>
     </ClInclude>
   </ItemGroup>

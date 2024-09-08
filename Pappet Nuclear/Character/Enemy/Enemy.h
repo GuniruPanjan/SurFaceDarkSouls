@@ -13,8 +13,11 @@ public:
 	virtual ~Enemy();
 
 	void Init(int max);
-	void Update(Player& player, Map& map, int max);
-	void BossUpdate(Player& player, Map& map);
+	void BossInit();
+	void Update(Player& player, Map& map, int max, int volume);
+	void BossUpdate(Player& player, Map& map, int volume);
+	void MapHitWenemy(Map& map, int max);
+	void MapHitBoss(Map& map);
 	void Draw(int max);
 	void BossDraw();
 	void End(int max);
@@ -44,7 +47,7 @@ public:
 	float GetPosZ(int max) { return enemy->GetPosZ(max); }
 	float GetDamage() { return enemy->GetDamage(); }
 	CapsuleCol GetCol(int max) const { return enemy->GetCol(max); }
-	SphereCol GetAttackCol(int max) const { return enemy->GetAttackCol(max); }
+	SphereCol GetAttackCol(int max);
 	bool isSphereHit(SphereCol col, float damage, int max) { return enemy->isSphereHit(col, damage,max); }
 	bool isSeachHit(CapsuleCol col, int max) { return enemy->isSeachHit(col,max); }
 	bool isDistanceHit(CapsuleCol col, int max) { return enemy->isDistanceHit(col,max); }

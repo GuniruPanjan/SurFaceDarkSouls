@@ -6,9 +6,8 @@
 namespace
 {
 	//敵とプレイヤーの座標の差を求める
-	float difX[ENEMY_NOW];
-	float difZ[ENEMY_NOW];
-
+	VECTOR dif[ENEMY_NOW];
+	float difSize[ENEMY_NOW];
 }
 
 
@@ -59,27 +58,13 @@ void Camera::Update(Player& player)
 		//左キー
 		if (input.Rx < 0)
 		{
-			if (m_HitFlag == true)
-			{
-				m_cameraAngle.y -= D2R(1.0f);
-			}
-			else
-			{
-				m_cameraAngle.y += D2R(1.0f);
-			}
+			m_cameraAngle.y -= D2R(1.0f);
 			
 		}
 		//右キー
 		if (input.Rx > 0)
 		{
-			if (m_HitFlag == true)
-			{
-				m_cameraAngle.y += D2R(1.0f);
-			}
-			else
-			{
-				m_cameraAngle.y -= D2R(1.0f);
-			}
+			m_cameraAngle.y += D2R(1.0f);
 			
 		}
 		//上キー
@@ -129,6 +114,20 @@ void Camera::Update(Player& player)
 
 void Camera::LockUpdate(Player& player, Enemy& enemy, int max)
 {
+	//敵の距離がプレイヤーに近いやつをロックするようにする
+	dif[0] = VSub(enemy.GetPos(0), player.GetPos());
+	dif[1] = VSub(enemy.GetPos(1), player.GetPos());
+	dif[2] = VSub(enemy.GetPos(2), player.GetPos());
+	dif[3] = VSub(enemy.GetPos(3), player.GetPos());
+	dif[4] = VSub(enemy.GetPos(4), player.GetPos());
+
+	difSize[0] = VSize(dif[0]);
+	difSize[1] = VSize(dif[1]);
+	difSize[2] = VSize(dif[2]);
+	difSize[3] = VSize(dif[3]);
+	difSize[4] = VSize(dif[4]);
+
+
 	//ロックオンしたとき
 	if (player.GetLock() == true)
 	{
@@ -170,53 +169,124 @@ void Camera::LockUpdate(Player& player, Enemy& enemy, int max)
 		//ボス戦以外のターゲット
 		if (enemy.GetBattale() == false)
 		{
-			//敵の距離がプレイヤーに近いやつをロックするようにする
+			//一番目の敵をターゲット
+			if (difSize[0] < difSize[1] && difSize[0] < difSize[2] && difSize[0] < difSize[3] &&
+				difSize[0] < difSize[4])
+			{
+				WeakLockUpdate(player, enemy, 0);
+			}
+			//2番目の敵をターゲット
+			if (difSize[1] < difSize[0] && difSize[1] < difSize[2] && difSize[1] < difSize[3] &&
+				difSize[1] < difSize[4])
+			{
+				WeakLockUpdate(player, enemy, 1);
+			}
+			//3番目の敵をターゲット
+			if (difSize[2] < difSize[1] && difSize[2] < difSize[0] && difSize[2] < difSize[3] &&
+				difSize[2] < difSize[4])
+			{
+				WeakLockUpdate(player, enemy, 2);
+			}
+			//4番目の敵をターゲット
+			if (difSize[3] < difSize[1] && difSize[3] < difSize[2] && difSize[3] < difSize[0] &&
+				difSize[3] < difSize[4])
+			{
+				WeakLockUpdate(player, enemy, 3);
+			}
+			//5番目の敵をターゲット
+			if (difSize[4] < difSize[1] && difSize[4] < difSize[2] && difSize[4] < difSize[3] &&
+				difSize[4] < difSize[0])
+			{
+				WeakLockUpdate(player, enemy, 4);
+			}
 
-			//注視点は敵の座標にする
-			m_cameraTarget = VAdd(enemy.GetPos(max), VGet(0.0f, 20.0f, 0.0f));
+			////注視点は敵の座標にする
+			//m_cameraTarget = VAdd(enemy.GetPos(max), VGet(0.0f, 20.0f, 0.0f));
 
-			//プレイヤーとエネミーのX座標の差を求める
-			float X = enemy.GetPosX(max) - player.GetPosX();
+			////プレイヤーとエネミーのX座標の差を求める
+			//float X = enemy.GetPosX(max) - player.GetPosX();
 
-			//プレイヤーとエネミーのZ座標の差を求める
-			float Z = enemy.GetPosZ(max) - player.GetPosZ();
+			////プレイヤーとエネミーのZ座標の差を求める
+			//float Z = enemy.GetPosZ(max) - player.GetPosZ();
 
-			//角度を出す
-			float angle = atan2f(X, Z);
+			////角度を出す
+			//float angle = atan2f(X, Z);
 
-			m_x = X;
-			m_z = Z;
+			//m_x = X;
+			//m_z = Z;
 
-			//敵からプレイヤーに伸びる基準のベクトルを求める
-			VECTOR pos = VSub(player.GetPos(), enemy.GetPos(max));
+			////敵からプレイヤーに伸びる基準のベクトルを求める
+			//VECTOR pos = VSub(player.GetPos(), enemy.GetPos(max));
 
-			//ベクトルの正規化
-			VECTOR posTarget = VNorm(pos);
+			////ベクトルの正規化
+			//VECTOR posTarget = VNorm(pos);
 
-			posTarget.x *= 130.0f;
-			posTarget.z *= 130.0f;
+			//posTarget.x *= 130.0f;
+			//posTarget.z *= 130.0f;
 
-			//カメラがどれだけプレイヤーの座標より高いかを設定
-			posTarget.y = 80.0f;
+			////カメラがどれだけプレイヤーの座標より高いかを設定
+			//posTarget.y = 80.0f;
 
-			m_cameraAngle.y = angle;
+			//m_cameraAngle.y = angle;
 
-			//プレイヤーの座標に求めたベクトルを足して、カメラの座標とする
-			m_cameraPos = VAdd(player.GetPos(), posTarget);
+			////プレイヤーの座標に求めたベクトルを足して、カメラの座標とする
+			//m_cameraPos = VAdd(player.GetPos(), posTarget);
 		}
 
 	}
+}
 
-	difX[max] = enemy.GetPos(max).x - player.GetPos().x;
-	difZ[max] = enemy.GetPos(max).z - player.GetPos().z;
+void Camera::WeakLockUpdate(Player& player, Enemy& enemy, int weak)
+{
+	//注視点は敵の座標にする
+	m_cameraTarget = VAdd(enemy.GetPos(weak), VGet(0.0f, 20.0f, 0.0f));
+
+	//プレイヤーとエネミーのX座標の差を求める
+	float X = enemy.GetPosX(weak) - player.GetPosX();
+
+	//プレイヤーとエネミーのZ座標の差を求める
+	float Z = enemy.GetPosZ(weak) - player.GetPosZ();
+
+	//角度を出す
+	float angle = atan2f(X, Z);
+
+	m_x = X;
+	m_z = Z;
+
+	//敵からプレイヤーに伸びる基準のベクトルを求める
+	VECTOR pos = VSub(player.GetPos(), enemy.GetPos(weak));
+
+	//ベクトルの正規化
+	VECTOR posTarget = VNorm(pos);
+
+	posTarget.x *= 130.0f;
+	posTarget.z *= 130.0f;
+
+	//カメラがどれだけプレイヤーの座標より高いかを設定
+	posTarget.y = 80.0f;
+
+	m_cameraAngle.y = angle;
+
+	//プレイヤーの座標に求めたベクトルを足して、カメラの座標とする
+	m_cameraPos = VAdd(player.GetPos(), posTarget);
 }
 
 void Camera::HitObj(Map& map)
 {
 	int j;
 
+	//プレイヤーの座標からカメラの方向ベクトルを計算する
+	auto playerToCamera = VSub(m_cameraPos, m_cameraTarget);
+
+	//向きと大きさに分ける
+	auto vec = VNorm(playerToCamera);
+	auto length = VSize(playerToCamera);
+
 	//プレイヤーの周囲にあるコリジョンのポリゴンを取得する
 	HitDim = MV1CollCheck_Sphere(map.GetCollisionMap(), -1, map.GetVectorMapPos(), 1500.0f);
+
+	//検出したプレイヤーの周囲のポリゴン情報を解放する
+	MV1CollResultPolyDimTerminate(HitDim);
 
 	//検出されたポリゴンが壁ポリゴン(XZ平面に垂直なポリゴン)か床ポリゴン(XZ平面に垂直ではないポリゴン)かを判断する
 	for (int i = 0; i < HitDim.HitNum; i++)
@@ -225,21 +295,19 @@ void Camera::HitObj(Map& map)
 		if (HitDim.Dim[i].Normal.y < 0.000001f && HitDim.Dim[i].Normal.y > -0.0000001f)
 		{
 
-			//ポリゴンの数が列挙できる限界数に達していなかったらポリゴンを配列に追加
-			if (m_WallNum < PLAYER_MAX_HITCOLL)
-			{
-				//ポリゴンの構造体のアドレスを壁ポリゴンポインタ配列に保存する
-				m_Wall[m_WallNum] = &HitDim.Dim[i];
-
-				//壁ポリゴンの数を加算する
-				m_WallNum++;
-			}
-
 			if (HitDim.Dim[i].Position[0].y > m_cameraPos.y + 1.0f ||
 				HitDim.Dim[i].Position[1].y > m_cameraPos.y + 1.0f ||
 				HitDim.Dim[i].Position[2].y > m_cameraPos.y + 1.0f)
 			{
-				
+				//ポリゴンの数が列挙できる限界数に達していなかったらポリゴンを配列に追加
+				if (m_WallNum < PLAYER_MAX_HITCOLL)
+				{
+					//ポリゴンの構造体のアドレスを壁ポリゴンポインタ配列に保存する
+					m_Wall[m_WallNum] = &HitDim.Dim[i];
+
+					//壁ポリゴンの数を加算する
+					m_WallNum++;
+				}
 			}
 		}
 	}
@@ -299,16 +367,6 @@ void Camera::HitObj(Map& map)
 
 		}
 
-		//移動したかどうかで処理を分岐
-		//if (m_moveflag == true)
-		//{
-		//	
-		//}
-		//else
-		//{
-	
-		//}
-
 		//壁に当たっていたら壁から押し出す処理を行う
 		if (m_HitFlag == true)
 		{
@@ -325,7 +383,13 @@ void Camera::HitObj(Map& map)
 					if (HitCheck_Sphere_Triangle(m_cameraPos, m_radius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == false) continue;
 
 					//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
-					m_cameraPos = VAdd(m_cameraPos, VScale(m_Poly->Normal, 1.0f));
+					//m_cameraPos = VAdd(m_cameraPos, VScale(m_Poly->Normal, 1.0f));
+					//距離を縮める
+					length *= 0.998f;
+
+					auto checkPos = VAdd(m_cameraPos, VScale(vec, length));
+
+					m_cameraPos = checkPos;
 
 					//移動した上で壁ポリゴンと接触しているかどうかを判定
 					for (j = 0; j < m_WallNum; j++)
@@ -345,18 +409,15 @@ void Camera::HitObj(Map& map)
 			}
 		}
 	}
-
-	//検出したプレイヤーの周囲のポリゴン情報を解放する
-	MV1CollResultPolyDimTerminate(HitDim);
 }
 
 void Camera::Draw()
 {
-	DrawFormatString(0, 240, 0xffffff, "dif1.x : %f,dif1.z : %f", difX[0], difZ[0]);
-	DrawFormatString(0, 260, 0xffffff, "dif2.x : %f,dif2.z : %f", difX[1], difZ[1]);
-	DrawFormatString(0, 280, 0xffffff, "dif3.x : %f,dif3.z : %f", difX[2], difZ[2]);
-	DrawFormatString(0, 300, 0xffffff, "dif4.x : %f,dif4.z : %f", difX[3], difZ[3]);
-	DrawFormatString(0, 320, 0xffffff, "dif5.x : %f,dif5.z : %f", difX[4], difZ[4]);
+	//DrawFormatString(0, 240, 0xffffff, "dif1.x : %f,dif1.z : %f", difX[0], difZ[0]);
+	//DrawFormatString(0, 260, 0xffffff, "dif2.x : %f,dif2.z : %f", difX[1], difZ[1]);
+	//DrawFormatString(0, 280, 0xffffff, "dif3.x : %f,dif3.z : %f", difX[2], difZ[2]);
+	//DrawFormatString(0, 300, 0xffffff, "dif4.x : %f,dif4.z : %f", difX[3], difZ[3]);
+	//DrawFormatString(0, 320, 0xffffff, "dif5.x : %f,dif5.z : %f", difX[4], difZ[4]);
 
 }
 

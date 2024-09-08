@@ -40,10 +40,15 @@ SceneTitle::~SceneTitle()
 
 void SceneTitle::Init()
 {
-	m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitle.png", 30, 30);
-	m_start = MyLoadGraph("Data/UI/STARTButton.png", 30, 30);
-	m_setting = MyLoadGraph("Data/UI/SettingButton.png", 30, 30);
-	m_end = MyLoadGraph("Data/UI/EndButton.png", 30, 30);
+	//m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitle.png", 30, 30);
+	//m_start = MyLoadGraph("Data/UI/STARTButton.png", 30, 30);
+	//m_setting = MyLoadGraph("Data/UI/SettingButton.png", 30, 30);
+	//m_end = MyLoadGraph("Data/UI/EndButton.png", 30, 30);
+	m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitle.png", 14, 14);
+	m_start = MyLoadGraph("Data/UI/STARTButton.png", 14, 14);
+	m_setting = MyLoadGraph("Data/UI/SettingButton.png", 14, 14);
+	m_end = MyLoadGraph("Data/UI/EndButton.png", 14, 14);
+
 	m_playerHandle = MV1LoadModel("Data/Player/PlayerModel.mv1");
 	m_anim = MV1LoadModel("Data/PlayerAnimation/JumpingDown.mv1");
 
@@ -71,8 +76,11 @@ void SceneTitle::Init()
 
 	map->Init();
 
+	//設定関係
 	setting->Init();
-	
+	bgmse->TitleInit();
+	bgmse->TitleBGM();
+	se->SceneInit();
 
 	m_one = false;
 	m_blend = false;
@@ -115,6 +123,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			m_select[2] = 1;
 			m_select[0] = 0;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_blend = false;
 
 			m_one = true;
@@ -124,6 +134,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			m_select[0] = 1;
 			m_select[1] = 0;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_blend = false;
 
 			m_one = true;
@@ -132,6 +144,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 		{
 			m_select[1] = 1;
 			m_select[2] = 0;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
 
 			m_blend = false;
 
@@ -144,6 +158,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			m_select[1] = 1;
 			m_select[0] = 0;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_blend = false;
 
 			m_one = true;
@@ -153,6 +169,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			m_select[2] = 1;
 			m_select[1] = 0;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_blend = false;
 
 			m_one = true;
@@ -161,6 +179,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 		{
 			m_select[0] = 1;
 			m_select[2] = 0;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
 
 			m_blend = false;
 
@@ -172,6 +192,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			//Aボタン押したら
 			if (m_xpad.Buttons[12] == 1 && m_select[0] == 1)
 			{
+				PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
 				return std::make_shared<SceneGame>();
 
 				map->End();
@@ -179,6 +201,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			//設定シーン
 			if (m_xpad.Buttons[12] == 1 && m_select[1] == 1)
 			{
+				PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
 				m_setButton = true;
 
 				m_waitTime = 0;
@@ -188,6 +212,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			//終了
 			if (m_xpad.Buttons[12] == 1 && m_select[2] == 1)
 			{
+				PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
 				DxLib_End();
 			}
 		}
@@ -301,6 +327,9 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 		MV1SetAttachAnimTime(m_playerHandle, m_animation, m_playTime);
 	}
 
+	bgmse->Update(setting->GetVolume());
+	se->Update(setting->GetVolume());
+
 	SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
 
 	return shared_from_this();  //自身のポインタを返す
@@ -319,15 +348,26 @@ void SceneTitle::Draw()
 	//3Dモデルの回転地をセットする
 	MV1SetRotationXYZ(m_playerHandle, VGet(0.0f, 160.0f, 0.0f));
 
-	DrawGraph(-50, 0, m_backScene, TRUE);
+	//DrawGraph(-50, 0, m_backScene, TRUE);
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[0]);
+	//DrawGraph(200, 220, m_start, TRUE);
+	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[1]);
+	//DrawGraph(200, 280, m_setting, TRUE);
+	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[2]);
+	//DrawGraph(200, 340, m_end, TRUE);
+	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	DrawGraph(0, -10, m_backScene, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[0]);
-	DrawGraph(200, 220, m_start, TRUE);
+	DrawGraph(550, 450, m_start, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[1]);
-	DrawGraph(200, 280, m_setting, TRUE);
+	DrawGraph(550, 570, m_setting, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[2]);
-	DrawGraph(200, 340, m_end, TRUE);
+	DrawGraph(550, 690, m_end, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	//設定画面を描画
@@ -350,4 +390,7 @@ void SceneTitle::End()
 	DeleteGraph(m_end);
 	MV1DeleteModel(m_playerHandle);
 	MV1DeleteModel(m_anim);
+	setting->End();
+	bgmse->End();
+	se->End();
 }

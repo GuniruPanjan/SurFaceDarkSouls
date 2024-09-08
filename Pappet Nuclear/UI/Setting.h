@@ -1,5 +1,7 @@
 #pragma once
+#include "BGMESE/SEManager.h"
 #include "DxLib.h"
+#include<memory>
 
 class Setting
 {
@@ -14,6 +16,7 @@ public:
 	void End();
 
 	int MyLoadGraph(const char* FileName, int XSize, int YSize);
+	int GetVolume() { return m_volumeSize; }
 
 	bool GetSettingScene() { return m_settingScene; }
 	bool SetSettingScene(bool scene) { return m_settingScene = scene; }
@@ -40,5 +43,8 @@ private:
 	bool m_settingScene;    //İ’è‚·‚é‚½‚ß‚Ì‰æ–Ê‚ğŒÄ‚Ô•Ï”
 	bool m_brightness;      //–¾‚é‚³İ’è
 	bool m_volume;          //‰¹—Êİ’è
+	int m_volumeSize;         //‰¹—Ê
+
+	std::shared_ptr<SEManager> se = std::make_shared<SEManager>();
 };
 

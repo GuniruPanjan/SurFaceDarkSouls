@@ -11,7 +11,10 @@ public:
 
 	void Init(Player& player, Enemy& enemy);
 	void Draw(Player& player, Enemy& enemy);
+	void DiedDraw();
 	void End();
+
+	int MyLoadGraph(const char* FileName, int XSize, int YSize);
 
 private:
 	unsigned int m_hpColor = 0xff0000;
@@ -44,6 +47,7 @@ private:
 	float m_ItemColumn2Y2;
 	int m_heelStone;
 	int m_fist;
+	int m_youDied;
 
 	//ìGÇÃUIïœêî
 	float m_enemyBossHpCover;

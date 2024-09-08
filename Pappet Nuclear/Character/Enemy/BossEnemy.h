@@ -8,9 +8,10 @@ public:
 	virtual ~BossEnemy();
 
 	void Init();
-	void Update(Player& player, Map& map);
+	void Update(Player& player, Map& map, int volume);
 	void Action(Player& player);
 	void Animation(float& time);
+	void MapHit(Map& map);
 	void Draw();
 	void End();
 

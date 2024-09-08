@@ -8,11 +8,19 @@ SceneClear::SceneClear():
 
 SceneClear::~SceneClear()
 {
+	//メモリ解放
+	DeleteGraph(m_backScene);
 }
 
 void SceneClear::Init()
 {
+	//m_backScene = MyLoadGraph("Data/SceneBack/CLEARBack.png", 10, 10);
+	m_backScene = MyLoadGraph("Data/SceneBack/CLEARBack.png", 3, 3);
+
+	//設定関係
 	setting->Init();
+	bgmse->ClearInit();
+	bgmse->ClearBGM();
 }
 
 std::shared_ptr<SceneBase> SceneClear::Update()
@@ -26,14 +34,26 @@ std::shared_ptr<SceneBase> SceneClear::Update()
 		return std::make_shared<SceneTitle>();
 	}
 
+	bgmse->Update(setting->GetVolume());
+
 	return shared_from_this();  //自身のポインタを返す
 }
 
 void SceneClear::Draw()
 {
-	DrawString(240, 300, "Clear", 0xffffff);
+	//DrawString(240, 300, "Clear", 0xffffff);
+
+	//DrawGraph(220, 100, m_backScene, false);
+
+	DrawGraph(430, 100, m_backScene, false);
+
+	setting->SettingDraw();
 }
 
 void SceneClear::End()
 {
+	//メモリ解放
+	DeleteGraph(m_backScene);
+	setting->End();
+	bgmse->End();
 }

@@ -17,6 +17,7 @@ public:
 	virtual void End();
 
 private:
+	bool m_one;    //一回だけ実行
 	//ポインタで管理
 	std::shared_ptr<Player> player = std::make_shared<Player>();
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>();

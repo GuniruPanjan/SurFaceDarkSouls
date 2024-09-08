@@ -1,5 +1,6 @@
 #pragma once
 #include "DxLib.h"
+#include "BGM・SE/SEManager.h"
 #include "Character/Effect/Effect.h"
 #include "Col/CapsuleCol.h"
 #include "Col/SphereCol.h"
@@ -7,7 +8,7 @@
 //だいたいのアニメーション
 #define  ANIMATION   30
 #define D2R(deg) ((deg)*DX_PI_F/180.0f)
-#define PLAYER_MAX_HITCOLL  260    //処理するコリジョンポリゴンの最大数
+#define PLAYER_MAX_HITCOLL  500    //処理するコリジョンポリゴンの最大数
 
 class Map;   //マップクラス
 
@@ -142,4 +143,6 @@ protected:
 	MV1_COLL_RESULT_POLY* m_Wall[PLAYER_MAX_HITCOLL];     //壁ポリゴンと判断されたポリゴンの構造体のアドレスを保存しておくためのポインタ配列
 	MV1_COLL_RESULT_POLY* m_Floor[PLAYER_MAX_HITCOLL];    //床ポリゴンと判断されたポリゴンの構造体のアドレスを保存しておくためのポインタ配列
 	MV1_COLL_RESULT_POLY* m_Poly;  //ポリゴンの構造体にアクセスするためにしようするポインタ
+
+	std::shared_ptr<SEManager> se = std::make_shared<SEManager>();
 };

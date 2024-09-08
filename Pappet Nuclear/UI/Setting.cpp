@@ -21,7 +21,8 @@ Setting::Setting():
 	m_one(false),
 	m_settingScene(false),
 	m_brightness(false),
-	m_volume(false)
+	m_volume(false),
+	m_volumeSize(0)
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -46,8 +47,12 @@ Setting::~Setting()
 
 void Setting::Init()
 {
+	//m_black = LoadGraph("Data/SceneBack/Black.png");
+	//m_back = MyLoadGraph("Data/SceneBack/Black.png", 15, 15);
+	//m_white = LoadGraph("Data/SceneBack/White.png");
+
 	m_black = LoadGraph("Data/SceneBack/Black.png");
-	m_back = MyLoadGraph("Data/SceneBack/Black.png", 13, 13);
+	m_back = MyLoadGraph("Data/SceneBack/Black.png", 5, 6);
 	m_white = LoadGraph("Data/SceneBack/White.png");
 
 	m_select[0] = 1;
@@ -78,6 +83,7 @@ void Setting::Init()
 	m_volumeColor[3] = 0xffffff;
 	m_volumeColor[4] = 0xffffff;
 
+	m_volumeSize = 130;
 
 	m_button = 0;
 	m_thumb = 0;
@@ -92,6 +98,8 @@ void Setting::Init()
 
 	m_blackPal = 0;
 	m_whitePal = 0;
+
+	se->SceneInit();
 }
 
 void Setting::Update()
@@ -137,6 +145,8 @@ void Setting::Update()
 			m_select[2] = 1;
 			m_select[0] = 0;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_one = true;
 		}
 		if (m_select[1] == 1 && m_button > 0 && m_one == false &&
@@ -145,6 +155,8 @@ void Setting::Update()
 			m_select[0] = 1;
 			m_select[1] = 0;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_one = true;
 		}
 		if (m_select[2] == 1 && m_button > 0 && m_one == false &&
@@ -152,6 +164,8 @@ void Setting::Update()
 		{
 			m_select[1] = 1;
 			m_select[2] = 0;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
 
 			m_one = true;
 		}
@@ -163,6 +177,8 @@ void Setting::Update()
 			m_select[1] = 1;
 			m_select[0] = 0;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_one = true;
 		}
 		if (m_select[1] == 1 && m_button < 0 && m_one == false &&
@@ -171,6 +187,8 @@ void Setting::Update()
 			m_select[2] = 1;
 			m_select[1] = 0;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_one = true;
 		}
 		if (m_select[2] == 1 && m_button < 0 && m_one == false &&
@@ -178,6 +196,8 @@ void Setting::Update()
 		{
 			m_select[0] = 1;
 			m_select[2] = 0;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
 
 			m_one = true;
 		}
@@ -189,6 +209,8 @@ void Setting::Update()
 			m_brightSelect[0] = 0;
 			m_brightSelect[1] = 1;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_one = true;
 		}
 		if (m_brightSelect[1] == 1 && m_thumb > 0 && m_one == false &&
@@ -196,6 +218,8 @@ void Setting::Update()
 		{
 			m_brightSelect[1] = 0;
 			m_brightSelect[2] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
 
 			m_one = true;
 		}
@@ -205,6 +229,8 @@ void Setting::Update()
 			m_brightSelect[2] = 0;
 			m_brightSelect[3] = 1;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_one = true;
 		}
 		if (m_brightSelect[3] == 1 && m_thumb > 0 && m_one == false &&
@@ -213,6 +239,8 @@ void Setting::Update()
 			m_brightSelect[3] = 0;
 			m_brightSelect[4] = 1;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_one = true;
 		}
 		if (m_brightSelect[4] == 1 && m_thumb > 0 && m_one == false &&
@@ -220,6 +248,8 @@ void Setting::Update()
 		{
 			m_brightSelect[4] = 0;
 			m_brightSelect[0] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
 
 			m_one = true;
 		}
@@ -230,6 +260,8 @@ void Setting::Update()
 			m_brightSelect[0] = 0;
 			m_brightSelect[4] = 1;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_one = true;
 		}
 		if (m_brightSelect[1] == 1 && m_thumb < 0 && m_one == false &&
@@ -237,6 +269,8 @@ void Setting::Update()
 		{
 			m_brightSelect[1] = 0;
 			m_brightSelect[0] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
 
 			m_one = true;
 		}
@@ -246,6 +280,8 @@ void Setting::Update()
 			m_brightSelect[2] = 0;
 			m_brightSelect[1] = 1;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_one = true;
 		}
 		if (m_brightSelect[3] == 1 && m_thumb < 0 && m_one == false &&
@@ -253,6 +289,8 @@ void Setting::Update()
 		{
 			m_brightSelect[3] = 0;
 			m_brightSelect[2] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
 
 			m_one = true;
 		}
@@ -262,8 +300,113 @@ void Setting::Update()
 			m_brightSelect[4] = 0;
 			m_brightSelect[3] = 1;
 
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
 			m_one = true;
 		}
+		//右選択(音量)
+		if (m_volumeSelect[0] == 1 && m_thumb > 0 && m_one == false &&
+			m_volume == true && m_brightness == false)
+		{
+			m_volumeSelect[0] = 0;
+			m_volumeSelect[1] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+			m_one = true;
+		}
+		if (m_volumeSelect[1] == 1 && m_thumb > 0 && m_one == false &&
+			m_volume == true && m_brightness == false)
+		{
+			m_volumeSelect[1] = 0;
+			m_volumeSelect[2] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+			m_one = true;
+		}
+		if (m_volumeSelect[2] == 1 && m_thumb > 0 && m_one == false &&
+			m_volume == true && m_brightness == false)
+		{
+			m_volumeSelect[2] = 0;
+			m_volumeSelect[3] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+			m_one = true;
+		}
+		if (m_volumeSelect[3] == 1 && m_thumb > 0 && m_one == false &&
+			m_volume == true && m_brightness == false)
+		{
+			m_volumeSelect[3] = 0;
+			m_volumeSelect[4] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+			m_one = true;
+		}
+		if (m_volumeSelect[4] == 1 && m_thumb > 0 && m_one == false &&
+			m_volume == true && m_brightness == false)
+		{
+			m_volumeSelect[4] = 0;
+			m_volumeSelect[0] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+			m_one = true;
+		}
+		//左選択(音量)
+		if (m_volumeSelect[0] == 1 && m_thumb < 0 && m_one == false &&
+			m_volume == true && m_brightness == false)
+		{
+			m_volumeSelect[0] = 0;
+			m_volumeSelect[4] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+			m_one = true;
+		}
+		if (m_volumeSelect[1] == 1 && m_thumb < 0 && m_one == false &&
+			m_volume == true && m_brightness == false)
+		{
+			m_volumeSelect[1] = 0;
+			m_volumeSelect[0] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+			m_one = true;
+		}
+		if (m_volumeSelect[2] == 1 && m_thumb < 0 && m_one == false &&
+			m_volume == true && m_brightness == false)
+		{
+			m_volumeSelect[2] = 0;
+			m_volumeSelect[1] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+			m_one = true;
+		}
+		if (m_volumeSelect[3] == 1 && m_thumb < 0 && m_one == false &&
+			m_volume == true && m_brightness == false)
+		{
+			m_volumeSelect[3] = 0;
+			m_volumeSelect[2] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+			m_one = true;
+		}
+		if (m_volumeSelect[4] == 1 && m_thumb < 0 && m_one == false &&
+			m_volume == true && m_brightness == false)
+		{
+			m_volumeSelect[4] = 0;
+			m_volumeSelect[3] = 1;
+
+			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+			m_one = true;
+		}
+
 		//Aボタン押したら
 		//明るさ設定
 		if (m_xpad.Buttons[12] == 1 && m_select[0] == 1 && 
@@ -271,6 +414,8 @@ void Setting::Update()
 		{
 			updateBriht[2] = 1;
 			m_brightSelect[2] = 1;
+
+			PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
 			m_brightness = true;
 		}
@@ -281,6 +426,8 @@ void Setting::Update()
 			updateVolume[2] = 1;
 			m_volumeSelect[2] = 1;
 
+			PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
 			m_volume = true;
 		}
 		//元の画面に戻る
@@ -288,6 +435,8 @@ void Setting::Update()
 			m_brightness == false && m_volume == false)
 		{
 			m_waitTime = 0;
+
+			PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
 			m_settingScene = false;
 		}
@@ -297,6 +446,8 @@ void Setting::Update()
 			//Bボタンを押したら
 			if (m_xpad.Buttons[13] == 1)
 			{
+				PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
 				m_brightness = false;
 			}
 		}
@@ -306,6 +457,8 @@ void Setting::Update()
 			//Bボタンを押したら
 			if (m_xpad.Buttons[13] == 1)
 			{
+				PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
 				m_volume = false;
 			}
 		}
@@ -314,13 +467,19 @@ void Setting::Update()
 	{
 		m_waitTime++;
 	}
+
+	se->Update(m_volumeSize);
 	
 }
 
 void Setting::Draw()
 {
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+	//DrawGraph(30, 30, m_back, false);
+	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	DrawGraph(30, 30, m_back, false);
+	DrawGraph(45, 30, m_back, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	//選択中の色を変える
@@ -429,33 +588,59 @@ void Setting::Draw()
 
 	}
 
+	////フォントのサイズ変更
+	//SetFontSize(50);
+
+	//DrawString(50, 70, "設定", 0xffffff);
+
+	//SetFontSize(35);
+
+	//DrawString(50, 180, "明るさ", m_brightnessColor);
+	//DrawString(50, 240, "音量", m_bgmColor);
+	//DrawString(50, 300, "戻る", m_returnColor);
+
+	//DrawBox(200, 180, 240, 220, m_brightColor[0], true);
+	//DrawBox(280, 180, 320, 220, m_brightColor[1], true);
+	//DrawBox(360, 180, 400, 220, m_brightColor[2], true);
+	//DrawBox(440, 180, 480, 220, m_brightColor[3], true);
+	//DrawBox(520, 180, 560, 220, m_brightColor[4], true);
+
+	//DrawBox(200, 240, 240, 280, m_volumeColor[0], true);
+	//DrawBox(280, 240, 320, 280, m_volumeColor[1], true);
+	//DrawBox(360, 240, 400, 280, m_volumeColor[2], true);
+	//DrawBox(440, 240, 480, 280, m_volumeColor[3], true);
+	//DrawBox(520, 240, 560, 280, m_volumeColor[4], true);
+
+	////フォントのサイズを戻す
+	//SetFontSize(20);
+
 	//フォントのサイズ変更
-	SetFontSize(50);
+	SetFontSize(150);
 
-	DrawString(50, 70, "設定", 0xffffff);
+	DrawString(100, 70, "設定", 0xffffff);
 
-	SetFontSize(35);
+	SetFontSize(100);
 
-	DrawString(50, 180, "明るさ", m_brightnessColor);
-	DrawString(50, 240, "音量", m_bgmColor);
-	DrawString(50, 300, "戻る", m_returnColor);
+	DrawString(100, 340, "明るさ", m_brightnessColor);
+	DrawString(100, 500, "音量", m_bgmColor);
+	DrawString(100, 660, "戻る", m_returnColor);
 
-	DrawBox(200, 180, 240, 220, m_brightColor[0], true);
-	DrawBox(280, 180, 320, 220, m_brightColor[1], true);
-	DrawBox(360, 180, 400, 220, m_brightColor[2], true);
-	DrawBox(440, 180, 480, 220, m_brightColor[3], true);
-	DrawBox(520, 180, 560, 220, m_brightColor[4], true);
+	DrawBox(500, 340, 620, 460, m_brightColor[0], true);
+	DrawBox(700, 340, 820, 460, m_brightColor[1], true);
+	DrawBox(900, 340, 1020, 460, m_brightColor[2], true);
+	DrawBox(1100, 340, 1220, 460, m_brightColor[3], true);
+	DrawBox(1300, 340, 1420, 460, m_brightColor[4], true);
 
-	DrawBox(200, 240, 240, 280, m_volumeColor[0], true);
-	DrawBox(280, 240, 320, 280, m_volumeColor[1], true);
-	DrawBox(360, 240, 400, 280, m_volumeColor[2], true);
-	DrawBox(440, 240, 480, 280, m_volumeColor[3], true);
-	DrawBox(520, 240, 560, 280, m_volumeColor[4], true);
+	DrawBox(500, 500, 620, 620, m_volumeColor[0], true);
+	DrawBox(700, 500, 820, 620, m_volumeColor[1], true);
+	DrawBox(900, 500, 1020, 620, m_volumeColor[2], true);
+	DrawBox(1100, 500, 1220, 620, m_volumeColor[3], true);
+	DrawBox(1300, 500, 1420, 620, m_volumeColor[4], true);
 
 	//フォントのサイズを戻す
-	SetFontSize(20);
+	SetFontSize(40);
 
-	DrawFormatString(0, 0, 0xffffff, "m_thumb : %d", m_thumb);
+	//DrawFormatString(0, 0, 0xffffff, "m_thumb : %d", m_thumb);
 }
 
 void Setting::SettingDraw()
@@ -516,6 +701,58 @@ void Setting::SettingDraw()
 		m_blackPal = 0;
 		m_whitePal = 75;
 	}
+	//音量
+	if (m_volumeSelect[0] == 1)
+	{
+		updateVolume[0] = 1;
+		updateVolume[1] = 0;
+		updateVolume[2] = 0;
+		updateVolume[3] = 0;
+		updateVolume[4] = 0;
+
+		m_volumeSize = 0;
+	}
+	if (m_volumeSelect[1] == 1)
+	{
+		updateVolume[0] = 0;
+		updateVolume[1] = 1;
+		updateVolume[2] = 0;
+		updateVolume[3] = 0;
+		updateVolume[4] = 0;
+
+		m_volumeSize = 60;
+	}
+	if (m_volumeSelect[2] == 1)
+	{
+		updateVolume[0] = 0;
+		updateVolume[1] = 0;
+		updateVolume[2] = 1;
+		updateVolume[3] = 0;
+		updateVolume[4] = 0;
+
+		m_volumeSize = 130;
+	}
+	if (m_volumeSelect[3] == 1)
+	{
+		updateVolume[0] = 0;
+		updateVolume[1] = 0;
+		updateVolume[2] = 0;
+		updateVolume[3] = 1;
+		updateVolume[4] = 0;
+
+		m_volumeSize = 190;
+	}
+	if (m_volumeSelect[4] == 1)
+	{
+		updateVolume[0] = 0;
+		updateVolume[1] = 0;
+		updateVolume[2] = 0;
+		updateVolume[3] = 0;
+		updateVolume[4] = 1;
+
+		m_volumeSize = 255;
+	}
+
 	//画面を暗くする
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_blackPal);
 	DrawGraph(0, 0, m_black, false);
@@ -531,6 +768,7 @@ void Setting::End()
 	DeleteGraph(m_black);
 	DeleteGraph(m_back);
 	DeleteGraph(m_white);
+	se->End();
 }
 
 int Setting::MyLoadGraph(const char* FileName, int XSize, int YSize)

@@ -10,9 +10,10 @@ public:
 	virtual ~WeakEnemy();
 
 	void Init(int max);
-	void Update(Player& player, int max);
+	void Update(Player& player, int max, int volume);
 	void Action(Player& player, int max);
 	void Animation(float& time, int max);
+	void HitMap(Map& map, int max);
 	void Draw(int max);
 	void End(int max);
 
@@ -44,5 +45,11 @@ private:
 	float m_weakEnemyAngle[ENEMY_NOW];                   //敵のアングル
 	Pos3 m_weakColPos[ENEMY_NOW];                        //敵の当たり判定ポジション
 	CapsuleCol m_weakCapsuleCol[ENEMY_NOW];              //敵の当たり判定カプセル
+
+	//SE代入変数
+	int m_hitSE[ENEMY_NOW];
+	int m_attackSE[ENEMY_NOW];
+	int m_walkSE[ENEMY_NOW];
+	int m_diedSE[ENEMY_NOW];
 };
 

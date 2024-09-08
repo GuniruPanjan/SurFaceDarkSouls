@@ -14,6 +14,7 @@ public:
 	void Init();
 	void Update(Player& player);
 	void LockUpdate(Player& player, Enemy& enemy, int max);
+	void WeakLockUpdate(Player& player, Enemy& enemy, int weak);
 	void HitObj(Map& map);
 	void Draw();
 	void End();
