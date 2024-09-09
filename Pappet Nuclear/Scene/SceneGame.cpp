@@ -39,7 +39,6 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	player->SetCameraAngle(camera->GetAngleY());
 	player->Update();
 	player->PlaySE(setting->GetVolume());
-	player->OtherInfluence(enemy->GetOutPush());
 	camera->Update(*player);
 	map->Update(*player);
 	player->HitObj(*map);
@@ -55,6 +54,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
+		player->OtherInfluence(enemy->GetOutPush(), enemy->GetWeakOutPush(i));
 		enemy->Update(*player, *map, i, setting->GetVolume());
 		enemy->isSeachHit(player->GetCapsuleCol(), i);
 		enemy->isDistanceHit(player->GetCapsuleCol(), i);
@@ -64,6 +64,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		player->IsCapsuleHit(enemy->GetCol(i), enemy->GetBossCol());
 		//雑魚敵のアタックコルが問題
 		player->isSphereHit(enemy->GetAttackCol(i), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
+		enemy->isWeakPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetBounceDis(), i);
 	}
 
 
@@ -96,7 +97,6 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 
 			enemy->BossInit();
 			map->Init();
-			bgmse->GameInit();
 			bgmse->GameBGM();
 			player->Init();
 

@@ -33,7 +33,7 @@ BossEnemy::~BossEnemy()
 void BossEnemy::Init()
 {
 	//“G‚ÌHP‰Šú‰»
-	m_hp = 10.0f;
+	m_hp = 1200.0f;
 
 	//“G‚ÌUŒ‚—Í‰Šú‰»
 	m_attack = 30.0f;

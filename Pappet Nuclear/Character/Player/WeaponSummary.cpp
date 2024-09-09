@@ -21,7 +21,7 @@ void WeaponSummary::Init()
 {
 	m_weaponSize = 0.5f;
 
-	m_weaponHandle = MV1LoadModel("Data/Weapon/Sword.mv1");
+	//m_weaponHandle = MV1LoadModel("Data/Weapon/Sword.mv1");
 
 	//サイズ変更
 	MV1SetScale(m_weaponHandle, VGet(m_weaponSize, m_weaponSize, m_weaponSize));

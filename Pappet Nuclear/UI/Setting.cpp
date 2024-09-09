@@ -51,9 +51,9 @@ void Setting::Init()
 	//m_back = MyLoadGraph("Data/SceneBack/Black.png", 15, 15);
 	//m_white = LoadGraph("Data/SceneBack/White.png");
 
-	m_black = LoadGraph("Data/SceneBack/Black.png");
-	m_back = MyLoadGraph("Data/SceneBack/Black.png", 5, 6);
-	m_white = LoadGraph("Data/SceneBack/White.png");
+	m_black = LoadGraph("Data/SceneBack/BlackMini.png");
+	m_back = MyLoadGraph("Data/SceneBack/BlackMini.png", 1, 1);
+	m_white = LoadGraph("Data/SceneBack/WhiteMini.png");
 
 	m_select[0] = 1;
 	m_select[1] = 0;
@@ -479,7 +479,7 @@ void Setting::Draw()
 	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	DrawGraph(45, 30, m_back, false);
+	DrawGraph(80, 0, m_back, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	//ëIëíÜÇÃêFÇïœÇ¶ÇÈ

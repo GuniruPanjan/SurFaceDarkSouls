@@ -19,6 +19,7 @@ public:
 
 	bool isSphereHit(const SphereCol& col, float damage,int max);
 	bool isSeachHit(const CapsuleCol& col,int max);
+	bool isPlayerHit(const CapsuleCol& col,VECTOR& vec, float speed, int max);
 	bool isDistanceHit(const CapsuleCol& col,int max);
 
 	VECTOR GetPos(int max) { return m_weakEnemyPos[max]; }
@@ -26,6 +27,7 @@ public:
 	float GetPosY(int max) { return m_weakEnemyPos[max].y; }
 	float GetPosZ(int max) { return m_weakEnemyPos[max].z; }
 	float GetDamage() { return m_attack; }
+	VECTOR GetOutPush(int max) { return m_outPush[max]; }
 	const CapsuleCol GetCol(int max) { return m_weakCapsuleCol[max]; }
 	const SphereCol GetAttackCol(int max) { return m_colAttack[max]; }
 
@@ -45,6 +47,7 @@ private:
 	float m_weakEnemyAngle[ENEMY_NOW];                   //敵のアングル
 	Pos3 m_weakColPos[ENEMY_NOW];                        //敵の当たり判定ポジション
 	CapsuleCol m_weakCapsuleCol[ENEMY_NOW];              //敵の当たり判定カプセル
+	VECTOR m_outPush[ENEMY_NOW];                         //押し出すベクトル
 
 	//SE代入変数
 	int m_hitSE[ENEMY_NOW];

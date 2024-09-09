@@ -46,11 +46,13 @@ public:
 	float GetPosY(int max) { return enemy->GetPosY(max); }
 	float GetPosZ(int max) { return enemy->GetPosZ(max); }
 	float GetDamage() { return enemy->GetDamage(); }
+	VECTOR GetWeakOutPush(int max) { return enemy->GetOutPush(max); }
 	CapsuleCol GetCol(int max) const { return enemy->GetCol(max); }
 	SphereCol GetAttackCol(int max);
 	bool isSphereHit(SphereCol col, float damage, int max) { return enemy->isSphereHit(col, damage,max); }
 	bool isSeachHit(CapsuleCol col, int max) { return enemy->isSeachHit(col,max); }
 	bool isDistanceHit(CapsuleCol col, int max) { return enemy->isDistanceHit(col,max); }
+	bool isWeakPlayerHit(CapsuleCol col, VECTOR vec, float speed, int max) { return enemy->isPlayerHit(col, vec, speed, max); }
 
 	//VECTOR GetPos() { return weakenemy[4]->GetPos(); }
 	//float GetPosX() { return weakenemy[4]->GetPosX(); }

@@ -16,7 +16,7 @@ public:
 	void Init();
 	void Update();
 	void PlaySE(int volume);
-	void OtherInfluence(VECTOR outpush);
+	void OtherInfluence(VECTOR outpush, VECTOR weakoutpush);
 	void Action();
 	void Animation(float& time, VECTOR& pos);
 	void HitObj(Map& map);

@@ -44,10 +44,10 @@ void SceneTitle::Init()
 	//m_start = MyLoadGraph("Data/UI/STARTButton.png", 30, 30);
 	//m_setting = MyLoadGraph("Data/UI/SettingButton.png", 30, 30);
 	//m_end = MyLoadGraph("Data/UI/EndButton.png", 30, 30);
-	m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitle.png", 14, 14);
-	m_start = MyLoadGraph("Data/UI/STARTButton.png", 14, 14);
-	m_setting = MyLoadGraph("Data/UI/SettingButton.png", 14, 14);
-	m_end = MyLoadGraph("Data/UI/EndButton.png", 14, 14);
+	m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitleMini.png", 1, 1);
+	m_start = MyLoadGraph("Data/UI/STARTButtonMini.png", 1, 1);
+	m_setting = MyLoadGraph("Data/UI/SettingButtonMini.png", 1, 1);
+	m_end = MyLoadGraph("Data/UI/EndButtonMini.png", 1, 1);
 
 	m_playerHandle = MV1LoadModel("Data/Player/PlayerModel.mv1");
 	m_anim = MV1LoadModel("Data/PlayerAnimation/JumpingDown.mv1");
@@ -359,15 +359,15 @@ void SceneTitle::Draw()
 	//DrawGraph(200, 340, m_end, TRUE);
 	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawGraph(0, -10, m_backScene, TRUE);
+	DrawGraph(120, 0, m_backScene, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[0]);
-	DrawGraph(550, 450, m_start, TRUE);
+	DrawGraph(500, 350, m_start, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[1]);
-	DrawGraph(550, 570, m_setting, TRUE);
+	DrawGraph(500, 500, m_setting, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[2]);
-	DrawGraph(550, 690, m_end, TRUE);
+	DrawGraph(500, 650, m_end, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	//ê›íËâÊñ Çï`âÊ

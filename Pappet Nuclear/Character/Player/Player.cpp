@@ -521,10 +521,11 @@ void Player::PlaySE(int volume)
 	se->Update(volume);
 }
 
-void Player::OtherInfluence(VECTOR outpush)
+void Player::OtherInfluence(VECTOR outpush, VECTOR weakoutpush)
 {
 	//他のキャラクターなどの影響を受ける
 	m_pos = VAdd(m_pos, outpush);
+	m_pos = VAdd(m_pos, weakoutpush);
 }
 
 /// <summary>

@@ -38,13 +38,13 @@ EnemyBase::EnemyBase():
 	m_bossAnimAttack3 = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack3.mv1");
 
 	//アニメーションアタッチ
-	//m_animation[0] = MV1AttachAnim(m_handle, 0, m_animStand, TRUE);
-	//m_animation[1] = MV1AttachAnim(m_handle, 0, m_animHit, TRUE);
-	//m_animation[2] = MV1AttachAnim(m_handle, 0, m_animDeath, TRUE);
-	//m_animation[3] = MV1AttachAnim(m_handle, 0, m_animWalk, TRUE);
-	//m_animation[4] = MV1AttachAnim(m_handle, 0, m_animLeftWalking, TRUE);
-	//m_animation[5] = MV1AttachAnim(m_handle, 0, m_animRightWalking, TRUE);
-	//m_animation[6] = MV1AttachAnim(m_handle, 0, m_animAttack1, TRUE);
+	m_animation[0] = MV1AttachAnim(m_handle, 0, m_animStand, TRUE);
+	m_animation[1] = MV1AttachAnim(m_handle, 0, m_animHit, TRUE);
+	m_animation[2] = MV1AttachAnim(m_handle, 0, m_animDeath, TRUE);
+	m_animation[3] = MV1AttachAnim(m_handle, 0, m_animWalk, TRUE);
+	m_animation[4] = MV1AttachAnim(m_handle, 0, m_animLeftWalking, TRUE);
+	m_animation[5] = MV1AttachAnim(m_handle, 0, m_animRightWalking, TRUE);
+	m_animation[6] = MV1AttachAnim(m_handle, 0, m_animAttack1, TRUE);
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
 		m_weakEnemyAnimation[0][i] = MV1AttachAnim(m_handle, 0, m_animStand, TRUE);

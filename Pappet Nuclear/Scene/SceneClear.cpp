@@ -15,7 +15,7 @@ SceneClear::~SceneClear()
 void SceneClear::Init()
 {
 	//m_backScene = MyLoadGraph("Data/SceneBack/CLEARBack.png", 10, 10);
-	m_backScene = MyLoadGraph("Data/SceneBack/CLEARBack.png", 3, 3);
+	m_backScene = MyLoadGraph("Data/SceneBack/CLEARBackMini.png", 2, 2);
 
 	//Ý’èŠÖŒW
 	setting->Init();

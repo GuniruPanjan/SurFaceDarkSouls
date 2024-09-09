@@ -59,7 +59,7 @@ void UI::Init(Player& player, Enemy& enemy)
 
 	m_heelStone = MyLoadGraph("Data/UI/HeelStoneMini.png", 3, 3);
 	m_fist = MyLoadGraph("Data/UI/FistUi.png", 3, 3);
-	m_youDied = MyLoadGraph("Data/UI/YOUDIEDGraph.png", 10, 10);
+	m_youDied = MyLoadGraph("Data/UI/YOUDIEDGraph Mini.png", 1, 1);
 
 	m_hpExpressionDivide1 = 0.9f;
 	m_hpExpressionDivide2 = 0.89f;
@@ -160,7 +160,7 @@ void UI::DiedDraw()
 {
 	//Ž€‚ñ‚¾Žž‚É•`‰æ‚·‚é
 	//DrawGraph(-250, 0, m_youDied, true);
-	DrawGraph(-340, 0, m_youDied, true);
+	DrawGraph(-150, 60, m_youDied, true);
 
 }
 

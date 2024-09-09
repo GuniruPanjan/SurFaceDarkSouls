@@ -16,10 +16,12 @@ WeakEnemy::WeakEnemy()
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
+		m_weakEnemyHandle[i] = 0;
 		m_weakEnemyHp[i] = 0;
 		m_weakEnemyPos[i] = VGet(0.0f, 0.0f, 0.0f);
 		m_weakPlayTime[i] = 0.0f;
 		m_weakEnemyMove[i] = VGet(0.0f, 0.0f, 0.0f);
+		m_outPush[i] = VGet(0.0f, 0.0f, 0.0f);
 		m_weakEnemyMoveAttack[i] = false;
 		m_weakEnemyAngle[i] = 0.0f;
 		m_hitSE[i] = 0;
@@ -33,6 +35,11 @@ WeakEnemy::WeakEnemy()
 
 WeakEnemy::~WeakEnemy()
 {
+	//メモリ解放
+	for (int i = 0; i < ENEMY_NOW; i++)
+	{
+		MV1DeleteModel(m_weakEnemyHandle[i]);
+	}
 }
 
 void WeakEnemy::Init(int max)
@@ -539,7 +546,7 @@ void WeakEnemy::HitMap(Map& map, int max)
 	//検出したプレイヤーの周囲のポリゴン情報を解放する
 	MV1CollResultPolyDimTerminate(HitDim);
 
-	for (int w = 0; w < max; w++)
+	for (int w = 0; w < max + 1; w++)
 	{
 		//検出されたポリゴンが壁ポリゴン(XZ平面に垂直なポリゴン)か床ポリゴン(XZ平面に垂直ではないポリゴン)かを判断する
 		for (int i = 0; i < HitDim.HitNum; i++)
@@ -641,7 +648,7 @@ void WeakEnemy::HitMap(Map& map, int max)
 						if (HitCheck_Capsule_Triangle(mapHitCol[w], VAdd(mapHitCol[w], VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == false) continue;
 
 						//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
-						m_weakEnemyPos[w] = VAdd(m_weakEnemyPos[w], VScale(m_Poly->Normal, m_speed / 2));
+						m_weakEnemyPos[w] = VAdd(m_weakEnemyPos[w], VScale(m_Poly->Normal, 2.0f));
 
 						//移動した上で壁ポリゴンと接触しているかどうかを判定
 						for (j = 0; j < m_WallNum; j++)
@@ -709,6 +716,11 @@ void WeakEnemy::Draw(int max)
 
 void WeakEnemy::End(int max)
 {
+	//メモリ解放
+	for (int i = 0; i < ENEMY_NOW; i++)
+	{
+		MV1DeleteModel(m_weakEnemyHandle[i]);
+	}
 }
 
 bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max)
@@ -757,6 +769,27 @@ bool WeakEnemy::isSeachHit(const CapsuleCol& col, int max)
 		m_seachColor = 0xffffff;
 
 		m_enemySearchFlag[max] = false;
+	}
+
+	return isHit;
+}
+
+bool WeakEnemy::isPlayerHit(const CapsuleCol& col,VECTOR& vec, float speed, int max)
+{
+	bool isHit = m_weakCapsuleCol[max].IsHitCapsule(col);
+
+	MATRIX mts = MGetRotY(D2R(m_weakEnemyAngle[max]));
+
+	//プレイヤーと当たった時
+	if (isHit)
+	{
+		m_outPush[max] = VScale(vec, speed);
+
+		m_outPush[max] = VTransform(m_outPush[max], mts);
+	}
+	else
+	{
+		m_outPush[max] = VGet(0.0f, 0.0f, 0.0f);
 	}
 
 	return isHit;
