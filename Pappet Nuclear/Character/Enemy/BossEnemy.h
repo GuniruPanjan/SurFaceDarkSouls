@@ -58,6 +58,7 @@ private:
 	SphereCol m_colBossAttackSphere1;    //攻撃の当たり判定Col1
 	SphereCol m_colBossAttackSphere2;    //攻撃の当たり判定Col2  
 	SphereCol m_colBossAttackSphere3;    //攻撃の当たり判定Col3
+	float m_bounceAngle;      //押し出すアングル
 	VECTOR m_outPush;        //押し出す方向ベクトル
 
 

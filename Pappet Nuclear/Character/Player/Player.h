@@ -82,6 +82,7 @@ private:
 	bool m_restAction;    //回復ができるようになる判定
 	bool m_dashMove;     //ダッシュしてる判断用変数
 	bool m_staminaBroke;   //スタミナ切れ判定
+	bool m_hit;           //怯み判定
 	VECTOR m_nowPos;   //現在のフレームの座標を取得する
 	VECTOR m_bounceMove;   //押し出すための変数
 

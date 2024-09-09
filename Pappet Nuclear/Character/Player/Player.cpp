@@ -121,6 +121,7 @@ void Player::Init()
 		m_animRollAttack = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRollAttack.mv1");
 		m_animDeath = MV1LoadModel("Data/PlayerAnimation/PlayerAnimDeath.mv1");
 		m_animHeel = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRecovery.mv1");
+		m_animHit = MV1LoadModel("Data/PlayerAnimation/PlayerAnimHit.mv1");
 
 		//アニメーションアタッチ
 		m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
@@ -133,6 +134,7 @@ void Player::Init()
 		m_animation[7] = MV1AttachAnim(m_handle, 1, m_animRollAttack, TRUE);
 		m_animation[8] = MV1AttachAnim(m_handle, 1, m_animDeath, TRUE);
 		m_animation[9] = MV1AttachAnim(m_handle, 1, m_animHeel, TRUE);
+		m_animation[10] = MV1AttachAnim(m_handle, 1, m_animHit, TRUE);
 
 		//アタッチしたアニメーションの総再生時間を取得する
 		m_totalAnimTime[0] = MV1GetAttachAnimTotalTime(m_handle, m_animation[0]);
@@ -145,6 +147,7 @@ void Player::Init()
 		m_totalAnimTime[7] = MV1GetAttachAnimTotalTime(m_handle, m_animation[7]);
 		m_totalAnimTime[8] = MV1GetAttachAnimTotalTime(m_handle, m_animation[8]);
 		m_totalAnimTime[9] = MV1GetAttachAnimTotalTime(m_handle, m_animation[9]);
+		m_totalAnimTime[10] = MV1GetAttachAnimTotalTime(m_handle, m_animation[10]);
 
 
 		//一旦待機以外のアニメーションデタッチ
@@ -157,6 +160,7 @@ void Player::Init()
 		MV1DetachAnim(m_handle, m_animation[7]);
 		MV1DetachAnim(m_handle, m_animation[8]);
 		MV1DetachAnim(m_handle, m_animation[9]);
+		MV1DetachAnim(m_handle, m_animation[10]);
 		m_animation[1] = -1;
 		m_animation[2] = -1;
 		m_animation[3] = -1;
@@ -166,6 +170,7 @@ void Player::Init()
 		m_animation[7] = -1;
 		m_animation[8] = -1;
 		m_animation[9] = -1;
+		m_animation[10] = -1;
 
 		se->CharaInit();
 
@@ -215,6 +220,8 @@ void Player::Init()
 
 	m_death = false;
 
+	m_hit = false;
+
 	//モデル全体のコリジョン情報のセットアップ
 	//MV1SetupCollInfo(map->GetCollisionMap(), -1);
 }
@@ -243,7 +250,8 @@ void Player::Update()
 	float SetAngleX = 0.0f;
 	float SetAngleY = 0.0f;
 
-	if (m_avoidance == false && m_moveAttack == false && m_recoberyAction == false)
+	if (m_avoidance == false && m_moveAttack == false && m_recoberyAction == false &&
+		m_hit == false && m_hp >= 0.0f)
 	{
 		GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
 	}
@@ -289,7 +297,8 @@ void Player::Update()
 
 	//移動方向からプレイヤーへの向く方向を決定する
 	//移動していない場合(ゼロベクトル)の場合は変更しない
-	if (VSquareSize(m_move) > 0.0f && m_avoidance == false && m_moveAttack == false && m_recoberyAction == false)
+	if (VSquareSize(m_move) > 0.0f && m_avoidance == false && m_moveAttack == false && m_recoberyAction == false &&
+		m_hit == false && m_hp >= 0.0f)
 	{
 		//アングルを決定
 		m_angle = atan2f(-m_move.z, m_move.x) - DX_PI_F / 2;
@@ -367,7 +376,8 @@ void Player::Update()
 
 
 	//Aボタンが押されたら
-	if (m_xpad.Buttons[12] == 1 && m_staminaBroke == false && m_recoberyAction == false && m_moveAttack == false)
+	if (m_xpad.Buttons[12] == 1 && m_staminaBroke == false && m_recoberyAction == false && 
+		m_moveAttack == false && m_hit == false)
 	{
 		if (m_a > 50 && m_stamina >= 0.1f)
 		{
@@ -512,7 +522,10 @@ void Player::Update()
 
 		m_moveAttack = false;
 	}
-
+	if (m_moveAttack == true && m_hit == true)
+	{
+		m_moveAttack = false;
+	}
 	
 }
 
@@ -546,7 +559,8 @@ void Player::Action()
 	//一段階目の攻撃
 	if (m_hp > 0.0f)
 	{
-		if (m_xpad.Buttons[9] == 1 && m_staminaBroke == false && m_recoberyAction == false && m_avoidance == false)
+		if (m_xpad.Buttons[9] == 1 && m_staminaBroke == false && m_recoberyAction == false && m_avoidance == false &&
+			m_hit == false)
 		{
 			if (m_attackNumber == 0 && m_stamina >= 10.0f)
 			{
@@ -591,14 +605,14 @@ void Player::Action()
 	//ZRボタンで強攻撃
 	if (m_xpad.RightTrigger)
 	{
-		DrawFormatString(0, 10, 0xffffff, "強攻撃");
+		//DrawFormatString(0, 10, 0xffffff, "強攻撃");
 	}
 
 
 	//Lボタンで防御
 	if (m_xpad.Buttons[8] == 1)
 	{
-		DrawFormatString(0, 10, 0xffffff, "防御");
+		//DrawFormatString(0, 10, 0xffffff, "防御");
 	}
 
 	//攻撃時のアニメーションを速くする
@@ -801,10 +815,10 @@ void Player::Animation(float& time, VECTOR& pos)
 	//プレイヤーが死んだ時
 	if (m_hp <= 0.0f)
 	{
-		//死んだ時のバグ対策でフラグも入れる
 		if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1 ||
 			m_animation[3] != -1 || m_animation[4] != -1 || m_animation[5] != -1 ||
-			m_animation[6] != -1 || m_animation[7] != -1 || m_animation[9] != -1 )
+			m_animation[6] != -1 || m_animation[7] != -1 || m_animation[9] != -1 ||
+			m_animation[10] != -1)
 		{
 			//アニメーションデタッチ
 			MV1DetachAnim(m_handle, m_animation[0]);
@@ -816,6 +830,7 @@ void Player::Animation(float& time, VECTOR& pos)
 			MV1DetachAnim(m_handle, m_animation[6]);
 			MV1DetachAnim(m_handle, m_animation[7]);
 			MV1DetachAnim(m_handle, m_animation[9]);
+			MV1DetachAnim(m_handle, m_animation[10]);
 
 			//アニメーションアタッチ
 			m_animation[8] = MV1AttachAnim(m_handle, 1, m_animDeath, TRUE);
@@ -831,21 +846,21 @@ void Player::Animation(float& time, VECTOR& pos)
 			m_animation[6] = -1;
 			m_animation[7] = -1;
 			m_animation[9] = -1;
-
+			m_animation[10] = -1;
 		}
 	}
 	//プレイヤーが生きていたら
 	else if (m_hp > 0.0f)
 	{
-		//プレイヤーが動いていないなら
-		if (m_moveflag == false && m_avoidance == false && m_moveAttack == false && m_recoberyAction == false)
+		//怯み
+		if (m_hit == true)
 		{
-			if (m_animation[1] != -1 || m_animation[2] != -1 || m_animation[3] != -1
-				|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
-				|| m_animation[7] != -1 || m_animation[9] != -1)
+			if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1 ||
+				m_animation[3] != -1 || m_animation[4] != -1 || m_animation[5] != -1 ||
+				m_animation[6] != -1 || m_animation[7] != -1 || m_animation[9] != -1)
 			{
-
 				//アニメーションデタッチ
+				MV1DetachAnim(m_handle, m_animation[0]);
 				MV1DetachAnim(m_handle, m_animation[1]);
 				MV1DetachAnim(m_handle, m_animation[2]);
 				MV1DetachAnim(m_handle, m_animation[3]);
@@ -856,10 +871,11 @@ void Player::Animation(float& time, VECTOR& pos)
 				MV1DetachAnim(m_handle, m_animation[9]);
 
 				//アニメーションアタッチ
-				m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
+				m_animation[10] = MV1AttachAnim(m_handle, 1, m_animHit, TRUE);
 
 				time = 0.0f;
 
+				m_animation[0] = -1;
 				m_animation[1] = -1;
 				m_animation[2] = -1;
 				m_animation[3] = -1;
@@ -868,139 +884,218 @@ void Player::Animation(float& time, VECTOR& pos)
 				m_animation[6] = -1;
 				m_animation[7] = -1;
 				m_animation[9] = -1;
-
-			}
-
-		}
-		//プレイヤーが動いたら
-		//Aボタン長押し
-		if (m_dashMove == true && m_moveflag == true && m_avoidance == false && m_moveAttack == false && m_recoberyAction == false)
-		{
-			if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[3] != -1
-				|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
-				|| m_animation[7] != -1 || m_animation[9] != -1)
-			{
-
-				//アニメーションデタッチ
-				MV1DetachAnim(m_handle, m_animation[0]);
-				MV1DetachAnim(m_handle, m_animation[1]);
-				MV1DetachAnim(m_handle, m_animation[3]);
-				MV1DetachAnim(m_handle, m_animation[4]);
-				MV1DetachAnim(m_handle, m_animation[5]);
-				MV1DetachAnim(m_handle, m_animation[6]);
-				MV1DetachAnim(m_handle, m_animation[7]);
-				MV1DetachAnim(m_handle, m_animation[9]);
-
-
-
-				//アニメーションアタッチ
-				m_animation[2] = MV1AttachAnim(m_handle, 1, m_animRun, TRUE);
-
-				time = 0.0f;
-
-				m_animation[0] = -1;
-				m_animation[1] = -1;
-				m_animation[3] = -1;
-				m_animation[4] = -1;
-				m_animation[5] = -1;
-				m_animation[6] = -1;
-				m_animation[7] = -1;
-				m_animation[9] = -1;
-
-
 			}
 		}
-		//回避
-		else if (m_avoidance == true && m_moveAttack == false && m_recoberyAction == false)
+		else if (m_hit == false)
 		{
-
-			if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1
-				|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
-				|| m_animation[7] != -1 || m_animation[9] != -1)
+			//プレイヤーが動いていないなら
+			if (m_moveflag == false && m_avoidance == false && m_moveAttack == false &&
+				m_recoberyAction == false)
 			{
-				m_stamina = m_stamina - 10.0f;
-
-				//アニメーションデタッチ
-				MV1DetachAnim(m_handle, m_animation[0]);
-				MV1DetachAnim(m_handle, m_animation[1]);
-				MV1DetachAnim(m_handle, m_animation[2]);
-				MV1DetachAnim(m_handle, m_animation[4]);
-				MV1DetachAnim(m_handle, m_animation[5]);
-				MV1DetachAnim(m_handle, m_animation[6]);
-				MV1DetachAnim(m_handle, m_animation[7]);
-				MV1DetachAnim(m_handle, m_animation[9]);
-
-
-				//アニメーションアタッチ
-				m_animation[3] = MV1AttachAnim(m_handle, 1, m_animRoll, TRUE);
-
-				time = 0.0f;
-
-				m_animation[0] = -1;
-				m_animation[1] = -1;
-				m_animation[2] = -1;
-				m_animation[4] = -1;
-				m_animation[5] = -1;
-				m_animation[6] = -1;
-				m_animation[7] = -1;
-				m_animation[9] = -1;
-
-			}
-		}
-		else if (m_moveflag == true && m_avoidance == false && m_moveAttack == false && m_recoberyAction == false)
-		{
-			if (m_animation[0] != -1 || m_animation[2] != -1 || m_animation[3] != -1
-				|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
-				|| m_animation[7] != -1 || m_animation[9] != -1)
-			{
-
-				//アニメーションデタッチ
-				MV1DetachAnim(m_handle, m_animation[0]);
-				MV1DetachAnim(m_handle, m_animation[2]);
-				MV1DetachAnim(m_handle, m_animation[3]);
-				MV1DetachAnim(m_handle, m_animation[4]);
-				MV1DetachAnim(m_handle, m_animation[5]);
-				MV1DetachAnim(m_handle, m_animation[6]);
-				MV1DetachAnim(m_handle, m_animation[7]);
-				MV1DetachAnim(m_handle, m_animation[9]);
-
-				//アニメーションアタッチ
-				m_animation[1] = MV1AttachAnim(m_handle, 1, m_animWalk, TRUE);
-
-				time = 0.0f;
-
-				m_animation[0] = -1;
-				m_animation[2] = -1;
-				m_animation[3] = -1;
-				m_animation[4] = -1;
-				m_animation[5] = -1;
-				m_animation[6] = -1;
-				m_animation[7] = -1;
-				m_animation[9] = -1;
-
-			}
-		}
-		if (m_avoidance == false && m_moveAttack == true && m_recoberyAction == false)
-		{
-			if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1
-				|| m_animation[3] != -1 || m_animation[7] != -1 || m_animation[9] != -1)
-			{
-				//攻撃1段階目
-				if (m_attackNumber == 1)
+				if (m_animation[1] != -1 || m_animation[2] != -1 || m_animation[3] != -1
+					|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
+					|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1)
 				{
-					//一段階目の攻撃力
-					m_attack = m_attack * 1.0f;
+
+					//アニメーションデタッチ
+					MV1DetachAnim(m_handle, m_animation[1]);
+					MV1DetachAnim(m_handle, m_animation[2]);
+					MV1DetachAnim(m_handle, m_animation[3]);
+					MV1DetachAnim(m_handle, m_animation[4]);
+					MV1DetachAnim(m_handle, m_animation[5]);
+					MV1DetachAnim(m_handle, m_animation[6]);
+					MV1DetachAnim(m_handle, m_animation[7]);
+					MV1DetachAnim(m_handle, m_animation[9]);
+					MV1DetachAnim(m_handle, m_animation[10]);
+
+					//アニメーションアタッチ
+					m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
+
+					time = 0.0f;
+
+					m_animation[1] = -1;
+					m_animation[2] = -1;
+					m_animation[3] = -1;
+					m_animation[4] = -1;
+					m_animation[5] = -1;
+					m_animation[6] = -1;
+					m_animation[7] = -1;
+					m_animation[9] = -1;
+					m_animation[10] = -1;
+
+				}
+
+			}
+			//プレイヤーが動いたら
+			//Aボタン長押し
+			if (m_dashMove == true && m_moveflag == true && m_avoidance == false &&
+				m_moveAttack == false && m_recoberyAction == false)
+			{
+				if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[3] != -1
+					|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
+					|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1)
+				{
+
+					//アニメーションデタッチ
+					MV1DetachAnim(m_handle, m_animation[0]);
+					MV1DetachAnim(m_handle, m_animation[1]);
+					MV1DetachAnim(m_handle, m_animation[3]);
+					MV1DetachAnim(m_handle, m_animation[4]);
+					MV1DetachAnim(m_handle, m_animation[5]);
+					MV1DetachAnim(m_handle, m_animation[6]);
+					MV1DetachAnim(m_handle, m_animation[7]);
+					MV1DetachAnim(m_handle, m_animation[9]);
+					MV1DetachAnim(m_handle, m_animation[10]);
+
+
+
+					//アニメーションアタッチ
+					m_animation[2] = MV1AttachAnim(m_handle, 1, m_animRun, TRUE);
+
+					time = 0.0f;
+
+					m_animation[0] = -1;
+					m_animation[1] = -1;
+					m_animation[3] = -1;
+					m_animation[4] = -1;
+					m_animation[5] = -1;
+					m_animation[6] = -1;
+					m_animation[7] = -1;
+					m_animation[9] = -1;
+					m_animation[10] = -1;
+
+
+				}
+			}
+			//回避
+			else if (m_avoidance == true && m_moveAttack == false && m_recoberyAction == false)
+			{
+
+				if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1
+					|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
+					|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1)
+				{
+					m_stamina = m_stamina - 10.0f;
+
+					//アニメーションデタッチ
+					MV1DetachAnim(m_handle, m_animation[0]);
+					MV1DetachAnim(m_handle, m_animation[1]);
+					MV1DetachAnim(m_handle, m_animation[2]);
+					MV1DetachAnim(m_handle, m_animation[4]);
+					MV1DetachAnim(m_handle, m_animation[5]);
+					MV1DetachAnim(m_handle, m_animation[6]);
+					MV1DetachAnim(m_handle, m_animation[7]);
+					MV1DetachAnim(m_handle, m_animation[9]);
+					MV1DetachAnim(m_handle, m_animation[10]);
+
+
+					//アニメーションアタッチ
+					m_animation[3] = MV1AttachAnim(m_handle, 1, m_animRoll, TRUE);
+
+					time = 0.0f;
+
+					m_animation[0] = -1;
+					m_animation[1] = -1;
+					m_animation[2] = -1;
+					m_animation[4] = -1;
+					m_animation[5] = -1;
+					m_animation[6] = -1;
+					m_animation[7] = -1;
+					m_animation[9] = -1;
+					m_animation[10] = -1;
+
+				}
+			}
+			else if (m_moveflag == true && m_avoidance == false && m_moveAttack == false &&
+				m_recoberyAction == false)
+			{
+				if (m_animation[0] != -1 || m_animation[2] != -1 || m_animation[3] != -1
+					|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
+					|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1)
+				{
+
+					//アニメーションデタッチ
+					MV1DetachAnim(m_handle, m_animation[0]);
+					MV1DetachAnim(m_handle, m_animation[2]);
+					MV1DetachAnim(m_handle, m_animation[3]);
+					MV1DetachAnim(m_handle, m_animation[4]);
+					MV1DetachAnim(m_handle, m_animation[5]);
+					MV1DetachAnim(m_handle, m_animation[6]);
+					MV1DetachAnim(m_handle, m_animation[7]);
+					MV1DetachAnim(m_handle, m_animation[9]);
+					MV1DetachAnim(m_handle, m_animation[10]);
+
+					//アニメーションアタッチ
+					m_animation[1] = MV1AttachAnim(m_handle, 1, m_animWalk, TRUE);
+
+					time = 0.0f;
+
+					m_animation[0] = -1;
+					m_animation[2] = -1;
+					m_animation[3] = -1;
+					m_animation[4] = -1;
+					m_animation[5] = -1;
+					m_animation[6] = -1;
+					m_animation[7] = -1;
+					m_animation[9] = -1;
+					m_animation[10] = -1;
+
+				}
+			}
+			if (m_avoidance == false && m_moveAttack == true && m_recoberyAction == false)
+			{
+				if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1
+					|| m_animation[3] != -1 || m_animation[7] != -1 || m_animation[9] != -1
+					|| m_animation[10] != -1)
+				{
+					//攻撃1段階目
+					if (m_attackNumber == 1)
+					{
+						//一段階目の攻撃力
+						m_attack = m_attack * 1.0f;
+
+						//アニメーションデタッチ
+						MV1DetachAnim(m_handle, m_animation[0]);
+						MV1DetachAnim(m_handle, m_animation[1]);
+						MV1DetachAnim(m_handle, m_animation[2]);
+						MV1DetachAnim(m_handle, m_animation[3]);
+						MV1DetachAnim(m_handle, m_animation[7]);
+						MV1DetachAnim(m_handle, m_animation[9]);
+						MV1DetachAnim(m_handle, m_animation[10]);
+
+						//アニメーションアタッチ
+						m_animation[4] = MV1AttachAnim(m_handle, 1, m_animAttack1, TRUE);
+
+						time = 0.0f;
+
+						m_animation[0] = -1;
+						m_animation[1] = -1;
+						m_animation[2] = -1;
+						m_animation[3] = -1;
+						m_animation[7] = -1;
+						m_animation[9] = -1;
+						m_animation[10] = -1;
+
+
+						m_moveAttackEnd = false;
+					}
+
+				}
+				//攻撃2段階目
+				if (m_attackNumber == 2 && m_animation[4] != -1)
+				{
+					//2段階目の攻撃力
+					m_attack = m_attack * 1.2f;
 
 					//アニメーションデタッチ
 					MV1DetachAnim(m_handle, m_animation[0]);
 					MV1DetachAnim(m_handle, m_animation[1]);
 					MV1DetachAnim(m_handle, m_animation[2]);
 					MV1DetachAnim(m_handle, m_animation[3]);
-					MV1DetachAnim(m_handle, m_animation[7]);
-					MV1DetachAnim(m_handle, m_animation[9]);
+					MV1DetachAnim(m_handle, m_animation[4]);
 
 					//アニメーションアタッチ
-					m_animation[4] = MV1AttachAnim(m_handle, 1, m_animAttack1, TRUE);
+					m_animation[5] = MV1AttachAnim(m_handle, 1, m_animAttack2, TRUE);
 
 					time = 0.0f;
 
@@ -1008,140 +1103,115 @@ void Player::Animation(float& time, VECTOR& pos)
 					m_animation[1] = -1;
 					m_animation[2] = -1;
 					m_animation[3] = -1;
-					m_animation[7] = -1;
-					m_animation[9] = -1;
-
+					m_animation[4] = -1;
 
 					m_moveAttackEnd = false;
+
 				}
+				//攻撃3段階目
+				if (m_attackNumber == 3 && m_animation[5] != -1)
+				{
+					//3段階目の攻撃力
+					m_attack = m_attack * 1.5f;
 
+					//アニメーションデタッチ
+					MV1DetachAnim(m_handle, m_animation[0]);
+					MV1DetachAnim(m_handle, m_animation[1]);
+					MV1DetachAnim(m_handle, m_animation[2]);
+					MV1DetachAnim(m_handle, m_animation[3]);
+					MV1DetachAnim(m_handle, m_animation[4]);
+					MV1DetachAnim(m_handle, m_animation[5]);
+
+					//アニメーションアタッチ
+					m_animation[6] = MV1AttachAnim(m_handle, 1, m_animAttack3, TRUE);
+
+					time = 0.0f;
+
+					m_animation[0] = -1;
+					m_animation[1] = -1;
+					m_animation[2] = -1;
+					m_animation[3] = -1;
+					m_animation[4] = -1;
+					m_animation[5] = -1;
+
+					m_moveAttackEnd = false;
+
+				}
+				//攻撃2段階目
+				//else if (m_attackNumber == 2 && m_animation[4] != -1 && m_moveAttackEnd == true)
+				//{
+				//	//アニメーションデタッチ
+				//	MV1DetachAnim(m_handle, m_animation[0]);
+				//	MV1DetachAnim(m_handle, m_animation[1]);
+				//	MV1DetachAnim(m_handle, m_animation[2]);
+				//	MV1DetachAnim(m_handle, m_animation[3]);
+				//	MV1DetachAnim(m_handle, m_animation[4]);
+
+				//	//アニメーションアタッチ
+				//	m_animation[5] = MV1AttachAnim(m_handle, 1, m_animAttack2, TRUE);
+
+				//	time = 0.0f;
+
+				//	m_animation[0] = -1;
+				//	m_animation[1] = -1;
+				//	m_animation[2] = -1;
+				//	m_animation[3] = -1;
+				//	m_animation[4] = -1;
+
+				//	m_moveAttackEnd = false;
+
+				//}
+				////攻撃3段階目
+				//else if (m_attackNumber == 3 && m_animation[5] != -1 && m_moveAttackEnd == true)
+				//{
+				//	//アニメーションデタッチ
+				//	MV1DetachAnim(m_handle, m_animation[0]);
+				//	MV1DetachAnim(m_handle, m_animation[1]);
+				//	MV1DetachAnim(m_handle, m_animation[2]);
+				//	MV1DetachAnim(m_handle, m_animation[3]);
+				//	MV1DetachAnim(m_handle, m_animation[4]);
+				//	MV1DetachAnim(m_handle, m_animation[5]);
+
+				//	//アニメーションアタッチ
+				//	m_animation[6] = MV1AttachAnim(m_handle, 1, m_animAttack3, TRUE);
+
+				//	time = 0.0f;
+
+				//	m_animation[0] = -1;
+				//	m_animation[1] = -1;
+				//	m_animation[2] = -1;
+				//	m_animation[3] = -1;
+				//	m_animation[4] = -1;
+				//	m_animation[5] = -1;
+
+				//	m_moveAttackEnd = false;
+
+				//}
 			}
-			//攻撃2段階目
-			if (m_attackNumber == 2 && m_animation[4] != -1)
+
+			//プレイヤーが回復したとき
+			if (m_recoberyAction == true)
 			{
-				//2段階目の攻撃力
-				m_attack = m_attack * 1.2f;
+				if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1 ||
+					m_animation[10] != -1)
+				{
+					//アニメーションデタッチ
+					MV1DetachAnim(m_handle, m_animation[0]);
+					MV1DetachAnim(m_handle, m_animation[1]);
+					MV1DetachAnim(m_handle, m_animation[2]);
+					MV1DetachAnim(m_handle, m_animation[10]);
 
-				//アニメーションデタッチ
-				MV1DetachAnim(m_handle, m_animation[0]);
-				MV1DetachAnim(m_handle, m_animation[1]);
-				MV1DetachAnim(m_handle, m_animation[2]);
-				MV1DetachAnim(m_handle, m_animation[3]);
-				MV1DetachAnim(m_handle, m_animation[4]);
+					//アニメーションアタッチ
+					m_animation[9] = MV1AttachAnim(m_handle, 1, m_animHeel, TRUE);
 
-				//アニメーションアタッチ
-				m_animation[5] = MV1AttachAnim(m_handle, 1, m_animAttack2, TRUE);
+					time = 0.0f;
 
-				time = 0.0f;
+					m_animation[0] = -1;
+					m_animation[1] = -1;
+					m_animation[2] = -1;
+					m_animation[10] = -1;
 
-				m_animation[0] = -1;
-				m_animation[1] = -1;
-				m_animation[2] = -1;
-				m_animation[3] = -1;
-				m_animation[4] = -1;
-
-				m_moveAttackEnd = false;
-
-			}
-			//攻撃3段階目
-			if (m_attackNumber == 3 && m_animation[5] != -1)
-			{
-				//3段階目の攻撃力
-				m_attack = m_attack * 1.5f;
-
-				//アニメーションデタッチ
-				MV1DetachAnim(m_handle, m_animation[0]);
-				MV1DetachAnim(m_handle, m_animation[1]);
-				MV1DetachAnim(m_handle, m_animation[2]);
-				MV1DetachAnim(m_handle, m_animation[3]);
-				MV1DetachAnim(m_handle, m_animation[4]);
-				MV1DetachAnim(m_handle, m_animation[5]);
-
-				//アニメーションアタッチ
-				m_animation[6] = MV1AttachAnim(m_handle, 1, m_animAttack3, TRUE);
-
-				time = 0.0f;
-
-				m_animation[0] = -1;
-				m_animation[1] = -1;
-				m_animation[2] = -1;
-				m_animation[3] = -1;
-				m_animation[4] = -1;
-				m_animation[5] = -1;
-
-				m_moveAttackEnd = false;
-
-			}
-			//攻撃2段階目
-			//else if (m_attackNumber == 2 && m_animation[4] != -1 && m_moveAttackEnd == true)
-			//{
-			//	//アニメーションデタッチ
-			//	MV1DetachAnim(m_handle, m_animation[0]);
-			//	MV1DetachAnim(m_handle, m_animation[1]);
-			//	MV1DetachAnim(m_handle, m_animation[2]);
-			//	MV1DetachAnim(m_handle, m_animation[3]);
-			//	MV1DetachAnim(m_handle, m_animation[4]);
-
-			//	//アニメーションアタッチ
-			//	m_animation[5] = MV1AttachAnim(m_handle, 1, m_animAttack2, TRUE);
-
-			//	time = 0.0f;
-
-			//	m_animation[0] = -1;
-			//	m_animation[1] = -1;
-			//	m_animation[2] = -1;
-			//	m_animation[3] = -1;
-			//	m_animation[4] = -1;
-
-			//	m_moveAttackEnd = false;
-
-			//}
-			////攻撃3段階目
-			//else if (m_attackNumber == 3 && m_animation[5] != -1 && m_moveAttackEnd == true)
-			//{
-			//	//アニメーションデタッチ
-			//	MV1DetachAnim(m_handle, m_animation[0]);
-			//	MV1DetachAnim(m_handle, m_animation[1]);
-			//	MV1DetachAnim(m_handle, m_animation[2]);
-			//	MV1DetachAnim(m_handle, m_animation[3]);
-			//	MV1DetachAnim(m_handle, m_animation[4]);
-			//	MV1DetachAnim(m_handle, m_animation[5]);
-
-			//	//アニメーションアタッチ
-			//	m_animation[6] = MV1AttachAnim(m_handle, 1, m_animAttack3, TRUE);
-
-			//	time = 0.0f;
-
-			//	m_animation[0] = -1;
-			//	m_animation[1] = -1;
-			//	m_animation[2] = -1;
-			//	m_animation[3] = -1;
-			//	m_animation[4] = -1;
-			//	m_animation[5] = -1;
-
-			//	m_moveAttackEnd = false;
-
-			//}
-		}
-
-		//プレイヤーが回復したとき
-		if (m_recoberyAction == true)
-		{
-			if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1)
-			{
-				//アニメーションデタッチ
-				MV1DetachAnim(m_handle, m_animation[0]);
-				MV1DetachAnim(m_handle, m_animation[1]);
-				MV1DetachAnim(m_handle, m_animation[2]);
-
-				//アニメーションアタッチ
-				m_animation[9] = MV1AttachAnim(m_handle, 1, m_animHeel, TRUE);
-
-				time = 0.0f;
-
-				m_animation[0] = -1;
-				m_animation[1] = -1;
-				m_animation[2] = -1;
+				}
 			}
 		}
 	}
@@ -1210,6 +1280,12 @@ void Player::Animation(float& time, VECTOR& pos)
 		m_recoveryNumber--;
 
 		m_recoberyAction = false;
+
+		time = 0.0f;
+	}
+	if (time >= m_totalAnimTime[10] && m_animation[10] != -1)
+	{
+		m_hit = false;
 
 		time = 0.0f;
 	}
@@ -1288,6 +1364,10 @@ void Player::Animation(float& time, VECTOR& pos)
 	if (m_animation[9] != -1)
 	{
 		MV1SetAttachAnimTime(m_handle, m_animation[9], time);
+	}
+	if (m_animation[10] != -1)
+	{
+		MV1SetAttachAnimTime(m_handle, m_animation[10], time);
 	}
 }
 
@@ -1528,23 +1608,26 @@ void Player::Draw()
 	//DrawFormatString(0, 60, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
 	////バグで攻撃状態になるがモーションが入らない
 	//DrawFormatString(0, 100, 0xffffff, "m_playTime : %f", m_playTime);
-	//DrawFormatString(0, 120, 0xffffff, "m_dashMove : %d", m_dashMove);
-	//DrawFormatString(0, 140, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
-	//DrawFormatString(0, 160, 0xffffff, "m_moveflag : %d", m_moveflag);
-	//DrawFormatString(0, 180, 0xffffff, "m_avoidance : %d", m_avoidance);
-	//DrawFormatString(0, 200, 0xffffff, "m_attack : %d", m_moveAttack);
-	//DrawFormatString(0, 220, 0xffffff, "m_rest: %d", m_restAction);
-	//DrawFormatString(0, 220, 0xffffff, "アニメ0 : %d", m_animation[0]);
-	//DrawFormatString(0, 240, 0xffffff, "アニメ1 : %d", m_animation[1]);
-	//DrawFormatString(0, 260, 0xffffff, "アニメ2 : %d", m_animation[2]);
-	//DrawFormatString(0, 280, 0xffffff, "アニメ3 : %d", m_animation[3]);
-	//DrawFormatString(0, 300, 0xffffff, "アニメ4 : %d", m_animation[4]);
-	//DrawFormatString(0, 320, 0xffffff, "アニメ5 : %d", m_animation[5]);
-	//DrawFormatString(0, 340, 0xffffff, "アニメ6 : %d", m_animation[6]);
-	//DrawFormatString(0, 360, 0xffffff, "アニメ7 : %d", m_animation[7]);
-	//DrawFormatString(0, 380, 0xffffff, "アニメ8 : %d", m_animation[8]);
-	//DrawFormatString(0, 400, 0xffffff, "アニメ9 : %d", m_animation[9]);
-	//DrawFormatString(150, 400, 0xffffff, "SE : %d", a);
+	DrawFormatString(200, 60, 0xffffff, "m_staminaBroke : %d", m_staminaBroke);
+	DrawFormatString(200, 100, 0xffffff, "m_hit : %d", m_hit);
+	DrawFormatString(200, 140, 0xffffff, "m_dashMove : %d", m_dashMove);
+	DrawFormatString(200, 180, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
+	DrawFormatString(200, 220, 0xffffff, "m_moveflag : %d", m_moveflag);
+	DrawFormatString(200, 260, 0xffffff, "m_avoidance : %d", m_avoidance);
+	DrawFormatString(200, 300, 0xffffff, "m_attack : %d", m_moveAttack);
+	DrawFormatString(200, 340, 0xffffff, "m_rest: %d", m_restAction);
+	DrawFormatString(200, 380, 0xffffff, "アニメ0 : %d", m_animation[0]);
+	DrawFormatString(200, 420, 0xffffff, "アニメ1 : %d", m_animation[1]);
+	DrawFormatString(200, 460, 0xffffff, "アニメ2 : %d", m_animation[2]);
+	DrawFormatString(200, 500, 0xffffff, "アニメ3 : %d", m_animation[3]);
+	DrawFormatString(200, 540, 0xffffff, "アニメ4 : %d", m_animation[4]);
+	DrawFormatString(200, 580, 0xffffff, "アニメ5 : %d", m_animation[5]);
+	DrawFormatString(200, 620, 0xffffff, "アニメ6 : %d", m_animation[6]);
+	DrawFormatString(200, 660, 0xffffff, "アニメ7 : %d", m_animation[7]);
+	DrawFormatString(200, 700, 0xffffff, "アニメ8 : %d", m_animation[8]);
+	DrawFormatString(200, 740, 0xffffff, "アニメ9 : %d", m_animation[9]);
+	DrawFormatString(200, 780, 0xffffff, "アニメ10 : %d", m_animation[10]);
+	//DrawFormatString(150, 400, 0xffffff, "playTime : %f", m_playTime);
 	effect->Draw();
 }
 
@@ -1637,6 +1720,8 @@ bool Player::isSphereHit(const SphereCol& col, const SphereCol& col1, const Sphe
 			if (m_avoidanceNow == false)
 			{
 				m_hp = m_hp - damage;
+
+				m_hit = true;
 			}
 			
 			m_damageReceived = true;
@@ -1656,6 +1741,8 @@ bool Player::isSphereHit(const SphereCol& col, const SphereCol& col1, const Sphe
 			if (m_avoidanceNow == false)
 			{
 				m_hp = m_hp - bossdamage;
+
+				m_hit = true;
 			}
 
 			m_damageReceived = true;

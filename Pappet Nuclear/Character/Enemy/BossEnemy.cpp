@@ -22,6 +22,7 @@ BossEnemy::BossEnemy() :
 	m_bossAttackRadius1(0.0f),
 	m_bossAttackRadius2(0.0f),
 	m_bossAttackRadius3(0.0f),
+	m_bounceAngle(0.0f),
 	m_outPush(VGet(0.0f, 0.0f, 0.0f))
 {
 }
@@ -109,6 +110,13 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 	{
 		m_playTime += 0.5f;
 	}
+
+	//プレイヤーを押し出す方向算出
+	float bounceX = m_pos.x - player.GetPosX();
+	float bounceZ = m_pos.z - player.GetPosZ();
+
+	m_bounceAngle = atan2f(bounceX, bounceZ);
+
 
 	//ボスの部屋に入った
 	if (map.GetRoomEntered() == true)
@@ -767,12 +775,16 @@ bool BossEnemy::isPlayerHit(const CapsuleCol& col, VECTOR vec, float bounce)
 {
 	bool isHit = m_capsuleCol.IsHitCapsule(col);
 
+	MATRIX mts = MGetRotY(D2R(m_bounceAngle));
+
 	//プレイヤーと当たった時
 	if (isHit)
 	{
 		m_color = 0xffff00;
 
-		m_outPush = VAdd(m_outPush, VScale(vec, 1.0f));
+		m_outPush = VScale(vec, bounce);
+
+		m_outPush = VTransform(m_outPush, mts);
 	}
 	else
 	{

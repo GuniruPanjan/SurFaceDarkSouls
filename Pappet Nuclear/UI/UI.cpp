@@ -101,7 +101,9 @@ void UI::Init(Player& player, Enemy& enemy)
 	m_enemyBossHpPosY3 = 350.0f;
 	m_enemyBossHpPosY4 = 349.0f;
 
-	m_enemyBossHpCover = enemy.GetBossHp() * m_enemyBossHpExpressionDivide1;
+	//m_enemyBossHpCover = enemy.GetBossHp() * m_enemyBossHpExpressionDivide1;
+	m_enemyBossHpCover = enemy.GetBossHp();
+
 }
 
 void UI::Draw(Player& player, Enemy& enemy)
@@ -151,8 +153,8 @@ void UI::Draw(Player& player, Enemy& enemy)
 		//DrawBox(m_enemyBossHpPosX2, m_enemyBossHpPosY2, m_enemyBossHpPosX2 + (enemy.GetBossHp() * m_enemyBossHpExpressionDivide2), m_enemyBossHpPosY4, m_hpColor, TRUE);
 
 		DrawString(100 * 3.0f, 310 * 2.0f, m_enemyBossName, 0xffffff);
-		DrawBox(m_enemyBossHpPosX1 * 3.2f, m_enemyBossHpPosY1 * 2.0f, m_enemyBossHpPosX1 + m_enemyBossHpCover * 3.0f, m_enemyBossHpPosY3 * 2.0f, 0xffffff, TRUE);
-		DrawBox(m_enemyBossHpPosX2 * 3.2f, m_enemyBossHpPosY2 * 2.0f, m_enemyBossHpPosX2 + (enemy.GetBossHp() * m_enemyBossHpExpressionDivide2) * 3.0f, m_enemyBossHpPosY4 * 2.0f, m_hpColor, TRUE);
+		DrawBox(m_enemyBossHpPosX1, m_enemyBossHpPosY1 * 2.0f, m_enemyBossHpPosX1 + m_enemyBossHpCover, m_enemyBossHpPosY3 * 2.0f, 0xffffff, TRUE);
+		DrawBox(m_enemyBossHpPosX2, m_enemyBossHpPosY2 * 2.0f, m_enemyBossHpPosX2 + enemy.GetBossHp(), m_enemyBossHpPosY4 * 2.0f, m_hpColor, TRUE);
 	}
 }
 

@@ -47,6 +47,9 @@ private:
 	float m_weakEnemyAngle[ENEMY_NOW];                   //敵のアングル
 	Pos3 m_weakColPos[ENEMY_NOW];                        //敵の当たり判定ポジション
 	CapsuleCol m_weakCapsuleCol[ENEMY_NOW];              //敵の当たり判定カプセル
+	float m_bounceX[ENEMY_NOW];                          //X軸方向算出
+	float m_bounceZ[ENEMY_NOW];                          //Z軸方向算出
+	float m_bounceAngle[ENEMY_NOW];                      //押し出すアングル
 	VECTOR m_outPush[ENEMY_NOW];                         //押し出すベクトル
 
 	//SE代入変数

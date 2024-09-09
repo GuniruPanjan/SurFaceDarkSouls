@@ -30,6 +30,9 @@ WeakEnemy::WeakEnemy()
 		m_diedSE[i] = 0;
 		oneInit[i] = false;
 		hitFlag[i] = false;
+		m_bounceX[i] = 0.0f;
+		m_bounceZ[i] = 0.0f;
+		m_bounceAngle[i] = 0.0f;
 	}
 }
 
@@ -160,6 +163,12 @@ void WeakEnemy::Update(Player& player, int max, int volume)
 
 	m_weakPlayTime[max] += 0.5f;
 
+	//‰Ÿ‚µo‚·ƒAƒ“ƒOƒ‹‚ğZo
+	m_bounceX[max] = m_weakEnemyPos[max].x - player.GetPosX();
+	m_bounceZ[max] = m_weakEnemyPos[max].z - player.GetPosX();
+
+	m_bounceAngle[max] = atan2f(m_bounceX[max], m_bounceZ[max]);
+
 	//õ“G‚Å”­Œ©‚³‚ê‚½ˆ—&“G‚ªUŒ‚‚µ‚Ä‚È‚¢
 	if (m_enemySearchFlag[max] == true && m_weakEnemyMoveAttack[max] == false)
 	{
@@ -251,6 +260,9 @@ void WeakEnemy::Action(Player& player, int max)
 			m_speed = 0.01f;
 
 			m_weakEnemyMove[max] = VScale(tracking, m_speed);
+
+			//UŒ‚‚Ì“–‚½‚è”»’è‰Šú‰»
+			m_colAttack[max].Update(Pos3(0.0f, -1000.0f, 0.0f));
 		}
 		//“G‚ª‹ß‚­‚É‚¢‚½‚Ìˆ—
 		else
@@ -778,7 +790,7 @@ bool WeakEnemy::isPlayerHit(const CapsuleCol& col,VECTOR& vec, float speed, int 
 {
 	bool isHit = m_weakCapsuleCol[max].IsHitCapsule(col);
 
-	MATRIX mts = MGetRotY(D2R(m_weakEnemyAngle[max]));
+	MATRIX mts = MGetRotY(D2R(m_bounceAngle[max]));
 
 	//ƒvƒŒƒCƒ„[‚Æ“–‚½‚Á‚½
 	if (isHit)
