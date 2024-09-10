@@ -694,7 +694,7 @@ void WeakEnemy::Draw(int max)
 
 	if (m_weakEnemyHp[max] > 0.0f)
 	{
-		//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+		DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
 		////õ“G”ÍˆÍ‰~‚Ì3D•`‰æ
 		//DrawSphere3D(m_colSearchPos[max].GetVector(), m_searchRadius, 16, m_seachColor, m_seachColor, false);
@@ -796,7 +796,7 @@ bool WeakEnemy::isPlayerHit(const CapsuleCol& col,VECTOR& vec, float speed, int 
 	//ƒvƒŒƒCƒ„[‚Æ“–‚½‚Á‚½
 	if (isHit)
 	{
-		m_outPush[max] = VScale(vec, 0.1f);
+		m_outPush[max] = VScale(vec, speed);
 
 		m_outPush[max] = VTransform(m_outPush[max], mts);
 	}

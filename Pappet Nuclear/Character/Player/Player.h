@@ -37,6 +37,7 @@ public:
 	float GetDamage() { return m_attack; }
 	float GetAngle() { return m_angle; }
 	float GetBounceDis() { return m_bounceDis; }
+	float GetSpeed() { return m_speed; }
 	VECTOR GetBounceMove() { return m_bounceMove; }
 	CapsuleCol GetCapsuleCol() { return m_capsuleCol; }
 	SphereCol GetSphereCol() { return m_sphereCol; }
@@ -74,6 +75,7 @@ private:
 	int m_pad;  //パッド入力所得変数
 	XINPUT_STATE m_xpad;  //パッド入力
 	int m_animRollAttack;  //キャラがローディング後に攻撃するアニメーション
+	int m_bugTime;         //一定時間経ったらバグと判断する
 	bool m_avoidance;   //回避入力を判断するための変数
 	bool m_nextAttack1;  //次の攻撃判定
 	bool m_nextAttack2;  //次の攻撃判定
@@ -83,6 +85,7 @@ private:
 	bool m_dashMove;     //ダッシュしてる判断用変数
 	bool m_staminaBroke;   //スタミナ切れ判定
 	bool m_hit;           //怯み判定
+	bool m_bug;           //バグの判定
 	VECTOR m_nowPos;   //現在のフレームの座標を取得する
 	VECTOR m_bounceMove;   //押し出すための変数
 

@@ -44,7 +44,9 @@ Player::Player():
 	m_recoberyAction(false),
 	m_effectHeel(0),
 	m_effectOneHeel(false),
-	m_a1(false)
+	m_a1(false),
+	m_bug(false),
+	m_bugTime(0)
 {
 }
 
@@ -215,6 +217,10 @@ void Player::Init()
 		m_animation[8] = -1;
 	}
 
+	m_bug = 0;
+
+	m_avoidance = false;
+
 	attack = false;
 
 	m_effectOneHeel = false;
@@ -222,6 +228,8 @@ void Player::Init()
 	m_death = false;
 
 	m_hit = false;
+
+	m_bug = false;
 
 	//モデル全体のコリジョン情報のセットアップ
 	//MV1SetupCollInfo(map->GetCollisionMap(), -1);
@@ -392,7 +400,7 @@ void Player::Update()
 			//スタミナ消費
 			m_stamina -= 0.1f;
 		}
-		else if(m_stamina >= 10.0f)
+		else if(m_stamina >= 10.0f && m_avoidance == false)
 		{
 			m_avoidance = true;
 		}
@@ -456,6 +464,15 @@ void Player::Update()
 
 		//攻撃終了
 		m_moveAttack = false;
+	}
+
+	//攻撃が当たった時モーションや判定を初期化する
+	if (m_hit == true)
+	{
+		m_drawPos = m_pos;
+		m_avoidance = false;
+		m_moveAttack = false;
+		m_recoberyAction = false;
 	}
 
 	//スタミナ切れ
@@ -530,8 +547,20 @@ void Player::Update()
 	
 	if (m_moveAttack == true && m_animation[0] != -1)
 	{
-		m_moveAttack = false;
-		m_moveflag = false;
+		m_bugTime++;
+
+		//バグと判断する
+		if (m_bugTime >= 10)
+		{
+			m_moveAttack = false;
+			m_moveflag = false;
+			m_bug = true;
+		}
+	}
+	else
+	{
+		m_bugTime = 0;
+		m_bug = false;
 	}
 }
 
@@ -543,11 +572,11 @@ void Player::PlaySE(int volume)
 void Player::OtherInfluence(VECTOR outpush, VECTOR weakoutpush)
 {
 	//他のキャラクターなどの影響を受ける
+	//m_drawPos = VSub(m_drawPos, outpush);
+	//m_drawPos = VSub(m_drawPos, weakoutpush);
+
 	m_pos = VAdd(m_pos, outpush);
 	m_pos = VAdd(m_pos, weakoutpush);
-
-	m_drawPos = VAdd(m_drawPos, outpush);
-	m_drawPos = VAdd(m_drawPos, weakoutpush);
 }
 
 /// <summary>
@@ -780,11 +809,13 @@ void Player::Action()
 		if (m_moveAttack == false && m_avoidance == false)
 		{
 			//一回だけ実行
-			if (m_effectOneHeel == false)
+			if (m_effectOneHeel == false && m_recoveryNumber > 0)
 			{
 				m_effectHeel = PlayEffekseer3DEffect(effect->GetHeelEffect());
 
 				PlaySoundMem(se->GetHeelSE(), DX_PLAYTYPE_BACK, true);
+
+				m_recoveryNumber--;
 
 				m_effectOneHeel = true;
 			}
@@ -800,7 +831,7 @@ void Player::Action()
 		m_heel = 0.0f;
 	}
 
-	if (m_recoveryNumber >= 0 && m_recoberyAction == true && m_moveAttack == false && m_avoidance == false)
+	if (m_recoveryNumber > 0 && m_recoberyAction == true && m_moveAttack == false && m_avoidance == false)
 	{
 		//HP回復
 		if (m_hp < 150.0f && m_heel < 100.0f)
@@ -1286,7 +1317,6 @@ void Player::Animation(float& time, VECTOR& pos)
 	}
 	if (time >= m_totalAnimTime[9] && m_animation[9] != -1)
 	{
-		m_recoveryNumber--;
 
 		m_recoberyAction = false;
 
@@ -1585,7 +1615,7 @@ void Player::Draw()
 	Pos3 pos2 = m_colPos - vec;
 
 	//カプセル3Dの描画
-	//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+	DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
 	////円の3D描画
 	//DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
@@ -1618,7 +1648,13 @@ void Player::Draw()
 	////バグで攻撃状態になるがモーションが入らない
 	//DrawFormatString(0, 100, 0xffffff, "m_playTime : %f", m_playTime);
 	//DrawFormatString(200, 60, 0xffffff, "m_staminaBroke : %d", m_staminaBroke);
-	DrawFormatString(200, 100, 0xffffff, "m_hit : %d", m_a1);
+	//DrawFormatString(200, 100, 0xffffff, "m_hit : %d", m_a1);
+
+	//if (m_xpad.Buttons[4] == 1)
+	//{
+	//	DrawFormatString(200, 100, 0xffffff, "押された");
+	//}
+	
 	//DrawFormatString(200, 180, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
 	//DrawFormatString(200, 220, 0xffffff, "m_moveflag : %d", m_moveflag);
 	//DrawFormatString(200, 260, 0xffffff, "m_avoidance : %d", m_avoidance);
@@ -1664,10 +1700,50 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 
 	m_a1 = isHit;
 
-	if (isHit || isHitBoss)
+	if (isHit)
 	{
 		m_color = 0xffff00;
 
+		//当たっていたら規定距離分プレイヤーを法線方向に移動させる
+		m_pos = VAdd(m_pos, VScale(m_bounceMove, m_speed / 2));
+
+		//回避行動だった場合
+		//m_posが動いている
+		if (m_avoidance == true)
+		{
+			//当たっていたら規定距離分プレイヤーを法線方向に移動させる
+			//m_pos.x -= m_moveVector.x + m_bounceDis;
+			//m_pos.z -= m_moveVector.z + m_bounceDis;
+			//m_drawPos.x -= m_moveVector.x + m_bounceDis;
+			//m_drawPos.z -= m_moveVector.z + m_bounceDis;
+			m_pos.x -= m_moveVector.x * 3.5f;
+			m_pos.z -= m_moveVector.z * 3.5f;
+			m_drawPos.x -= m_moveVector.x * 3.5f;
+			m_drawPos.z -= m_moveVector.z * 3.5f;
+
+
+		}
+		//攻撃中だった場合
+		else if (m_moveAttack == true)
+		{
+			//当たっていたら規定距離分プレイヤーを法線方向に移動させる
+			//m_pos.x -= m_moveVector.x + m_bounceDis;
+			//m_pos.z -= m_moveVector.z + m_bounceDis;
+			//m_drawPos.x -= m_moveVector.x + m_bounceDis;
+			//m_drawPos.z -= m_moveVector.z + m_bounceDis;
+			m_pos.x -= m_moveVector.x * 3.5f;
+			m_pos.z -= m_moveVector.z * 3.5f;
+			m_drawPos.x -= m_moveVector.x * 3.5f;
+			m_drawPos.z -= m_moveVector.z * 3.5f;
+		}
+	}
+	else
+	{
+		m_color = 0xffffff;
+	}
+
+	if (isHitBoss)
+	{
 		//当たっていたら規定距離分プレイヤーを法線方向に移動させる
 		m_pos = VAdd(m_pos, VScale(m_bounceMove, m_speed / 2));
 
@@ -1700,10 +1776,6 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 			m_drawPos.x -= m_moveVector.x;
 			m_drawPos.z -= m_moveVector.z;
 		}
-	}
-	else
-	{
-		m_color = 0xffffff;
 	}
 
 	return isHit || isHitBoss;

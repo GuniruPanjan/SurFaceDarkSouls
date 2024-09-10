@@ -154,7 +154,12 @@ void UI::Draw(Player& player, Enemy& enemy)
 
 		DrawString(100 * 3.0f, 310 * 2.0f, m_enemyBossName, 0xffffff);
 		DrawBox(m_enemyBossHpPosX1, m_enemyBossHpPosY1 * 2.0f, m_enemyBossHpPosX1 + m_enemyBossHpCover, m_enemyBossHpPosY3 * 2.0f, 0xffffff, TRUE);
-		DrawBox(m_enemyBossHpPosX2, m_enemyBossHpPosY2 * 2.0f, m_enemyBossHpPosX2 + enemy.GetBossHp(), m_enemyBossHpPosY4 * 2.0f, m_hpColor, TRUE);
+
+		if (enemy.GetBossHp() > 0.0f)
+		{
+			DrawBox(m_enemyBossHpPosX2, m_enemyBossHpPosY2 * 2.0f, m_enemyBossHpPosX2 + enemy.GetBossHp(), m_enemyBossHpPosY4 * 2.0f, m_hpColor, TRUE);
+		}
+		
 	}
 }
 
