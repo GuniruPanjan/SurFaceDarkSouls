@@ -86,6 +86,8 @@ private:
 	VECTOR m_nowPos;   //現在のフレームの座標を取得する
 	VECTOR m_bounceMove;   //押し出すための変数
 
+	bool m_a1;
+
 	unsigned int m_color = 0xffffff;   //デバッグ用の色変更
 
 	//レベル関係
@@ -99,5 +101,6 @@ private:
 	//スマートポインタ
 	std::shared_ptr<WeaponSummary> weapon = std::make_shared<WeaponSummary>();
 	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+
 };
 

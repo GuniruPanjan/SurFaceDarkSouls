@@ -43,7 +43,8 @@ Player::Player():
 	m_heel(0.0f),
 	m_recoberyAction(false),
 	m_effectHeel(0),
-	m_effectOneHeel(false)
+	m_effectOneHeel(false),
+	m_a1(false)
 {
 }
 
@@ -527,6 +528,11 @@ void Player::Update()
 		m_moveAttack = false;
 	}
 	
+	if (m_moveAttack == true && m_animation[0] != -1)
+	{
+		m_moveAttack = false;
+		m_moveflag = false;
+	}
 }
 
 void Player::PlaySE(int volume)
@@ -539,6 +545,9 @@ void Player::OtherInfluence(VECTOR outpush, VECTOR weakoutpush)
 	//他のキャラクターなどの影響を受ける
 	m_pos = VAdd(m_pos, outpush);
 	m_pos = VAdd(m_pos, weakoutpush);
+
+	m_drawPos = VAdd(m_drawPos, outpush);
+	m_drawPos = VAdd(m_drawPos, weakoutpush);
 }
 
 /// <summary>
@@ -1608,25 +1617,24 @@ void Player::Draw()
 	//DrawFormatString(0, 60, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
 	////バグで攻撃状態になるがモーションが入らない
 	//DrawFormatString(0, 100, 0xffffff, "m_playTime : %f", m_playTime);
-	DrawFormatString(200, 60, 0xffffff, "m_staminaBroke : %d", m_staminaBroke);
-	DrawFormatString(200, 100, 0xffffff, "m_hit : %d", m_hit);
-	DrawFormatString(200, 140, 0xffffff, "m_dashMove : %d", m_dashMove);
-	DrawFormatString(200, 180, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
-	DrawFormatString(200, 220, 0xffffff, "m_moveflag : %d", m_moveflag);
-	DrawFormatString(200, 260, 0xffffff, "m_avoidance : %d", m_avoidance);
-	DrawFormatString(200, 300, 0xffffff, "m_attack : %d", m_moveAttack);
-	DrawFormatString(200, 340, 0xffffff, "m_rest: %d", m_restAction);
-	DrawFormatString(200, 380, 0xffffff, "アニメ0 : %d", m_animation[0]);
-	DrawFormatString(200, 420, 0xffffff, "アニメ1 : %d", m_animation[1]);
-	DrawFormatString(200, 460, 0xffffff, "アニメ2 : %d", m_animation[2]);
-	DrawFormatString(200, 500, 0xffffff, "アニメ3 : %d", m_animation[3]);
-	DrawFormatString(200, 540, 0xffffff, "アニメ4 : %d", m_animation[4]);
-	DrawFormatString(200, 580, 0xffffff, "アニメ5 : %d", m_animation[5]);
-	DrawFormatString(200, 620, 0xffffff, "アニメ6 : %d", m_animation[6]);
-	DrawFormatString(200, 660, 0xffffff, "アニメ7 : %d", m_animation[7]);
-	DrawFormatString(200, 700, 0xffffff, "アニメ8 : %d", m_animation[8]);
-	DrawFormatString(200, 740, 0xffffff, "アニメ9 : %d", m_animation[9]);
-	DrawFormatString(200, 780, 0xffffff, "アニメ10 : %d", m_animation[10]);
+	//DrawFormatString(200, 60, 0xffffff, "m_staminaBroke : %d", m_staminaBroke);
+	DrawFormatString(200, 100, 0xffffff, "m_hit : %d", m_a1);
+	//DrawFormatString(200, 180, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
+	//DrawFormatString(200, 220, 0xffffff, "m_moveflag : %d", m_moveflag);
+	//DrawFormatString(200, 260, 0xffffff, "m_avoidance : %d", m_avoidance);
+	//DrawFormatString(200, 300, 0xffffff, "m_attack : %d", m_moveAttack);
+	//DrawFormatString(200, 340, 0xffffff, "m_rest: %d", m_restAction);
+	//DrawFormatString(200, 380, 0xffffff, "アニメ0 : %d", m_animation[0]);
+	//DrawFormatString(200, 420, 0xffffff, "アニメ1 : %d", m_animation[1]);
+	//DrawFormatString(200, 460, 0xffffff, "アニメ2 : %d", m_animation[2]);
+	//DrawFormatString(200, 500, 0xffffff, "アニメ3 : %d", m_animation[3]);
+	//DrawFormatString(200, 540, 0xffffff, "アニメ4 : %d", m_animation[4]);
+	//DrawFormatString(200, 580, 0xffffff, "アニメ5 : %d", m_animation[5]);
+	//DrawFormatString(200, 620, 0xffffff, "アニメ6 : %d", m_animation[6]);
+	//DrawFormatString(200, 660, 0xffffff, "アニメ7 : %d", m_animation[7]);
+	//DrawFormatString(200, 700, 0xffffff, "アニメ8 : %d", m_animation[8]);
+	//DrawFormatString(200, 740, 0xffffff, "アニメ9 : %d", m_animation[9]);
+	//DrawFormatString(200, 780, 0xffffff, "アニメ10 : %d", m_animation[10]);
 	//DrawFormatString(150, 400, 0xffffff, "playTime : %f", m_playTime);
 	effect->Draw();
 }
@@ -1653,6 +1661,8 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 {
 	bool isHit = m_capsuleCol.IsHitCapsule(col);
 	bool isHitBoss = m_capsuleCol.IsHitCapsule(col1);
+
+	m_a1 = isHit;
 
 	if (isHit || isHitBoss)
 	{
@@ -1705,6 +1715,8 @@ bool Player::isSphereHit(const SphereCol& col, const SphereCol& col1, const Sphe
 	bool isBossAttackHit1 = m_capsuleCol.IsHitSphere(col1);
 	bool isBossAttackHit2 = m_capsuleCol.IsHitSphere(col2);
 	bool isBossAttackHit3 = m_capsuleCol.IsHitSphere(col3);
+
+	//雑魚敵の攻撃が入っている
 
 	//ダメージを受けた判定
 	if (isHit)

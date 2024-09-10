@@ -13,11 +13,14 @@ namespace
 // プログラムは WinMain から始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	//名前変更
+	SetWindowText("PappetNuclear");
+
 	//画面の大きさ
-	SetWindowSize(Height, Width);
+	//SetWindowSize(Height, Width);
 	// windowモード設定
-	ChangeWindowMode(true);
 	SetGraphMode(1600, 1000, 32);
+	ChangeWindowMode(false);
 
 	if (DxLib_Init() == -1)		// ＤＸライブラリ初期化処理
 	{
@@ -67,6 +70,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		//裏画面を表画面を入れ替える
 		ScreenFlip();
+
+
+		if (pScene->GetEnd() == true)
+		{
+			break;
+		}
 
 		// escキーを押したら終了する
 		if (CheckHitKey(KEY_INPUT_ESCAPE))	break;

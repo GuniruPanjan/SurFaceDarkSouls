@@ -214,7 +214,9 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			{
 				PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
-				DxLib_End();
+				SetEnd(true);
+
+				//DxLib_End();
 			}
 		}
 		else

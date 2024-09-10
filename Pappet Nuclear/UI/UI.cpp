@@ -94,8 +94,8 @@ void UI::Init(Player& player, Enemy& enemy)
 
 	m_enemyBossHpExpressionDivide1 = 0.392f;
 	m_enemyBossHpExpressionDivide2 = 0.39f;
-	m_enemyBossHpPosX1 = 100.0f;
-	m_enemyBossHpPosX2 = 101.0f;
+	m_enemyBossHpPosX1 = 300.0f;
+	m_enemyBossHpPosX2 = 301.0f;
 	m_enemyBossHpPosY1 = 335.0f;
 	m_enemyBossHpPosY2 = 336.0f;
 	m_enemyBossHpPosY3 = 350.0f;

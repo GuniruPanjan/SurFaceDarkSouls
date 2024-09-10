@@ -671,7 +671,7 @@ void BossEnemy::MapHit(Map& map)
 					if (HitCheck_Capsule_Triangle(m_mapHitColl, VAdd(m_mapHitColl, VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == false) continue;
 
 					//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
-					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed));
+					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, 1.0f));
 
 					//移動した上で壁ポリゴンと接触しているかどうかを判定
 					for (j = 0; j < m_WallNum; j++)
@@ -782,7 +782,7 @@ bool BossEnemy::isPlayerHit(const CapsuleCol& col, VECTOR vec, float bounce)
 	{
 		m_color = 0xffff00;
 
-		m_outPush = VScale(vec, bounce);
+		m_outPush = VScale(vec, 0.1f);
 
 		m_outPush = VTransform(m_outPush, mts);
 	}

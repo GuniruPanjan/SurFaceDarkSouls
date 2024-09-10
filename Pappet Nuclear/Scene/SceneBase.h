@@ -7,7 +7,9 @@
 class SceneBase : public std::enable_shared_from_this<SceneBase>
 {
 public:
-	SceneBase(){}
+	SceneBase():
+		m_end(false)
+	{}
 
 	virtual ~SceneBase(){}
 
@@ -19,10 +21,13 @@ public:
 	virtual void End() = 0;
 
 	int MyLoadGraph(const char* FileName, int XSize, int YSize);
+	bool GetEnd() { return m_end; }
+	bool SetEnd(bool end) { return m_end = end; }
 
 protected:
 	//•Ï”‚ğ“ü‚ê‚é
 	int m_backScene = 0;
+	bool m_end;   //ƒQ[ƒ€I—¹•Ï”
 
 	std::shared_ptr<Setting> setting = std::make_shared<Setting>();
 	std::shared_ptr<BgmAndSeManager> bgmse = std::make_shared<BgmAndSeManager>();

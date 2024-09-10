@@ -115,7 +115,8 @@ void WeakEnemy::Init(int max)
 	m_weakCapsuleCol[max].Init(m_weakColPos[max], m_vec, m_len, m_capsuleRadius);
 	m_colSearch[max].Init(m_colSearchPos[max], m_searchRadius);
 	m_colDistance[max].Init(m_colDistancePos[max], m_distanceRadius);
-	m_colAttack[max].Init(m_colAttackPos[max], m_attackRadius);
+	//m_colAttack[max].Init(m_colAttackPos[max], m_attackRadius);
+	m_colAttack[max].Init(Pos3(1000.0f, 1000.0f, 1000.0f), m_attackRadius);
 
 	attack[max] = false;
 
@@ -262,7 +263,7 @@ void WeakEnemy::Action(Player& player, int max)
 			m_weakEnemyMove[max] = VScale(tracking, m_speed);
 
 			//攻撃の当たり判定初期化
-			m_colAttack[max].Update(Pos3(0.0f, -1000.0f, 0.0f));
+			m_colAttack[max].Update(Pos3(1000.0f, -1000.0f, 1000.0f));
 		}
 		//敵が近くにいた時の処理
 		else
@@ -660,7 +661,7 @@ void WeakEnemy::HitMap(Map& map, int max)
 						if (HitCheck_Capsule_Triangle(mapHitCol[w], VAdd(mapHitCol[w], VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == false) continue;
 
 						//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
-						m_weakEnemyPos[w] = VAdd(m_weakEnemyPos[w], VScale(m_Poly->Normal, 2.0f));
+						m_weakEnemyPos[w] = VAdd(m_weakEnemyPos[w], VScale(m_Poly->Normal, 1.0f));
 
 						//移動した上で壁ポリゴンと接触しているかどうかを判定
 						for (j = 0; j < m_WallNum; j++)
@@ -701,7 +702,7 @@ void WeakEnemy::Draw(int max)
 		////一定距離の範囲描画
 		//DrawSphere3D(m_colDistancePos[max].GetVector(), m_distanceRadius, 16, m_distanceColor, m_distanceColor, false);
 
-		////攻撃判定描画
+		//攻撃判定描画
 		//DrawSphere3D(m_colAttackPos[max].GetVector(), m_attackRadius, 16, 0xffffff, 0xffffff, false);
 	}
 
@@ -795,7 +796,7 @@ bool WeakEnemy::isPlayerHit(const CapsuleCol& col,VECTOR& vec, float speed, int 
 	//プレイヤーと当たった時
 	if (isHit)
 	{
-		m_outPush[max] = VScale(vec, speed);
+		m_outPush[max] = VScale(vec, 0.1f);
 
 		m_outPush[max] = VTransform(m_outPush[max], mts);
 	}
