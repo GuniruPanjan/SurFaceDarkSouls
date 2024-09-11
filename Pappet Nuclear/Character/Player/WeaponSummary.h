@@ -8,7 +8,7 @@ public:
 	virtual ~WeaponSummary();
 
 	void Init();
-	void Update(int frame);
+	void Update(int handle, int frame);
 	void Draw(VECTOR& vector);
 	void End();
 

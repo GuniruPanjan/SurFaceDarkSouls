@@ -27,6 +27,7 @@ public:
 	float GetPosY(int max) { return m_weakEnemyPos[max].y; }
 	float GetPosZ(int max) { return m_weakEnemyPos[max].z; }
 	float GetDamage() { return m_attack; }
+	float GetWeakHp(int max) { return m_weakEnemyHp[max]; }
 	VECTOR GetOutPush(int max) { return m_outPush[max]; }
 	const CapsuleCol GetCol(int max) { return m_weakCapsuleCol[max]; }
 	const SphereCol GetAttackCol(int max) { return m_colAttack[max]; }

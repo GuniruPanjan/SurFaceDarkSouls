@@ -694,7 +694,7 @@ void WeakEnemy::Draw(int max)
 
 	if (m_weakEnemyHp[max] > 0.0f)
 	{
-		DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+		//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
 		////õ“G”ÍˆÍ‰~‚Ì3D•`‰æ
 		//DrawSphere3D(m_colSearchPos[max].GetVector(), m_searchRadius, 16, m_seachColor, m_seachColor, false);

@@ -62,7 +62,7 @@ void BossEnemy::Init()
 	m_colBossAttackPos1 = Pos3(m_pos.x - 50.0f, m_pos.y + 35.0f, m_pos.z);
 	m_colBossAttackPos2 = Pos3(m_pos.x - 50.0f, m_pos.y + 35.0f, m_pos.z);
 	m_colBossAttackPos3 = Pos3(m_pos.x, m_pos.y + 35.0f, m_pos.z);
-	m_initializationPos = Pos3(0.0f, -1000.0f, 0.0f);
+	m_initializationPos = Pos3(1000.0f, -1000.0f, 1000.0f);
 	m_vec = Vec3(0.0f, m_pos.y + 2.0f, 0.0f);
 	m_len = 40.0f;
 	m_capsuleRadius = 35.0f;
@@ -102,14 +102,31 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 	m_bossColDistance.Update(m_colPos);
 
 	//アニメーション再生速度
-	if (m_bossAttack1 == true || m_bossAttack2 == true)
+	if (m_bossAttack1 == true)
 	{
 		m_playTime += 0.3f;
+	}
+	else if (m_bossAttack2 == true)
+	{
+		m_playTime += 0.2f;
 	}
 	else
 	{
 		m_playTime += 0.5f;
 	}
+
+	//if (m_bossAttack1 == true)
+	//{
+	//	m_playTime += 0.5f;
+	//}
+	//else if (m_bossAttack2 == true)
+	//{
+	//	m_playTime += 0.5f;
+	//}
+	//else
+	//{
+	//	m_playTime += 0.5f;
+	//}
 
 	//プレイヤーを押し出す方向算出
 	float bounceX = m_pos.x - player.GetPosX();

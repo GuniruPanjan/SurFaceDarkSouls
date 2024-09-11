@@ -46,6 +46,7 @@ public:
 	float GetPosY(int max) { return enemy->GetPosY(max); }
 	float GetPosZ(int max) { return enemy->GetPosZ(max); }
 	float GetDamage() { return enemy->GetDamage(); }
+	float GetWeakHp(int max) { return enemy->GetWeakHp(max); }
 	VECTOR GetWeakOutPush(int max) { return enemy->GetOutPush(max); }
 	CapsuleCol GetCol(int max) const { return enemy->GetCol(max); }
 	SphereCol GetAttackCol(int max);

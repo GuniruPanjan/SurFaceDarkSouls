@@ -241,7 +241,7 @@ void Player::Update()
 
 	//アニメーションで移動しているフレームの番号を検索する
 	m_moveAnimFrameIndex = MV1SearchFrame(m_handle, "mixamorig:Hips");
-	m_moveAnimFrameRight = MV1SearchFrame(m_handle, "mixamorig:RightHandMiddle4");
+	m_moveAnimFrameRight = MV1SearchFrame(m_handle, "mixamorig:RightHandThumb2");
 
 	//武器をアタッチするフレームのローカル→ワールド変換行列を取得する
 	m_moveWeaponFrameMatrix = MV1GetFrameLocalMatrix(m_handle, m_moveAnimFrameRight);
@@ -494,7 +494,7 @@ void Player::Update()
 		}
 	}
 
-	weapon->Update(m_moveAnimFrameRight);
+	weapon->Update(m_handle, m_moveAnimFrameRight);
 
 	Animation(m_playTime, m_pos);
 
@@ -831,7 +831,7 @@ void Player::Action()
 		m_heel = 0.0f;
 	}
 
-	if (m_recoveryNumber > 0 && m_recoberyAction == true && m_moveAttack == false && m_avoidance == false)
+	if (m_recoveryNumber >= 0 && m_recoberyAction == true && m_moveAttack == false && m_avoidance == false)
 	{
 		//HP回復
 		if (m_hp < 150.0f && m_heel < 100.0f)
@@ -1615,7 +1615,7 @@ void Player::Draw()
 	Pos3 pos2 = m_colPos - vec;
 
 	//カプセル3Dの描画
-	DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+	//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
 	////円の3D描画
 	//DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
@@ -1630,7 +1630,7 @@ void Player::Draw()
 	//3Dモデル描画
 	MV1DrawModel(m_handle);
 
-	//weapon->Draw(m_moveAnimFrameRigthPosition);
+	weapon->Draw(m_moveAnimFrameRigthPosition);
 
 	//if (m_HitFlag == true)
 	//{
@@ -1756,10 +1756,10 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 			//m_pos.z -= m_moveVector.z + m_bounceDis;
 			//m_drawPos.x -= m_moveVector.x + m_bounceDis;
 			//m_drawPos.z -= m_moveVector.z + m_bounceDis;
-			m_pos.x -= m_moveVector.x;
-			m_pos.z -= m_moveVector.z;
-			m_drawPos.x -= m_moveVector.x;
-			m_drawPos.z -= m_moveVector.z;
+			m_pos.x -= m_moveVector.x * 1.2f;
+			m_pos.z -= m_moveVector.z * 1.2f;
+			m_drawPos.x -= m_moveVector.x * 1.2f;
+			m_drawPos.z -= m_moveVector.z * 1.2f;
 
 
 		}
@@ -1771,10 +1771,10 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 			//m_pos.z -= m_moveVector.z + m_bounceDis;
 			//m_drawPos.x -= m_moveVector.x + m_bounceDis;
 			//m_drawPos.z -= m_moveVector.z + m_bounceDis;
-			m_pos.x -= m_moveVector.x;
-			m_pos.z -= m_moveVector.z;
-			m_drawPos.x -= m_moveVector.x;
-			m_drawPos.z -= m_moveVector.z;
+			m_pos.x -= m_moveVector.x * 1.2f;
+			m_pos.z -= m_moveVector.z * 1.2f;
+			m_drawPos.x -= m_moveVector.x * 1.2f;
+			m_drawPos.z -= m_moveVector.z * 1.2f;
 		}
 	}
 
