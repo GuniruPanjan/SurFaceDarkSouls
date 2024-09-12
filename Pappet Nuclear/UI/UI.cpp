@@ -130,7 +130,7 @@ void UI::Draw(Player& player, Enemy& enemy, Equipment& eq)
 	//Œ‘•”õ
 	if (eq.GetFist() == true)
 	{
-		DrawGraph(0, 460, m_fist, TRUE);
+		DrawGraph(40, 490, m_fist, TRUE);
 	}
 	//Œ•‘•”õ
 	if (eq.GetSword() == true)

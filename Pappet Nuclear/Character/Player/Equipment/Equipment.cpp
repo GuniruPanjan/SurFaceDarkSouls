@@ -204,6 +204,17 @@ void Equipment::Draw()
 	DrawGraph(0, 0, DrawBox(200, 200, 400, 400, m_rightEquipmentBoxColor, true), false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
+	//åùÇæÇ¡ÇΩèÍçá
+	if (m_equipmentFist == true)
+	{
+		DrawGraph(180, 220, m_fist, true);
+	}
+	//åïÇæÇ¡ÇΩèÍçá
+	if (m_equipmentSword == true)
+	{
+		DrawGraph(150, 200, m_sword, true);
+	}
+
 	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 	//DrawGraph(0, 0, DrawBox(600, 200, 800, 400, 0x000000, true), false);
 	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -235,7 +246,7 @@ void Equipment::RightDraw()
 
 	DrawGraph(150, m_rightEquipmentSelectY, DrawBox(150, m_rightEquipmentSelectY, 350, m_rightEquipmentSelectY + 200, 0xffff00, true), false);
 
-	DrawGraph(100, 100, m_fist, true);
+	DrawGraph(140, 100, m_fist, true);
 	DrawGraph(100, 300, m_sword, true);
 
 

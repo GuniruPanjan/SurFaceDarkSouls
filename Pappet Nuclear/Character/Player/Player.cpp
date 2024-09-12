@@ -49,7 +49,11 @@ Player::Player():
 	m_menuOpen(false),
 	m_button(0),
 	m_one(false),
-	m_bugTime(0)
+	m_bugTime(0),
+	m_notWeapon(false),
+	m_swordRadius(0.0f),
+	m_fistCol(false),
+	m_swordCol(false)
 {
 }
 
@@ -187,7 +191,7 @@ void Player::Init()
 	}
 
 	m_playTime = 0.0f;
-
+	
 	//当たり判定
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 	m_colAttackPos = Pos3(m_pos.x - 50.0f, m_pos.y + 35.0f, m_pos.z);
@@ -196,9 +200,9 @@ void Player::Init()
 	m_len = 40.0f;
 	m_capsuleRadius = 12.0f;
 	m_sphereRadius = 18.0f;
+	m_swordRadius = 30.0f;
 	m_capsuleCol.Init(m_colPos, m_vec, m_len, m_capsuleRadius);
 	m_sphereCol.Init(m_colAttackPos, m_sphereRadius);
-	
 
 	m_posX = m_updatePosX;
 	m_posY = m_updatePosY;
@@ -244,6 +248,20 @@ void Player::Init()
 void Player::Update()
 {
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
+
+	//初期化
+	if (m_notWeapon == false)
+	{
+		if (m_fistCol == false && m_swordCol == false)
+		{
+			m_sphereCol.Init(m_colAttackPos, m_sphereRadius);
+
+			m_fistCol = true;
+		}
+
+		//素手の攻撃力
+		m_attack = 10.0f;
+	}
 
 	//アニメーションで移動しているフレームの番号を検索する
 	m_moveAnimFrameIndex = MV1SearchFrame(m_handle, "mixamorig:Hips");
@@ -376,9 +394,15 @@ void Player::Update()
 		
 	}
 
-	//攻撃の当たり判定をプレイヤーの正面に持ってくる
-	m_colAttackPos.x = m_pos.x + sinf(m_angle) * -25.0f;
-	m_colAttackPos.z = m_pos.z - cosf(m_angle) * 25.0f;
+
+	//武器を持ってない時
+	if (m_notWeapon == false)
+	{
+		//攻撃の当たり判定をプレイヤーの正面に持ってくる
+		m_colAttackPos.x = m_pos.x + sinf(m_angle) * -25.0f;
+		m_colAttackPos.z = m_pos.z - cosf(m_angle) * 25.0f;
+	}
+	
 
 
 	//アニメーション時間を進める前のアニメーションで移動をしているフレームの座標取得
@@ -589,7 +613,40 @@ void Player::Update()
 
 void Player::WeaponUpdate(Equipment& eq)
 {
-	weapon->Update(m_moveWeaponFrameMatrix);
+	//剣を持った時
+	if (eq.GetSword() == true)
+	{
+		m_notWeapon = true;
+
+		weapon->Update(m_moveWeaponFrameMatrix);
+
+		//一回だけ初期化
+		if (m_swordCol == false)
+		{
+			m_sphereCol.Init(m_colAttackPos, m_swordRadius);
+
+			m_swordCol = true;
+		}
+
+		//攻撃の当たり判定をプレイヤーの正面に持ってくる
+		m_colAttackPos.x = m_pos.x + sinf(m_angle) * -35.0f;
+		m_colAttackPos.z = m_pos.z - cosf(m_angle) * 35.0f;
+
+
+		if (m_swordCol == true)
+		{
+			m_fistCol = false;
+		}
+
+		//剣の攻撃力
+		m_attack = 30.0f;
+	}
+	else
+	{
+		m_notWeapon = false;
+
+		m_swordCol = false;
+	}
 }
 
 void Player::PlaySE(int volume)
@@ -1646,7 +1703,15 @@ void Player::Draw()
 	//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
 	////円の3D描画
-	//DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
+	if (m_fistCol == true)
+	{
+		DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
+	}
+	if (m_swordCol == true)
+	{
+		DrawSphere3D(m_colAttackPos.GetVector(), m_swordRadius, 16, 0xffffff, 0xffffff, false);
+
+	}
 	//DrawSphere3D(map->GetVectorMapPos(), 1500.0f, 16, 0xffffff, 0xffffff, false);
 
 	//3Dモデルのポジション設定
@@ -1699,8 +1764,12 @@ void Player::Draw()
 
 void Player::WeaponDraw(Equipment& eq)
 {
-
-	weapon->Draw(m_moveAnimFrameRigthPosition);
+	//剣を持った時
+	if (eq.GetSword() == true)
+	{
+		weapon->Draw(m_moveAnimFrameRigthPosition);
+	}
+	
 }
 
 void Player::End()

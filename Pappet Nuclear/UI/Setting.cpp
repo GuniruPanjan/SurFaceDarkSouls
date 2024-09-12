@@ -759,8 +759,10 @@ void Setting::Draw()
 	//DrawFormatString(0, 0, 0xffffff, "m_thumb : %d", m_thumb);
 }
 
-void Setting::SettingDraw()
+void Setting::SettingDraw(int volume)
 {
+	se->Update(volume);
+
 	//–¾‚é‚³
 	if (m_brightSelect[0] == 1)
 	{

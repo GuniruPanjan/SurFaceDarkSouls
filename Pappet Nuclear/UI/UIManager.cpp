@@ -3,7 +3,7 @@
 UIManager::UIManager()
 {
 	m_heelStone = MyLoadGraph("Data/UI/HeelStoneMini.png", 3, 3);
-	m_fist = MyLoadGraph("Data/UI/FistUi.png", 3, 3);
+	m_fist = MyLoadGraph("Data/UI/FistUi.png", 4, 4);
 	m_sword = MyLoadGraph("Data/UI/SwordUI.png", 3, 3);
 }
 

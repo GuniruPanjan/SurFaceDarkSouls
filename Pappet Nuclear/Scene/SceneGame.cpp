@@ -225,7 +225,7 @@ void SceneGame::Draw()
 		equipment->RightDraw();
 	}
 
-	setting->SettingDraw();
+	setting->SettingDraw(setting->GetVolume());
 }
 
 void SceneGame::End()

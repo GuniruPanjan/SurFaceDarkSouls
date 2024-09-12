@@ -13,7 +13,7 @@ public:
 	void Update();
 	void MenuUpdate();
 	void Draw();
-	void SettingDraw();
+	void SettingDraw(int volume);
 	void MenuDraw();
 	void End();
 

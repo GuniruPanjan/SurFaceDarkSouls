@@ -67,6 +67,7 @@ private:
 	float m_updatePosY;   //Y座標更新用変数
 	float m_updatePosZ;   //Z座標更新用変数
 	float m_stamina;      //スタミナ
+	float m_swordRadius;   //剣の当たり判定の半径
 	int m_animHeel;       //回復アニメーション代入
 	int m_recoveryNumber;     //回復できる回数変数
 	float m_recoberyAmount;   //回復量
@@ -96,6 +97,9 @@ private:
 	bool m_hit;           //怯み判定
 	bool m_bug;           //バグの判定
 	bool m_menuOpen;      //メニューを開く
+	bool m_notWeapon;     //武器を持ってない状態
+	bool m_fistCol;       //拳の当たり判定初期化
+	bool m_swordCol;      //剣の当たり判定初期化判定
 	VECTOR m_nowPos;   //現在のフレームの座標を取得する
 	VECTOR m_bounceMove;   //押し出すための変数
 
