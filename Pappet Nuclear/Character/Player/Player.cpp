@@ -46,6 +46,9 @@ Player::Player():
 	m_effectOneHeel(false),
 	m_a1(false),
 	m_bug(false),
+	m_menuOpen(false),
+	m_button(0),
+	m_one(false),
 	m_bugTime(0)
 {
 }
@@ -68,6 +71,9 @@ Player::~Player()
 
 void Player::Init()
 {
+	m_button = 0;
+	m_one = false;
+
 	//プレイヤーHPの初期化
 	m_hp = 150.0f;
 
@@ -244,7 +250,7 @@ void Player::Update()
 	m_moveAnimFrameRight = MV1SearchFrame(m_handle, "mixamorig:RightHandThumb2");
 
 	//武器をアタッチするフレームのローカル→ワールド変換行列を取得する
-	m_moveWeaponFrameMatrix = MV1GetFrameLocalMatrix(m_handle, m_moveAnimFrameRight);
+	m_moveWeaponFrameMatrix = MV1GetFrameLocalWorldMatrix(m_handle, m_moveAnimFrameRight);
 
 	//盾を構えるときのアニメーションのフレーム所得
 	m_moveAnimShieldFrameIndex = MV1SearchFrame(m_handle, "mixamorig:LeftHand");
@@ -362,7 +368,12 @@ void Player::Update()
 	{
 		m_pos = VAdd(m_pos, m_move);
 
-		Action();
+		//メニューが開かれてたら行動できない
+		if (m_menuOpen == false)
+		{
+			Action();
+		}
+		
 	}
 
 	//攻撃の当たり判定をプレイヤーの正面に持ってくる
@@ -385,39 +396,46 @@ void Player::Update()
 
 
 	//Aボタンが押されたら
-	if (m_xpad.Buttons[12] == 1 && m_staminaBroke == false && m_recoberyAction == false && 
-		m_moveAttack == false && m_hit == false)
+	//メニューが開かれてたら行動できない
+	if (m_menuOpen == false)
 	{
-		if (m_a > 50 && m_stamina >= 0.1f)
+		if (m_xpad.Buttons[12] == 1 && m_staminaBroke == false && m_recoberyAction == false &&
+			m_moveAttack == false && m_hit == false)
 		{
-			m_avoidance = false;
+			if (m_a > 50 && m_stamina >= 0.1f)
+			{
+				m_avoidance = false;
 
-			//ダッシュ中
-			m_dashMove = true;
+				//ダッシュ中
+				m_dashMove = true;
 
-			m_speed = 3.0f;
+				m_speed = 3.0f;
 
-			//スタミナ消費
-			m_stamina -= 0.1f;
+				//スタミナ消費
+				m_stamina -= 0.1f;
+			}
+			else if (m_stamina >= 10.0f && m_avoidance == false)
+			{
+				m_avoidance = true;
+			}
+
+			if (m_a < 51)
+			{
+				m_a++;
+			}
 		}
-		else if(m_stamina >= 10.0f && m_avoidance == false)
+		else
 		{
-			m_avoidance = true;
-		}
+			m_dashMove = false;
 
-		if (m_a < 51)
-		{
-			m_a++;
+			m_speed = 2.0f;
+
+			m_a = 0;
 		}
 	}
-	else
-	{
-		m_dashMove = false;
+	
 
-		m_speed = 2.0f;
 
-		m_a = 0;
-	}
 	//回避や攻撃していない時に座標を入れる
 	if (m_avoidance == false && m_moveAttack == false)
 	{
@@ -494,14 +512,19 @@ void Player::Update()
 		}
 	}
 
-	weapon->Update(m_handle, m_moveAnimFrameRight);
-
 	Animation(m_playTime, m_pos);
 
 	m_capsuleCol.Update(m_colPos, m_vec);
 
 	//マップとの当たり判定用
 	m_mapHitColl = VGet(m_colPos.x, m_colPos.y, m_colPos.z);
+
+	//メニューを開く
+	if (m_xpad.Buttons[4] == 1)
+	{
+		m_menuOpen = true;
+	}
+
 
 	//バグ直す用
 	if (m_animation[8] != -1 && m_moveAttack == true)
@@ -562,6 +585,11 @@ void Player::Update()
 		m_bugTime = 0;
 		m_bug = false;
 	}
+}
+
+void Player::WeaponUpdate(Equipment& eq)
+{
+	weapon->Update(m_moveWeaponFrameMatrix);
 }
 
 void Player::PlaySE(int volume)
@@ -1630,8 +1658,6 @@ void Player::Draw()
 	//3Dモデル描画
 	MV1DrawModel(m_handle);
 
-	weapon->Draw(m_moveAnimFrameRigthPosition);
-
 	//if (m_HitFlag == true)
 	//{
 	//	DrawFormatString(0, 100, 0xffffff, "壁に当たった");
@@ -1650,11 +1676,7 @@ void Player::Draw()
 	//DrawFormatString(200, 60, 0xffffff, "m_staminaBroke : %d", m_staminaBroke);
 	//DrawFormatString(200, 100, 0xffffff, "m_hit : %d", m_a1);
 
-	//if (m_xpad.Buttons[4] == 1)
-	//{
-	//	DrawFormatString(200, 100, 0xffffff, "押された");
-	//}
-	
+
 	//DrawFormatString(200, 180, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
 	//DrawFormatString(200, 220, 0xffffff, "m_moveflag : %d", m_moveflag);
 	//DrawFormatString(200, 260, 0xffffff, "m_avoidance : %d", m_avoidance);
@@ -1673,6 +1695,12 @@ void Player::Draw()
 	//DrawFormatString(200, 780, 0xffffff, "アニメ10 : %d", m_animation[10]);
 	//DrawFormatString(150, 400, 0xffffff, "playTime : %f", m_playTime);
 	effect->Draw();
+}
+
+void Player::WeaponDraw(Equipment& eq)
+{
+
+	weapon->Draw(m_moveAnimFrameRigthPosition);
 }
 
 void Player::End()

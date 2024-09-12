@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Character/Player/Player.h"
 #include "Character/Enemy/Enemy.h"
+#include "Character/Player/Equipment/Equipment.h"
 
 UI::UI():
 	m_hpCover(0.0f),
@@ -39,8 +40,6 @@ UI::UI():
 	m_ItemColumn2X2(0.0f),
 	m_ItemColumn2Y1(0.0f),
 	m_ItemColumn2Y2(0.0f),
-	m_heelStone(0),
-	m_fist(0),
 	m_enemyBossName(0),
 	m_youDied(0)
 {
@@ -48,7 +47,8 @@ UI::UI():
 
 UI::~UI()
 {
-	DeleteGraph(m_heelStone);
+	DeleteGraph(m_youDied);
+
 }
 
 void UI::Init(Player& player, Enemy& enemy)
@@ -57,8 +57,6 @@ void UI::Init(Player& player, Enemy& enemy)
 	//m_fist = LoadGraph("Data/UI/FistUi.png");
 	//m_youDied = MyLoadGraph("Data/UI/YOUDIEDGraph.png", 20, 20);
 
-	m_heelStone = MyLoadGraph("Data/UI/HeelStoneMini.png", 3, 3);
-	m_fist = MyLoadGraph("Data/UI/FistUi.png", 3, 3);
 	m_youDied = MyLoadGraph("Data/UI/YOUDIEDGraph Mini.png", 1, 1);
 
 	m_hpExpressionDivide1 = 0.9f;
@@ -106,7 +104,7 @@ void UI::Init(Player& player, Enemy& enemy)
 
 }
 
-void UI::Draw(Player& player, Enemy& enemy)
+void UI::Draw(Player& player, Enemy& enemy, Equipment& eq)
 {
 	//DrawBox(m_hpPosX1, m_hpPosY1, m_hpPosX1 + m_hpCover, m_hpPosY3, 0xffffff, TRUE);
 	//DrawBox(m_hpPosX2, m_hpPosY2, m_hpPosX2 + (player.GetHp() * m_hpExpressionDivide2), m_hpPosY4, m_hpColor, TRUE);
@@ -128,7 +126,18 @@ void UI::Draw(Player& player, Enemy& enemy)
 	DrawBox(m_ItemColumn2X1 * 3.0f, m_ItemColumn2Y1 * 1.9f, m_ItemColumn2X2 * 3.0f, m_ItemColumn2Y2 * 2.1f, 0xffffff, TRUE);
 
 	//DrawGraph(-3, 305, m_fist, TRUE);
-	DrawGraph(0, 460, m_fist, TRUE);
+
+	//åùëïîı
+	if (eq.GetFist() == true)
+	{
+		DrawGraph(0, 460, m_fist, TRUE);
+	}
+	//åïëïîı
+	if (eq.GetSword() == true)
+	{
+		DrawGraph(0, 460, m_sword, TRUE);
+	}
+	
 
 
 	//âÒïúÉAÉCÉeÉÄÇ™0à»è„ÇæÇ∆
@@ -176,6 +185,7 @@ void UI::DiedDraw()
 
 void UI::End()
 {
+	DeleteGraph(m_youDied);
 }
 
 int UI::MyLoadGraph(const char* FileName, int XSize, int YSize)

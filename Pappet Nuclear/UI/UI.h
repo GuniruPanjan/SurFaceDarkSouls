@@ -1,16 +1,18 @@
 #pragma once
+#include "UIManager.h"
 
 class Player;
 class Enemy;
+class Equipment;
 
-class UI
+class UI : public UIManager
 {
 public:
 	UI();
 	virtual ~UI();
 
 	void Init(Player& player, Enemy& enemy);
-	void Draw(Player& player, Enemy& enemy);
+	void Draw(Player& player, Enemy& enemy, Equipment& eq);
 	void DiedDraw();
 	void End();
 
@@ -45,8 +47,6 @@ private:
 	float m_ItemColumn2X2;
 	float m_ItemColumn2Y1;
 	float m_ItemColumn2Y2;
-	int m_heelStone;
-	int m_fist;
 	int m_youDied;
 
 	//“G‚ÌUI•Ï”

@@ -22,11 +22,16 @@ Setting::Setting():
 	m_settingScene(false),
 	m_brightness(false),
 	m_volume(false),
-	m_volumeSize(0)
+	m_volumeSize(0),
+	m_equipmentMenu(false),
+	m_returnMenu(true),
+	m_titleMenu(false)
 {
 	for (int i = 0; i < 3; i++)
 	{
 		m_select[i] = 0;
+		m_menuSelect[i] = 0;
+		m_menuColor[i] = 0;
 	}
 
 	for (int i = 0; i < 5; i++)
@@ -83,6 +88,10 @@ void Setting::Init()
 	m_volumeColor[3] = 0xffffff;
 	m_volumeColor[4] = 0xffffff;
 
+	m_menuSelect[0] = 1;
+	m_menuSelect[1] = 0;
+	m_menuSelect[2] = 0;
+
 	m_volumeSize = 130;
 
 	m_button = 0;
@@ -91,6 +100,9 @@ void Setting::Init()
 	m_settingScene = false;
 	m_brightness = false;
 	m_volume = false;
+	m_equipmentMenu = false;
+	m_returnMenu = true;
+	m_titleMenu = false;
 
 	m_brightnessColor = 0xffffff;
 	m_bgmColor = 0xffffff;
@@ -472,6 +484,110 @@ void Setting::Update()
 	
 }
 
+void Setting::MenuUpdate()
+{
+	//パッド入力所得
+	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
+
+	//上
+	if (m_xpad.Buttons[0] == 1)
+	{
+		m_button++;
+	}
+	//下
+	else if (m_xpad.Buttons[1] == 1)
+	{
+		m_button--;
+	}
+	else
+	{
+		//初期化
+		m_button = 0;
+
+		m_one = false;
+	}
+
+	//上選択
+	if (m_menuSelect[0] == 1 && m_button > 0 && m_one == false)
+	{
+		m_menuSelect[2] = 1;
+		m_menuSelect[0] = 0;
+
+		PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+		m_one = true;
+	}
+	if (m_menuSelect[1] == 1 && m_button > 0 && m_one == false)
+	{
+		m_menuSelect[0] = 1;
+		m_menuSelect[1] = 0;
+
+		PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+		m_one = true;
+	}
+	if (m_menuSelect[2] == 1 && m_button > 0 && m_one == false)
+	{
+		m_menuSelect[1] = 1;
+		m_menuSelect[2] = 0;
+
+		PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+		m_one = true;
+	}
+	//下選択
+	if (m_menuSelect[0] == 1 && m_button < 0 && m_one == false)
+	{
+		m_menuSelect[1] = 1;
+		m_menuSelect[0] = 0;
+
+		PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+		m_one = true;
+	}
+	if (m_menuSelect[1] == 1 && m_button < 0 && m_one == false)
+	{
+		m_menuSelect[2] = 1;
+		m_menuSelect[1] = 0;
+
+		PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+		m_one = true;
+	}
+	if (m_menuSelect[2] == 1 && m_button < 0 && m_one == false)
+	{
+		m_menuSelect[0] = 1;
+		m_menuSelect[2] = 0;
+
+		PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
+
+		m_one = true;
+	}
+	//Aボタン押したら
+	//装備メニュー
+	if (m_xpad.Buttons[12] == 1 && m_menuSelect[0] == 1)
+	{
+		PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
+		m_equipmentMenu = true;
+	}
+	//戻る
+	if (m_xpad.Buttons[12] == 1 && m_menuSelect[1] == 1)
+	{
+		PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
+		m_returnMenu = false;
+	}
+	//タイトルに戻る
+	if (m_xpad.Buttons[12] == 1 && m_menuSelect[2] == 1)
+	{
+		PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
+		m_titleMenu = true;
+	}
+
+}
+
 void Setting::Draw()
 {
 	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
@@ -479,7 +595,7 @@ void Setting::Draw()
 	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	DrawGraph(80, 0, m_back, false);
+	DrawGraph(0, 0, m_back, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	//選択中の色を変える
@@ -761,6 +877,46 @@ void Setting::SettingDraw()
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_whitePal);
 	DrawGraph(0, 0, m_white, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
+
+void Setting::MenuDraw()
+{
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+	DrawGraph(0, 0, m_back, false);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	if (m_menuSelect[0] == 1)
+	{
+		m_menuColor[0] = 0xffff00;
+		m_menuColor[1] = 0xffffff;
+		m_menuColor[2] = 0xffffff;
+	}
+	if (m_menuSelect[1] == 1)
+	{
+		m_menuColor[0] = 0xffffff;
+		m_menuColor[1] = 0xffff00;
+		m_menuColor[2] = 0xffffff;
+	}
+	if (m_menuSelect[2] == 1)
+	{
+		m_menuColor[0] = 0xffffff;
+		m_menuColor[1] = 0xffffff;
+		m_menuColor[2] = 0xffff00;
+	}
+
+	//フォントのサイズ変更
+	SetFontSize(150);
+
+	DrawString(100, 70, "メニュー", 0xffffff);
+
+	SetFontSize(100);
+
+	DrawString(100, 340, "装備", m_menuColor[0]);
+	DrawString(100, 500, "戻る", m_menuColor[1]);
+	DrawString(100, 660, "タイトルへ", m_menuColor[2]);
+
+	//フォントのサイズを戻す
+	SetFontSize(40);
 }
 
 void Setting::End()

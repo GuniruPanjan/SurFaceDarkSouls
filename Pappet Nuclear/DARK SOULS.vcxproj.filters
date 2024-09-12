@@ -79,6 +79,12 @@
     <Filter Include="ヘッダー ファイル\BGM・SE">
       <UniqueIdentifier>{b1811810-dbaf-4bbb-a31d-09e784e8ab66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Character\Player\Equipment">
+      <UniqueIdentifier>{aac62b95-ad50-40ce-adf2-2c38298fef55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Character\Player\Equipment">
+      <UniqueIdentifier>{855fd696-1a97-44d5-9b67-a74a4a6e581e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Template3D.cpp">
@@ -159,6 +165,12 @@
     <ClCompile Include="BGM・SE\SEManager.cpp">
       <Filter>ソース ファイル\BGM・SE</Filter>
     </ClCompile>
+    <ClCompile Include="UI\UIManager.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\Equipment\Equipment.cpp">
+      <Filter>ソース ファイル\Character\Player\Equipment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneBase.h">
@@ -235,6 +247,12 @@
     </ClInclude>
     <ClInclude Include="BGM・SE\SEManager.h">
       <Filter>ヘッダー ファイル\BGM・SE</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\Equipment\Equipment.h">
+      <Filter>ヘッダー ファイル\Character\Player\Equipment</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIManager.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

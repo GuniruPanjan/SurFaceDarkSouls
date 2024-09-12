@@ -1,5 +1,6 @@
 #include "SceneGame.h"
 #include "SceneClear.h"
+#include "SceneTitle.h"
 
 namespace
 {
@@ -30,6 +31,7 @@ void SceneGame::Init()
 	setting->Init();
 	bgmse->GameInit();
 	bgmse->GameBGM();
+	equipment->Init();
 
 	a = 0;
 }
@@ -38,6 +40,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 {
 	player->SetCameraAngle(camera->GetAngleY());
 	player->Update();
+	player->WeaponUpdate(*equipment);
 	player->PlaySE(setting->GetVolume());
 	camera->Update(*player);
 	map->Update(*player);
@@ -66,7 +69,6 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		player->isSphereHit(enemy->GetAttackCol(i), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
 		enemy->isWeakPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetSpeed(), i);
 	}
-
 
 	//休息する場合
 	if (player->GetRest() == true)
@@ -104,9 +106,9 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 
 			a = 0;
 		}
-		
+
 	}
-	
+
 	//ボス部屋に入ったら
 	if (map->GetRoomEntered() == true && m_one == false)
 	{
@@ -121,6 +123,40 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	{
 		return std::make_shared<SceneClear>();
 	}
+	//タイトルに戻る
+	if (setting->GetTitle() == true)
+	{
+		return std::make_shared<SceneTitle>();
+	}
+
+	//メニューを開く
+	if (player->GetMenu() == true && setting->GetEquipment() == false)
+	{
+		setting->MenuUpdate();
+
+		player->SetMenu(setting->GetReturn());
+	}
+	//メニューを開けるようにする
+	else
+	{
+		setting->SetReturn(true);
+	}
+	//装備メニューを開く
+	if (setting->GetEquipment() == true && equipment->GetRightEquipment() == false)
+	{
+		equipment->Update();
+	}
+	//右手装備欄
+	if (equipment->GetRightEquipment() == true)
+	{
+		equipment->RightUpdate();
+	}
+
+
+	//else
+	//{
+		//setting->SetReturn(true);
+	//}
 
 	bgmse->Update(setting->GetVolume());
 
@@ -147,7 +183,8 @@ void SceneGame::Draw()
 	}
 
 	player->Draw();
-	ui->Draw(*player, *enemy);
+	player->WeaponDraw(*equipment);
+	ui->Draw(*player, *enemy, *equipment);
 
 	//プレイヤーが死んだ場合
 	if (player->GetDeath() == true)
@@ -168,6 +205,26 @@ void SceneGame::Draw()
 
 	}
 
+	//メニューを開く
+	if (player->GetMenu() == true && setting->GetEquipment() == false)
+	{
+		setting->MenuDraw();
+
+		player->SetMenu(setting->GetReturn());
+	}
+	//装備メニューを開く
+	if (setting->GetEquipment() == true && equipment->GetRightEquipment() == false)
+	{
+		equipment->Draw();
+
+		setting->SetEquipment(equipment->GetEquipment());
+	}
+	//右手の装備メニュー
+	if (equipment->GetRightEquipment() == true)
+	{
+		equipment->RightDraw();
+	}
+
 	setting->SettingDraw();
 }
 
@@ -177,7 +234,7 @@ void SceneGame::End()
 	enemy->End(ENEMY_NOW);
 	camera->End();
 	map->End();
-
+	equipment->End();
 	setting->End();
 	bgmse->End();
 }

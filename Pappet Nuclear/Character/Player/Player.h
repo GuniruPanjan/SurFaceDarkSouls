@@ -1,6 +1,7 @@
 #pragma once
 #include "Character/CharacterBase.h"
 #include "Character/Player/WeaponSummary.h"
+#include "Character/Player/Equipment/Equipment.h"
 
 struct Weapon
 {
@@ -15,6 +16,7 @@ public:
 
 	void Init();
 	void Update();
+	void WeaponUpdate(Equipment& eq);
 	void PlaySE(int volume);
 	void OtherInfluence(VECTOR outpush, VECTOR weakoutpush);
 	void Action();
@@ -22,6 +24,7 @@ public:
 	void HitObj(Map& map);
 	void SaveAction(Map& map);
 	void Draw();
+	void WeaponDraw(Equipment& eq);
 	void End();
 
 	//カプセル同士の当たり判定
@@ -48,6 +51,10 @@ public:
 	bool GetDeath() { return m_death; }
 	bool GetReceived() { return m_damageReceived; }
 	bool SetReceived(bool recebived) { return m_damageReceived = recebived; }
+	bool GetMenu() { return m_menuOpen; }
+	bool SetMenu(bool menu) { return m_menuOpen = menu; }
+	int GetButton() { return m_button; }
+	bool GetOne() { return m_one; }
 
 	//UIに必要な変数
 	float GetHp() { return m_hp; }
@@ -76,6 +83,8 @@ private:
 	XINPUT_STATE m_xpad;  //パッド入力
 	int m_animRollAttack;  //キャラがローディング後に攻撃するアニメーション
 	int m_bugTime;         //一定時間経ったらバグと判断する
+	int m_button;          //ボタン変数
+	bool m_one;            //一回だけ判定をする
 	bool m_avoidance;   //回避入力を判断するための変数
 	bool m_nextAttack1;  //次の攻撃判定
 	bool m_nextAttack2;  //次の攻撃判定
@@ -86,6 +95,7 @@ private:
 	bool m_staminaBroke;   //スタミナ切れ判定
 	bool m_hit;           //怯み判定
 	bool m_bug;           //バグの判定
+	bool m_menuOpen;      //メニューを開く
 	VECTOR m_nowPos;   //現在のフレームの座標を取得する
 	VECTOR m_bounceMove;   //押し出すための変数
 
