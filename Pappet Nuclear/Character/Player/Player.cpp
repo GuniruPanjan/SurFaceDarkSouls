@@ -53,8 +53,17 @@ Player::Player():
 	m_notWeapon(false),
 	m_swordRadius(0.0f),
 	m_fistCol(false),
-	m_swordCol(false)
+	m_swordCol(false),
+	m_targetRadius(0.0f),
+	m_animShield(0),
+	m_shield(false),
+	m_rate(0.0f),
+	m_oneShield(false)
 {
+	for (int i = 0; i < ENEMY_NOW; i++)
+	{
+		m_targetNumber[i] = false;
+	}
 }
 
 Player::~Player()
@@ -70,6 +79,7 @@ Player::~Player()
 	MV1DeleteModel(m_animAttack3);
 	MV1DeleteModel(m_animDeath);
 	MV1DeleteModel(m_animHeel);
+	MV1DeleteModel(m_animShield);
 
 }
 
@@ -135,6 +145,7 @@ void Player::Init()
 		m_animDeath = MV1LoadModel("Data/PlayerAnimation/PlayerAnimDeath.mv1");
 		m_animHeel = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRecovery.mv1");
 		m_animHit = MV1LoadModel("Data/PlayerAnimation/PlayerAnimHit.mv1");
+		m_animShield = MV1LoadModel("Data/PlayerAnimation/PlayerShieldAnim1.mv1");
 
 		//アニメーションアタッチ
 		m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
@@ -148,6 +159,7 @@ void Player::Init()
 		m_animation[8] = MV1AttachAnim(m_handle, 1, m_animDeath, TRUE);
 		m_animation[9] = MV1AttachAnim(m_handle, 1, m_animHeel, TRUE);
 		m_animation[10] = MV1AttachAnim(m_handle, 1, m_animHit, TRUE);
+		m_animation[11] = MV1AttachAnim(m_handle, 0, m_animShield, TRUE);
 
 		//アタッチしたアニメーションの総再生時間を取得する
 		m_totalAnimTime[0] = MV1GetAttachAnimTotalTime(m_handle, m_animation[0]);
@@ -161,6 +173,7 @@ void Player::Init()
 		m_totalAnimTime[8] = MV1GetAttachAnimTotalTime(m_handle, m_animation[8]);
 		m_totalAnimTime[9] = MV1GetAttachAnimTotalTime(m_handle, m_animation[9]);
 		m_totalAnimTime[10] = MV1GetAttachAnimTotalTime(m_handle, m_animation[10]);
+		m_totalAnimTime[11] = MV1GetAttachAnimTotalTime(m_handle, m_animation[11]);
 
 
 		//一旦待機以外のアニメーションデタッチ
@@ -174,6 +187,7 @@ void Player::Init()
 		MV1DetachAnim(m_handle, m_animation[8]);
 		MV1DetachAnim(m_handle, m_animation[9]);
 		MV1DetachAnim(m_handle, m_animation[10]);
+		MV1DetachAnim(m_handle, m_animation[11]);
 		m_animation[1] = -1;
 		m_animation[2] = -1;
 		m_animation[3] = -1;
@@ -184,6 +198,7 @@ void Player::Init()
 		m_animation[8] = -1;
 		m_animation[9] = -1;
 		m_animation[10] = -1;
+		m_animation[11] = -1;
 
 		se->CharaInit();
 
@@ -196,13 +211,16 @@ void Player::Init()
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 	m_colAttackPos = Pos3(m_pos.x - 50.0f, m_pos.y + 35.0f, m_pos.z);
 	m_initializationPos = Pos3(0.0f, -1000.0f, 0.0f);
+	m_targetColPos = Pos3(m_pos.x, m_pos.y + 35.0f, m_pos.z);
 	m_vec = Vec3(0.0f, m_vec.y + 2.0f, 0.0f);
 	m_len = 40.0f;
 	m_capsuleRadius = 12.0f;
 	m_sphereRadius = 18.0f;
 	m_swordRadius = 30.0f;
+	m_targetRadius = 200.0f;
 	m_capsuleCol.Init(m_colPos, m_vec, m_len, m_capsuleRadius);
 	m_sphereCol.Init(m_colAttackPos, m_sphereRadius);
+	m_targetCunCol.Init(m_targetColPos, m_targetRadius);
 
 	m_posX = m_updatePosX;
 	m_posY = m_updatePosY;
@@ -241,6 +259,10 @@ void Player::Init()
 
 	m_bug = false;
 
+	m_shield = false;
+
+	m_oneShield = false;
+
 	//モデル全体のコリジョン情報のセットアップ
 	//MV1SetupCollInfo(map->GetCollisionMap(), -1);
 }
@@ -248,6 +270,8 @@ void Player::Init()
 void Player::Update()
 {
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
+	m_targetColPos = Pos3(m_pos.x, m_pos.y + 35.0f, m_pos.z);
+
 
 	//初期化
 	if (m_notWeapon == false)
@@ -266,12 +290,13 @@ void Player::Update()
 	//アニメーションで移動しているフレームの番号を検索する
 	m_moveAnimFrameIndex = MV1SearchFrame(m_handle, "mixamorig:Hips");
 	m_moveAnimFrameRight = MV1SearchFrame(m_handle, "mixamorig:RightHandThumb2");
+	//m_moveAnimShieldFrameIndex = MV1SearchFrame(m_handle, "mixamorig:LeftShoulder");
 
 	//武器をアタッチするフレームのローカル→ワールド変換行列を取得する
 	m_moveWeaponFrameMatrix = MV1GetFrameLocalWorldMatrix(m_handle, m_moveAnimFrameRight);
 
 	//盾を構えるときのアニメーションのフレーム所得
-	m_moveAnimShieldFrameIndex = MV1SearchFrame(m_handle, "mixamorig:LeftHand");
+	m_moveAnimShieldFrameIndex = MV1SearchFrame(m_handle, "mixamorig:LeftArm");
 
 	//パッド入力所得
 	m_pad = GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
@@ -385,6 +410,8 @@ void Player::Update()
 	if (m_hp > 0.0f)
 	{
 		m_pos = VAdd(m_pos, m_move);
+
+		m_targetCunCol.Update(m_targetColPos);
 
 		//メニューが開かれてたら行動できない
 		if (m_menuOpen == false)
@@ -735,8 +762,20 @@ void Player::Action()
 	//Lボタンで防御
 	if (m_xpad.Buttons[8] == 1)
 	{
-		//DrawFormatString(0, 10, 0xffffff, "防御");
+		DrawFormatString(0, 10, 0xffffff, "防御");
+
+		m_shield = true;
 	}
+	else
+	{
+		m_shield = false;
+
+		m_oneShield = false;
+
+		m_rate = 0.0f;
+	}
+
+	//MV1SetAttachAnimBlendRate
 
 	//攻撃時のアニメーションを速くする
 	if (m_moveAttack == true)
@@ -1313,6 +1352,23 @@ void Player::Animation(float& time, VECTOR& pos)
 
 				//}
 			}
+			//防御
+			if (m_shield == true)
+			{
+				if (m_oneShield == false)
+				{
+					m_animation[11] = MV1AttachAnim(m_handle, 0, m_animShield, FALSE);
+
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[0], 1.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[1], 1.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[2], 1.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[11], 0.0f);
+
+					time = 0.0f;
+
+					m_oneShield = true;
+				}
+			}
 
 			//プレイヤーが回復したとき
 			if (m_recoberyAction == true)
@@ -1413,6 +1469,10 @@ void Player::Animation(float& time, VECTOR& pos)
 
 		time = 0.0f;
 	}
+	if (time >= m_totalAnimTime[11] && m_animation[11] != -1)
+	{
+		time = 0.0f;
+	}
 
 	//再生時間をセットする
 	if (m_animation[0] != -1)
@@ -1492,6 +1552,21 @@ void Player::Animation(float& time, VECTOR& pos)
 	if (m_animation[10] != -1)
 	{
 		MV1SetAttachAnimTime(m_handle, m_animation[10], time);
+	}
+	if (m_animation[11] != -1)
+	{	
+		for (m_rate = 0.0f; m_rate < 1.0f; m_rate += 0.01f)
+		{
+			
+		}
+
+		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[0], m_moveAnimShieldFrameIndex, 0.0f);
+		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[1], m_moveAnimShieldFrameIndex, 0.0f);
+		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[2], m_moveAnimShieldFrameIndex, 0.0f);
+		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[11], m_moveAnimShieldFrameIndex, 1.0f);
+
+
+		MV1SetAttachAnimTime(m_handle, m_animation[11], time);
 	}
 }
 
@@ -1705,14 +1780,16 @@ void Player::Draw()
 	////円の3D描画
 	if (m_fistCol == true)
 	{
-		DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
+		//DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
 	}
 	if (m_swordCol == true)
 	{
-		DrawSphere3D(m_colAttackPos.GetVector(), m_swordRadius, 16, 0xffffff, 0xffffff, false);
+		//DrawSphere3D(m_colAttackPos.GetVector(), m_swordRadius, 16, 0xffffff, 0xffffff, false);
 
 	}
 	//DrawSphere3D(map->GetVectorMapPos(), 1500.0f, 16, 0xffffff, 0xffffff, false);
+
+	//DrawSphere3D(m_targetColPos.GetVector(), m_targetRadius, 16, 0xffffff, 0xffffff, false);
 
 	//3Dモデルのポジション設定
 	MV1SetPosition(m_handle, m_drawPos);
@@ -1937,4 +2014,21 @@ bool Player::isSphereHit(const SphereCol& col, const SphereCol& col1, const Sphe
 	}
 
 	return isHit || isBossAttackHit1 || isBossAttackHit2 || isBossAttackHit3;
+}
+
+bool Player::isTargetHit(const CapsuleCol& col, int max)
+{
+	bool isHit = m_targetCunCol.IsHitCapsule(col);
+
+	if (isHit)
+	{
+		//ターゲットできるようになる
+		m_targetNumber[max] = true;
+	}
+	else
+	{
+		m_targetNumber[max] = false;
+	}
+
+	return isHit;
 }

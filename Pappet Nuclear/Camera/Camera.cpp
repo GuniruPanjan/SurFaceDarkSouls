@@ -70,22 +70,21 @@ void Camera::Update(Player& player)
 		//上キー
 		if (input.Ry < 0)
 		{
-			//カメラがプレイヤーを超えないくらいまで
-			if (m_cameraAngle.x <= 0.7f)
-			{
-				m_cameraAngle.x += D2R(1.0f);
-			}
-
-		}
-		//下キー
-		if (input.Ry > 0)
-		{
 			//カメラが地面にめりこまないように
 			if (m_cameraPos.y >= 15.2f + player.GetPosY())
 			{
 				m_cameraAngle.x -= D2R(1.0f);
 			}
 
+		}
+		//下キー
+		if (input.Ry > 0)
+		{
+			//カメラがプレイヤーを超えないくらいまで
+			if (m_cameraAngle.x <= 0.7f)
+			{
+				m_cameraAngle.x += D2R(1.0f);
+			}
 		}
 
 		//基準のベクトル
@@ -170,35 +169,36 @@ void Camera::LockUpdate(Player& player, Enemy& enemy, int max)
 		if (enemy.GetBattale() == false)
 		{
 			//一番目の敵をターゲット
-			if (difSize[0] < difSize[1] && difSize[0] < difSize[2] && difSize[0] < difSize[3] &&
-				difSize[0] < difSize[4])
+			if (player.GetTarget(0) == true)
 			{
 				WeakLockUpdate(player, enemy, 0);
 			}
-			//2番目の敵をターゲット
-			if (difSize[1] < difSize[0] && difSize[1] < difSize[2] && difSize[1] < difSize[3] &&
-				difSize[1] < difSize[4])
+			else if (player.GetTarget(1) == true)
 			{
+				//2番目の敵をターゲット
 				WeakLockUpdate(player, enemy, 1);
 			}
-			//3番目の敵をターゲット
-			if (difSize[2] < difSize[1] && difSize[2] < difSize[0] && difSize[2] < difSize[3] &&
-				difSize[2] < difSize[4])
+			else if (player.GetTarget(2) == true)
 			{
+				//3番目の敵をターゲット
 				WeakLockUpdate(player, enemy, 2);
 			}
-			//4番目の敵をターゲット
-			if (difSize[3] < difSize[1] && difSize[3] < difSize[2] && difSize[3] < difSize[0] &&
-				difSize[3] < difSize[4])
+			else if (player.GetTarget(3) == true)
 			{
+				//4番目の敵をターゲット
 				WeakLockUpdate(player, enemy, 3);
 			}
-			//5番目の敵をターゲット
-			if (difSize[4] < difSize[1] && difSize[4] < difSize[2] && difSize[4] < difSize[3] &&
-				difSize[4] < difSize[0])
+			else if (player.GetTarget(4) == true)
 			{
+				//5番目の敵をターゲット
 				WeakLockUpdate(player, enemy, 4);
 			}
+			else
+			{
+				player.SetLock(false);
+			}
+			
+			
 
 			////注視点は敵の座標にする
 			//m_cameraTarget = VAdd(enemy.GetPos(max), VGet(0.0f, 20.0f, 0.0f));

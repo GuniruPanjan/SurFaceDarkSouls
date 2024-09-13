@@ -34,7 +34,10 @@ void WeaponSummary::Init()
 
 	m_weaponHandle = MV1LoadModel("Data/Weapon/Sword.mv1");
 
-	m_weaponPos = VGet(0.0f, -1.947f, -1.947f);
+	m_weaponPos = VGet(0.0f, 1.947f, -1.947f);
+
+	//m_weaponPos = VGet(0.0f, 0.0f, -5.0f);
+
 
 	//サイズ変更
 	MV1SetScale(m_weaponHandle, VGet(m_weaponSize, m_weaponSize, m_weaponSize));

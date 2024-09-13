@@ -1,6 +1,6 @@
 #pragma once
 #include "Character/CharacterBase.h"
-#define ENEMY_NOW 5  //“G‚Ì”z—ñ‚Åo‚·”
+
 class Player;
 
 class EnemyBase : public CharacterBase

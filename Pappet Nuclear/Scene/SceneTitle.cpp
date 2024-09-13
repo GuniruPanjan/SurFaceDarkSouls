@@ -378,7 +378,7 @@ void SceneTitle::Draw()
 		setting->Draw();
 	}
 
-	setting->SettingDraw();
+	setting->SettingDraw(setting->GetVolume());
 
 	//DrawString(240, 300, "Title", 0xffffff);
 	

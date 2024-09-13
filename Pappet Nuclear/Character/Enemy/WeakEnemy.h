@@ -42,6 +42,7 @@ private:
 	int m_weakEnemyHandle[ENEMY_NOW];                    //敵のハンドル
 	float m_weakEnemyHp[ENEMY_NOW];                      //敵のHP
 	VECTOR m_weakEnemyPos[ENEMY_NOW];                    //敵のポジション
+	VECTOR m_weakDrawPos[ENEMY_NOW];                     //敵のDrawポジション
 	float m_weakPlayTime[ENEMY_NOW];                     //敵のアニメーション時間
 	VECTOR m_weakEnemyMove[ENEMY_NOW];                   //敵の移動ベクトル
 	bool m_weakEnemyMoveAttack[ENEMY_NOW];               //敵の攻撃判定

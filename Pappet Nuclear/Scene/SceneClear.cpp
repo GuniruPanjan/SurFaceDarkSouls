@@ -47,7 +47,7 @@ void SceneClear::Draw()
 
 	DrawGraph(430, 100, m_backScene, false);
 
-	setting->SettingDraw();
+	setting->SettingDraw(setting->GetVolume());
 }
 
 void SceneClear::End()

@@ -19,6 +19,7 @@ WeakEnemy::WeakEnemy()
 		m_weakEnemyHandle[i] = 0;
 		m_weakEnemyHp[i] = 0;
 		m_weakEnemyPos[i] = VGet(0.0f, 0.0f, 0.0f);
+		m_weakDrawPos[i] = VGet(0.0f, 0.0f, 0.0f);
 		m_weakPlayTime[i] = 0.0f;
 		m_weakEnemyMove[i] = VGet(0.0f, 0.0f, 0.0f);
 		m_outPush[i] = VGet(0.0f, 0.0f, 0.0f);
@@ -215,6 +216,8 @@ void WeakEnemy::Update(Player& player, int max, int volume)
 		m_weakCapsuleCol[max].Update(m_colDeathPos, m_deathVec);
 
 		m_colSearch[max].Update(m_colDeathPos);
+
+		m_weakEnemyPos[max] = VGet(0.0f, -10000.0f, 0.0f);
 	}
 	else
 	{
@@ -223,6 +226,9 @@ void WeakEnemy::Update(Player& player, int max, int volume)
 		//とりあえず置いとく
 		m_colSearch[max].Update(m_colSearchPos[max]);
 		m_colDistance[max].Update(m_colDistancePos[max]);
+
+		//ポジション代入
+		m_weakDrawPos[max] = m_weakEnemyPos[max];
 	}
 
 	//索敵の当たり判定を正面に持ってくる
@@ -707,7 +713,7 @@ void WeakEnemy::Draw(int max)
 	}
 
 	//3Dモデルポジション設定
-	MV1SetPosition(m_weakEnemyHandle[max], m_weakEnemyPos[max]);
+	MV1SetPosition(m_weakEnemyHandle[max], m_weakDrawPos[max]);
 
 	//3Dモデル描画
 	MV1DrawModel(m_weakEnemyHandle[max]);

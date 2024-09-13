@@ -3,11 +3,6 @@
 #include "Character/Player/WeaponSummary.h"
 #include "Character/Player/Equipment/Equipment.h"
 
-struct Weapon
-{
-
-};
-
 class Player : public CharacterBase
 {
 public:
@@ -30,6 +25,7 @@ public:
 	//カプセル同士の当たり判定
 	bool IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1);
 	bool isSphereHit(const SphereCol& col, const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float damage, float bossdamage);
+	bool isTargetHit(const CapsuleCol& col, int max);
 
 	void SetCameraAngle(float angle) { m_cameraAngle = angle; }
 
@@ -46,6 +42,7 @@ public:
 	SphereCol GetSphereCol() { return m_sphereCol; }
 
 	bool GetLock() { return m_lockonTarget; }
+	bool SetLock(bool lock) { return m_lockonTarget = lock; }
 	bool GetRest() { return m_restAction; }
 	bool SetRest(bool rest) { return m_restAction = rest; }
 	bool GetDeath() { return m_death; }
@@ -55,6 +52,7 @@ public:
 	bool SetMenu(bool menu) { return m_menuOpen = menu; }
 	int GetButton() { return m_button; }
 	bool GetOne() { return m_one; }
+	bool GetTarget(int max) { return m_targetNumber[max]; }
 
 	//UIに必要な変数
 	float GetHp() { return m_hp; }
@@ -68,12 +66,15 @@ private:
 	float m_updatePosZ;   //Z座標更新用変数
 	float m_stamina;      //スタミナ
 	float m_swordRadius;   //剣の当たり判定の半径
+	float m_targetRadius;   //ターゲットの当たり判定の半径
 	int m_animHeel;       //回復アニメーション代入
+	int m_animShield;      //盾を構えるアニメーション代入
 	int m_recoveryNumber;     //回復できる回数変数
 	float m_recoberyAmount;   //回復量
 	float m_heel;             //hpに足す回復量
 	bool m_recoberyAction;    //回復中の判定
 	bool m_lockonTarget;  //ターゲットロックオン判定
+	bool m_targetNumber[ENEMY_NOW];     //ターゲットできる奴の判定
 	int m_moveAnimFrameIndex;  //フレームを検索する
 	int m_moveAnimFrameRight;   //右手のフレームを検索する
 	VECTOR m_moveAnimFrameRigthPosition;  //右手のフレームのポジション
@@ -95,6 +96,8 @@ private:
 	bool m_dashMove;     //ダッシュしてる判断用変数
 	bool m_staminaBroke;   //スタミナ切れ判定
 	bool m_hit;           //怯み判定
+	bool m_shield;        //防御判定
+	bool m_oneShield;     //一回だけ
 	bool m_bug;           //バグの判定
 	bool m_menuOpen;      //メニューを開く
 	bool m_notWeapon;     //武器を持ってない状態
@@ -102,7 +105,10 @@ private:
 	bool m_swordCol;      //剣の当たり判定初期化判定
 	VECTOR m_nowPos;   //現在のフレームの座標を取得する
 	VECTOR m_bounceMove;   //押し出すための変数
+	Pos3 m_targetColPos;     //ターゲットの当たり判定ポジション
+	SphereCol m_targetCunCol;   //ターゲットできるようにする
 
+	float m_rate;
 	bool m_a1;
 
 	unsigned int m_color = 0xffffff;   //デバッグ用の色変更

@@ -9,6 +9,7 @@
 #define  ANIMATION   30
 #define D2R(deg) ((deg)*DX_PI_F/180.0f)
 #define PLAYER_MAX_HITCOLL  500    //処理するコリジョンポリゴンの最大数
+#define ENEMY_NOW 5  //敵の配列で出す数
 
 class Map;   //マップクラス
 

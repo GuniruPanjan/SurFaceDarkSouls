@@ -68,6 +68,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		//雑魚敵のアタックコルが問題
 		player->isSphereHit(enemy->GetAttackCol(i), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
 		enemy->isWeakPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetSpeed(), i);
+		player->isTargetHit(enemy->GetCol(i), i);
 	}
 
 	//休息する場合
