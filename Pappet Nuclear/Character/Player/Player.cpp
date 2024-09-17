@@ -21,6 +21,7 @@ Player::Player():
 	m_moveAnimFrameIndex(0),
 	m_moveAnimFrameRight(0),
 	m_moveAnimFrameRigthPosition(VGet(0.0f,0.0f,0.0f)),
+	m_moveAnimShieldFrameBodyIndex(0),
 	m_moveAnimShieldFrameIndex(0),
 	m_a(0),
 	m_pad(0),
@@ -58,7 +59,8 @@ Player::Player():
 	m_animShield(0),
 	m_shield(false),
 	m_rate(0.0f),
-	m_oneShield(false)
+	m_oneShield(false),
+	m_moveAnimFrameLeftPosition(VGet(0.0f,0.0f,0.0f))
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
@@ -297,6 +299,20 @@ void Player::Update()
 
 	//盾を構えるときのアニメーションのフレーム所得
 	m_moveAnimShieldFrameIndex = MV1SearchFrame(m_handle, "mixamorig:LeftArm");
+	m_moveAnimShieldFrameBodyIndex = MV1SearchFrame(m_handle, "mixamorig:Spine");
+
+	//m_moveAnimFrameLeftPosition = MV1GetFramePosition(m_handle, m_moveAnimShieldFrameBodyIndex);
+
+	//m_moveShieldLeftMatrix = MGetTranslate(m_moveAnimFrameLeftPosition);
+
+	m_moveShieldLeftMatrix = MV1GetFrameLocalMatrix(m_handle, m_moveAnimShieldFrameBodyIndex);
+
+	if (m_shield == false)
+	{
+		
+	}
+	
+
 
 	//パッド入力所得
 	m_pad = GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
@@ -765,6 +781,12 @@ void Player::Action()
 		DrawFormatString(0, 10, 0xffffff, "防御");
 
 		m_shield = true;
+
+		//フレーム回転を行う
+		//MV1SetFrameUserLocalMatrix(m_handle, m_moveAnimShieldFrameIndex, MMult(MMult(m_moveShieldM2, MGetRotZ(1.0f)), m_moveShieldM1));
+		//MV1SetFrameUserLocalMatrix(m_handle, m_moveAnimShieldFrameIndex, MMult(m_moveShieldM1, MGetRotZ(1.0f)));
+		//MV1SetFrameUserLocalMatrix(m_handle, m_moveAnimShieldFrameBodyIndex, MMult(m_moveShieldLeftMatrix, MGetRotY(0.5f)));
+
 	}
 	else
 	{
@@ -1369,6 +1391,18 @@ void Player::Animation(float& time, VECTOR& pos)
 					m_oneShield = true;
 				}
 			}
+			else
+			{
+
+				MV1DetachAnim(m_handle, m_animation[11]);
+
+				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[11], m_moveAnimShieldFrameIndex, 0.0f);
+				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[0], m_moveAnimShieldFrameIndex, 1.0f);
+				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[1], m_moveAnimShieldFrameIndex, 1.0f);
+				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[2], m_moveAnimShieldFrameIndex, 1.0f);
+
+				m_animation[11] = -1;
+			}
 
 			//プレイヤーが回復したとき
 			if (m_recoberyAction == true)
@@ -1469,10 +1503,10 @@ void Player::Animation(float& time, VECTOR& pos)
 
 		time = 0.0f;
 	}
-	if (time >= m_totalAnimTime[11] && m_animation[11] != -1)
-	{
-		time = 0.0f;
-	}
+	//if (time >= m_totalAnimTime[11] && m_animation[11] != -1)
+	//{
+	//	time = 0.0f;
+	//}
 
 	//再生時間をセットする
 	if (m_animation[0] != -1)
@@ -1555,11 +1589,6 @@ void Player::Animation(float& time, VECTOR& pos)
 	}
 	if (m_animation[11] != -1)
 	{	
-		for (m_rate = 0.0f; m_rate < 1.0f; m_rate += 0.01f)
-		{
-			
-		}
-
 		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[0], m_moveAnimShieldFrameIndex, 0.0f);
 		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[1], m_moveAnimShieldFrameIndex, 0.0f);
 		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[2], m_moveAnimShieldFrameIndex, 0.0f);
@@ -1818,7 +1847,7 @@ void Player::Draw()
 	//DrawFormatString(200, 60, 0xffffff, "m_staminaBroke : %d", m_staminaBroke);
 	//DrawFormatString(200, 100, 0xffffff, "m_hit : %d", m_a1);
 
-
+	//DrawFormatString(200, 180, 0xffffff, "m_angle : %f", m_angle);
 	//DrawFormatString(200, 180, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
 	//DrawFormatString(200, 220, 0xffffff, "m_moveflag : %d", m_moveflag);
 	//DrawFormatString(200, 260, 0xffffff, "m_avoidance : %d", m_avoidance);
