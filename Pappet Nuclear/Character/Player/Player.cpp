@@ -147,7 +147,7 @@ void Player::Init()
 		m_animDeath = MV1LoadModel("Data/PlayerAnimation/PlayerAnimDeath.mv1");
 		m_animHeel = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRecovery.mv1");
 		m_animHit = MV1LoadModel("Data/PlayerAnimation/PlayerAnimHit.mv1");
-		m_animShield = MV1LoadModel("Data/PlayerAnimation/PlayerAnimShieldSin.mv1");
+		m_animShield = MV1LoadModel("Data/PlayerAnimation/kaizou.mv1");
 
 		//アニメーションアタッチ
 		m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
@@ -161,7 +161,7 @@ void Player::Init()
 		m_animation[8] = MV1AttachAnim(m_handle, 1, m_animDeath, TRUE);
 		m_animation[9] = MV1AttachAnim(m_handle, 1, m_animHeel, TRUE);
 		m_animation[10] = MV1AttachAnim(m_handle, 1, m_animHit, TRUE);
-		m_animation[11] = MV1AttachAnim(m_handle, 1, m_animShield, TRUE);
+		m_animation[11] = MV1AttachAnim(m_handle, 0, m_animShield, TRUE);
 
 		//アタッチしたアニメーションの総再生時間を取得する
 		m_totalAnimTime[0] = MV1GetAttachAnimTotalTime(m_handle, m_animation[0]);
@@ -1379,7 +1379,7 @@ void Player::Animation(float& time, VECTOR& pos)
 			{
 				if (m_oneShield == false)
 				{
-					m_animation[11] = MV1AttachAnim(m_handle, 1, m_animShield, FALSE);
+					m_animation[11] = MV1AttachAnim(m_handle, 0, m_animShield, FALSE);
 
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[0], 1.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[1], 1.0f);
