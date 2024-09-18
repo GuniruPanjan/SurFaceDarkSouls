@@ -147,7 +147,7 @@ void Player::Init()
 		m_animDeath = MV1LoadModel("Data/PlayerAnimation/PlayerAnimDeath.mv1");
 		m_animHeel = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRecovery.mv1");
 		m_animHit = MV1LoadModel("Data/PlayerAnimation/PlayerAnimHit.mv1");
-		m_animShield = MV1LoadModel("Data/PlayerAnimation/kaizou.mv1");
+		m_animShield = MV1LoadModel("Data/PlayerAnimation/PlayerAnimShield.mv1");
 
 		//アニメーションアタッチ
 		m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
