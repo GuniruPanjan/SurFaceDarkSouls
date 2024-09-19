@@ -41,6 +41,7 @@ UI::UI():
 	m_ItemColumn2Y1(0.0f),
 	m_ItemColumn2Y2(0.0f),
 	m_enemyBossName(0),
+	m_equipmentUI(0),
 	m_youDied(0)
 {
 }
@@ -57,6 +58,7 @@ void UI::Init(Player& player, Enemy& enemy)
 	//m_fist = LoadGraph("Data/UI/FistUi.png");
 	//m_youDied = MyLoadGraph("Data/UI/YOUDIEDGraph.png", 20, 20);
 
+	m_equipmentUI = MyLoadGraph("Data/UI/EquipmentUI.png", 2, 2);
 	m_youDied = MyLoadGraph("Data/UI/YOUDIEDGraph Mini.png", 1, 1);
 
 	m_hpExpressionDivide1 = 0.9f;
@@ -122,36 +124,53 @@ void UI::Draw(Player& player, Enemy& enemy, Equipment& eq)
 	//アイテム欄UI
 	//DrawBox(m_ItemColumn1X1, m_ItemColumn1Y1, m_ItemColumn1X2, m_ItemColumn1Y2, 0xffffff, TRUE);
 	//DrawBox(m_ItemColumn2X1, m_ItemColumn2Y1, m_ItemColumn2X2, m_ItemColumn2Y2, 0xffffff, TRUE);
-	DrawBox(m_ItemColumn1X1 * 3.0f, m_ItemColumn1Y1 * 1.5f, m_ItemColumn1X2 * 3.0f, m_ItemColumn1Y2 * 1.8f, 0xffffff, TRUE);
-	DrawBox(m_ItemColumn2X1 * 3.0f, m_ItemColumn2Y1 * 1.9f, m_ItemColumn2X2 * 3.0f, m_ItemColumn2Y2 * 2.1f, 0xffffff, TRUE);
+	//DrawBox(m_ItemColumn1X1 * 14.1f, m_ItemColumn1Y1 * 2.0f, m_ItemColumn1X2 * 5.2f, m_ItemColumn1Y2 * 2.1f, 0xffffff, TRUE);
+	//DrawBox(m_ItemColumn1X1 * 0.0f, m_ItemColumn1Y1 * 2.0f, m_ItemColumn1X2 * 1.6f, m_ItemColumn1Y2 * 2.1f, 0xffffff, TRUE);
+	//DrawBox(m_ItemColumn2X1 * 6.5f, m_ItemColumn2Y1 * 1.9f, m_ItemColumn2X2 * 3.5f, m_ItemColumn2Y2 * 2.0f, 0xffffff, TRUE);
+
+	DrawGraph(-70, 600, m_equipmentUI, TRUE);
 
 	//DrawGraph(-3, 305, m_fist, TRUE);
 
+
+	//右装備
 	//拳装備
-	if (eq.GetFist() == true)
+	if (eq.GetRightFist() == true)
 	{
-		DrawGraph(40, 490, m_fist, TRUE);
+		DrawGraph(160, 720, m_eqFist, TRUE);
 	}
 	//剣装備
 	if (eq.GetSword() == true)
 	{
-		DrawGraph(0, 460, m_sword, TRUE);
+		DrawGraph(160, 725, m_eqSword, TRUE);
 	}
 	
+	
+	//左装備
+	//拳装備
+	if (eq.GetLeftFist() == true)
+	{
+		DrawGraph(25, 720, m_eqFist, TRUE);
+	}
+	//盾装備
+	if (eq.GetShield() == true)
+	{
+		DrawGraph(25, 720, m_eqShield, TRUE);
+	}
 
 
 	//回復アイテムが0以上だと
 	if (player.GetRecoveryNumber() > 0)
 	{
 		//DrawGraph(-3, 385, m_heelStone, TRUE);
-		DrawGraph(0, 750, m_heelStone, TRUE);
+		DrawGraph(82, 785, m_heelStone, TRUE);
 
 
 		//DrawFormatString(70, 445, 0x000000, "%d", player.GetRecoveryNumber());
 
 		SetFontSize(60);
 
-		DrawFormatString(70 * 3.0f, 445 * 2.0f, 0x000000, "%d", player.GetRecoveryNumber());
+		DrawFormatString(140, 840, 0x000000, "%d", player.GetRecoveryNumber());
 
 		//フォントのサイズを戻す
 		SetFontSize(40);

@@ -143,14 +143,19 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		setting->SetReturn(true);
 	}
 	//装備メニューを開く
-	if (setting->GetEquipment() == true && equipment->GetRightEquipment() == false)
+	if (setting->GetEquipment() == true && equipment->GetRightEquipment() == false && equipment->GetLeftEquipment() == false)
 	{
 		equipment->Update();
 	}
 	//右手装備欄
-	if (equipment->GetRightEquipment() == true)
+	if (equipment->GetRightEquipment() == true && equipment->GetLeftEquipment() == false)
 	{
 		equipment->RightUpdate();
+	}
+	//左手装備欄
+	if (equipment->GetLeftEquipment() == true && equipment->GetRightEquipment() == false)
+	{
+		equipment->LeftUpdate();
 	}
 
 
@@ -214,16 +219,21 @@ void SceneGame::Draw()
 		player->SetMenu(setting->GetReturn());
 	}
 	//装備メニューを開く
-	if (setting->GetEquipment() == true && equipment->GetRightEquipment() == false)
+	if (setting->GetEquipment() == true && equipment->GetRightEquipment() == false && equipment->GetLeftEquipment() == false)
 	{
 		equipment->Draw();
 
 		setting->SetEquipment(equipment->GetEquipment());
 	}
 	//右手の装備メニュー
-	if (equipment->GetRightEquipment() == true)
+	if (equipment->GetRightEquipment() == true && equipment->GetLeftEquipment() == false)
 	{
 		equipment->RightDraw();
+	}
+	//左手の装備メニュー
+	if (equipment->GetLeftEquipment() == true && equipment->GetRightEquipment() == false)
+	{
+		equipment->LeftDraw();
 	}
 
 	setting->SettingDraw(setting->GetVolume());

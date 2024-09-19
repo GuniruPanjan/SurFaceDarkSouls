@@ -2,9 +2,13 @@
 
 UIManager::UIManager()
 {
-	m_heelStone = MyLoadGraph("Data/UI/HeelStoneMini.png", 3, 3);
+	m_heelStone = MyLoadGraph("Data/UI/HeelStoneMini.png", 6, 6);
 	m_fist = MyLoadGraph("Data/UI/FistUi.png", 4, 4);
+	m_eqFist = MyLoadGraph("Data/UI/FistUi.png", 7, 7);
 	m_sword = MyLoadGraph("Data/UI/SwordUI.png", 3, 3);
+	m_eqSword = MyLoadGraph("Data/UI/SwordUI.png", 7, 7);
+	m_shield = MyLoadGraph("Data/UI/Shield.png", 3, 3);
+	m_eqShield = MyLoadGraph("Data/UI/Shield.png", 7, 7);
 }
 
 UIManager::~UIManager()
@@ -12,6 +16,11 @@ UIManager::~UIManager()
 	DeleteGraph(m_heelStone);
 	DeleteGraph(m_fist);
 	DeleteGraph(m_sword);
+	DeleteGraph(m_shield);
+	DeleteGraph(m_eqFist);
+	DeleteGraph(m_eqSword);
+	DeleteGraph(m_eqShield);
+
 }
 
 int UIManager::MyLoadGraph(const char* FileName, int XSize, int YSize)

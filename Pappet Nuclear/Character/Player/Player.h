@@ -79,10 +79,10 @@ private:
 	int m_moveAnimFrameRight;   //右手のフレームを検索する
 	VECTOR m_moveAnimFrameRigthPosition;  //右手のフレームのポジション
 	int m_moveAnimShieldFrameIndex;  //ガードするときのフレーム検索
-	int m_moveAnimShieldFrameBodyIndex;     //ガードするときの体のフレーム検索
+	int m_moveAnimShieldFrameHandIndex;     //ガードするときの体のフレーム検索
 	VECTOR m_moveAnimFrameLeftPosition;   //左手のフレームのポジション
-	MATRIX m_moveShieldLeftMatrix;        //左手のマトリックス
 	MATRIX m_moveWeaponFrameMatrix;   //武器をアタッチするフレームのローカル座標
+	MATRIX m_moveShieldFrameMatrix;   //盾をアタッチするフレームのローカル座標
 	int m_a;  //長押し確認変数
 	int m_pad;  //パッド入力所得変数
 	XINPUT_STATE m_xpad;  //パッド入力

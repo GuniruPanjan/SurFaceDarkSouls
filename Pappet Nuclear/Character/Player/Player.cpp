@@ -21,7 +21,7 @@ Player::Player():
 	m_moveAnimFrameIndex(0),
 	m_moveAnimFrameRight(0),
 	m_moveAnimFrameRigthPosition(VGet(0.0f,0.0f,0.0f)),
-	m_moveAnimShieldFrameBodyIndex(0),
+	m_moveAnimShieldFrameHandIndex(0),
 	m_moveAnimShieldFrameIndex(0),
 	m_a(0),
 	m_pad(0),
@@ -292,20 +292,16 @@ void Player::Update()
 	//アニメーションで移動しているフレームの番号を検索する
 	m_moveAnimFrameIndex = MV1SearchFrame(m_handle, "mixamorig:Hips");
 	m_moveAnimFrameRight = MV1SearchFrame(m_handle, "mixamorig:RightHandThumb2");
-	//m_moveAnimShieldFrameIndex = MV1SearchFrame(m_handle, "mixamorig:LeftShoulder");
 
 	//武器をアタッチするフレームのローカル→ワールド変換行列を取得する
 	m_moveWeaponFrameMatrix = MV1GetFrameLocalWorldMatrix(m_handle, m_moveAnimFrameRight);
 
 	//盾を構えるときのアニメーションのフレーム所得
 	m_moveAnimShieldFrameIndex = MV1SearchFrame(m_handle, "mixamorig:LeftArm");
-	m_moveAnimShieldFrameBodyIndex = MV1SearchFrame(m_handle, "mixamorig:Spine");
+	m_moveAnimShieldFrameHandIndex = MV1SearchFrame(m_handle, "mixamorig:LeftHand");
 
-	//m_moveAnimFrameLeftPosition = MV1GetFramePosition(m_handle, m_moveAnimShieldFrameBodyIndex);
-
-	//m_moveShieldLeftMatrix = MGetTranslate(m_moveAnimFrameLeftPosition);
-
-	m_moveShieldLeftMatrix = MV1GetFrameLocalMatrix(m_handle, m_moveAnimShieldFrameBodyIndex);
+	//武器をアタッチするフレームのローカル→ワールド変換行列を取得する
+	m_moveShieldFrameMatrix = MV1GetFrameLocalWorldMatrix(m_handle, m_moveAnimShieldFrameHandIndex);
 
 	if (m_shield == false)
 	{
@@ -656,12 +652,15 @@ void Player::Update()
 
 void Player::WeaponUpdate(Equipment& eq)
 {
+
+	//右手装備
 	//剣を持った時
 	if (eq.GetSword() == true)
 	{
 		m_notWeapon = true;
 
-		weapon->Update(m_moveWeaponFrameMatrix);
+		weapon->RightUpdate(m_moveWeaponFrameMatrix);
+
 
 		//一回だけ初期化
 		if (m_swordCol == false)
@@ -689,6 +688,14 @@ void Player::WeaponUpdate(Equipment& eq)
 		m_notWeapon = false;
 
 		m_swordCol = false;
+	}
+
+
+	//左手装備
+	//盾を持った時
+	if (eq.GetShield() == true)
+	{
+		weapon->LeftUpdate(m_moveShieldFrameMatrix);
 	}
 }
 
@@ -781,11 +788,6 @@ void Player::Action()
 		DrawFormatString(0, 10, 0xffffff, "防御");
 
 		m_shield = true;
-
-		//フレーム回転を行う
-		//MV1SetFrameUserLocalMatrix(m_handle, m_moveAnimShieldFrameIndex, MMult(MMult(m_moveShieldM2, MGetRotZ(1.0f)), m_moveShieldM1));
-		//MV1SetFrameUserLocalMatrix(m_handle, m_moveAnimShieldFrameIndex, MMult(m_moveShieldM1, MGetRotZ(1.0f)));
-		//MV1SetFrameUserLocalMatrix(m_handle, m_moveAnimShieldFrameBodyIndex, MMult(m_moveShieldLeftMatrix, MGetRotY(0.5f)));
 
 	}
 	else
@@ -1873,9 +1875,13 @@ void Player::WeaponDraw(Equipment& eq)
 	//剣を持った時
 	if (eq.GetSword() == true)
 	{
-		weapon->Draw(m_moveAnimFrameRigthPosition);
+		weapon->RightDraw();
 	}
-	
+	//盾を持った時
+	if (eq.GetShield() == true)
+	{
+		weapon->LeftDraw();
+	}
 }
 
 void Player::End()

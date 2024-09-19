@@ -14,7 +14,11 @@ public:
 protected:
 	int m_heelStone;
 	int m_fist;
+	int m_eqFist;
 	int m_sword;
+	int m_eqSword;
+	int m_shield; 
+	int m_eqShield;
 
 	std::shared_ptr<SEManager> se = std::make_shared<SEManager>();
 };

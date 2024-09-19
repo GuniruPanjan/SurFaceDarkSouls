@@ -47,6 +47,7 @@ private:
 	float m_ItemColumn2X2;
 	float m_ItemColumn2Y1;
 	float m_ItemColumn2Y2;
+	int m_equipmentUI;
 	int m_youDied;
 
 	//“G‚ÌUI•Ï”

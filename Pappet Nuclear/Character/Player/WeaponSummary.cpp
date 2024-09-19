@@ -11,7 +11,6 @@ WeaponSummary::WeaponSummary():
 	m_weaponHandle(-1),
 	m_weaponSize(0.0f),
 	m_weaponFrameIndex(0),
-	m_weaponPos(VGet(0.0f, 1.947f, 1.947f)),
 	m_weaponFramePosition(VGet(0.0f, 0.0f, 0.0f)),
 	m_weaponPosition(VGet(0.0f,0.0f,0.0f))
 {
@@ -19,13 +18,13 @@ WeaponSummary::WeaponSummary():
 	m_mixMatrix = MV1GetFrameLocalWorldMatrix(0, 0);
 	m_weaponMatrixY = MGetRotY(5.655f);
 	m_weaponMatrixZ = MGetRotZ(1.795f);
-
 }
 
 WeaponSummary::~WeaponSummary()
 {
 	//メモリ解放
 	MV1DeleteModel(m_weaponHandle);
+	MV1DeleteModel(pshield->m_shieldHandle);
 }
 
 void WeaponSummary::Init()
@@ -34,16 +33,25 @@ void WeaponSummary::Init()
 
 	m_weaponHandle = MV1LoadModel("Data/Weapon/Sword.mv1");
 
-	m_weaponPos = VGet(0.0f, 1.947f, -1.947f);
-
-	//m_weaponPos = VGet(0.0f, 0.0f, -5.0f);
-
+	m_weaponPosition = VGet(0.0f, 1.947f, -1.947f);
 
 	//サイズ変更
 	MV1SetScale(m_weaponHandle, VGet(m_weaponSize, m_weaponSize, m_weaponSize));
+
+
+	//盾の初期化
+	pshield->m_shieldSize = 1.0f;
+	pshield->m_shieldHandle = MV1LoadModel("Data/Weapon/Shield.mv1");
+	pshield->m_mixMatrix = MV1GetFrameLocalMatrix(0, 0);
+	pshield->m_shieldFrameIndex = 0;
+	pshield->m_shieldFramePosition = VGet(0.0f, 0.0f, 0.0f);
+	pshield->m_shieldPos = VGet(0.0f, 0.0f, 0.0f);
+	pshield->m_transMatrix = MV1GetFrameLocalWorldMatrix(0, 0);
+	pshield->m_weaponMatrixY = MGetRotY(3.142f);
+	pshield->m_weaponMatrixZ = MGetRotZ(0.0f);
 }
 
-void WeaponSummary::Update(MATRIX mat)
+void WeaponSummary::RightUpdate(MATRIX mat)
 {
 	MV1SetMatrix(m_weaponHandle, MGetIdent());
 
@@ -52,11 +60,10 @@ void WeaponSummary::Update(MATRIX mat)
 
 	m_weaponFramePosition = MV1GetFramePosition(m_weaponHandle, m_weaponFrameIndex);
 
-	m_weaponPosition = VAdd(m_weaponFramePosition, m_weaponPos);
+	m_weaponPosition = VAdd(m_weaponFramePosition, m_weaponPosition);
 
+	//アタッチするモデルをフレームの座標を原点にするための平行移動行列を作成
 	m_transMatrix = MGetTranslate(VScale(m_weaponPosition, -1.0f));
-
-	//auto weaponFrameMatrix = MV1GetFrameLocalMatrix(handle, frame);
 
 	m_transMatrix = MMult(m_transMatrix, m_weaponMatrixY);
 	m_transMatrix = MMult(m_transMatrix, m_weaponMatrixZ);
@@ -87,39 +94,43 @@ void WeaponSummary::Update(MATRIX mat)
 	//MV1SetMatrix(m_weaponHandle, mat);
 }
 
-void WeaponSummary::Draw(VECTOR& vector)
+void WeaponSummary::LeftUpdate(MATRIX mat)
 {
-	//合成した行列をアタッチするモデルにセット
-	//MV1SetMatrix(m_weaponHandle, m_mixMatrix);
+	MV1SetMatrix(pshield->m_shieldHandle, MGetIdent());
 
-	//ベクトルを行列で変換
-	//m_weaponPos = VTransform(m_weaponPos, m_mixMatrix);
+	//フレームを検索
+	pshield->m_shieldFrameIndex = MV1SearchFrame(pshield->m_shieldHandle, "0:fbx");
 
-	//vector = VAdd(vector, m_weaponPos);
+	pshield->m_shieldFramePosition = MV1GetFramePosition(pshield->m_shieldHandle, pshield->m_shieldFrameIndex);
 
-	//モデルの座標設定
-	//MV1SetPosition(m_weaponHandle, vector);
-	//MV1SetPosition(m_weaponHandle, m_weaponPos);
+	pshield->m_shieldPos = VAdd(pshield->m_shieldFramePosition, pshield->m_shieldPos);
 
-	//3Dモデルの回転地をセットする
-	//MV1SetRotationXYZ(m_weaponHandle, VGet(0.0f, 5.655f, 1.795f));
+	//アタッチするモデルをフレームの座標を原点にするための平行移動行列を作成
+	pshield->m_transMatrix = MGetTranslate(VScale(pshield->m_shieldPos, -1.0f));
 
+	pshield->m_transMatrix = MMult(pshield->m_transMatrix, pshield->m_weaponMatrixY);
+	pshield->m_transMatrix = MMult(pshield->m_transMatrix, pshield->m_weaponMatrixZ);
+
+	pshield->m_mixMatrix = MMult(pshield->m_transMatrix, mat);
+
+	MV1SetMatrix(pshield->m_shieldHandle, pshield->m_mixMatrix);
+}
+
+void WeaponSummary::RightDraw()
+{
 	//モデル描画
 	MV1DrawModel(m_weaponHandle);
+}
 
-	//MV1DrawModel(m_weaponHandle);
-
-	//DrawFormatString(0, 300, 0xffffff, "vector.x : %f", vector.x);
-	//DrawFormatString(0, 320, 0xffffff, "vector.y : %f", vector.y);
-	//DrawFormatString(0, 340, 0xffffff, "vector.z : %f", vector.z);
-
-	//DrawFormatString(0, 400, 0xffffff, "m_weaponPosition.x : %f", m_weaponFramePosition.x);
-	//DrawFormatString(0, 440, 0xffffff, "m_weaponPosition.y : %f", m_weaponFramePosition.y);
-	//DrawFormatString(0, 480, 0xffffff, "m_weaponPosition.z : %f", m_weaponFramePosition.z);
+void WeaponSummary::LeftDraw()
+{
+	//モデル描画
+	MV1DrawModel(pshield->m_shieldHandle);
 }
 
 void WeaponSummary::End()
 {
 	//メモリ解放
 	MV1DeleteModel(m_weaponHandle);
+	MV1DeleteModel(pshield->m_shieldHandle);
 }
