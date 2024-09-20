@@ -25,6 +25,7 @@ public:
 	//カプセル同士の当たり判定
 	bool IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1);
 	bool isSphereHit(const SphereCol& col, const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float damage, float bossdamage);
+	bool isShieldHit(const SphereCol& col, const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float damage, float bossdamage);
 	bool isTargetHit(const CapsuleCol& col, int max);
 
 	void SetCameraAngle(float angle) { m_cameraAngle = angle; }
@@ -99,7 +100,8 @@ private:
 	bool m_dashMove;     //ダッシュしてる判断用変数
 	bool m_staminaBroke;   //スタミナ切れ判定
 	bool m_hit;           //怯み判定
-	bool m_shield;        //防御判定
+	bool m_shield;        //防御のアニメーション判定
+	bool m_shieldNow;     //防御中の判定
 	bool m_oneShield;     //一回だけ
 	bool m_bug;           //バグの判定
 	bool m_menuOpen;      //メニューを開く
@@ -109,12 +111,16 @@ private:
 	VECTOR m_nowPos;   //現在のフレームの座標を取得する
 	VECTOR m_bounceMove;   //押し出すための変数
 	Pos3 m_targetColPos;     //ターゲットの当たり判定ポジション
+	Pos3 m_rectPos;          //盾の当たり判定ポジション
+	Size m_rectSize;         //盾の当たり判定サイズ
 	SphereCol m_targetCunCol;   //ターゲットできるようにする
+	RectCol m_rectCol;       //盾の当たり判定
 
 	float m_rate;
 	bool m_a1;
 
 	unsigned int m_color = 0xffffff;   //デバッグ用の色変更
+	unsigned int m_rectColor = 0xffffff;      //デバッグ用の色変更
 
 	//レベル関係
 	int m_hpLevel;       //HPレベル

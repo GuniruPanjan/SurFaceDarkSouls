@@ -45,7 +45,7 @@ void WeaponSummary::Init()
 	pshield->m_mixMatrix = MV1GetFrameLocalMatrix(0, 0);
 	pshield->m_shieldFrameIndex = 0;
 	pshield->m_shieldFramePosition = VGet(0.0f, 0.0f, 0.0f);
-	pshield->m_shieldPos = VGet(0.0f, 0.0f, 0.0f);
+	pshield->m_shieldPos = VGet(0.0f, 0.0f, 7.787f);
 	pshield->m_transMatrix = MV1GetFrameLocalWorldMatrix(0, 0);
 	pshield->m_weaponMatrixY = MGetRotY(3.142f);
 	pshield->m_weaponMatrixZ = MGetRotZ(0.0f);
@@ -71,27 +71,6 @@ void WeaponSummary::RightUpdate(MATRIX mat)
 	m_mixMatrix = MMult(m_transMatrix, mat);
 
 	MV1SetMatrix(m_weaponHandle, m_mixMatrix);
-
-
-	//アタッチするモデルのフレームの座標を取得する
-	//m_weaponFramePosition = MV1GetFramePosition(handle, frame);
-	//auto mt = MV1GetFrameLocalWorldMatrix(m_weaponHandle, m_weaponFrameIndex);
-	//auto rotation = MGetRotY(DX_PI_F);
-	//temp = MMult(rotation, mt);
-	//auto scaleMat = MGetScale(VGet(0.5f, 0.5f, 0.5f));
-	//mat = MMult(scaleMat, temp);
-
-	////アタッチするモデルをフレームの座標を原点にするための平行移動行列を作成
-	//m_transMatrix = MGetTranslate(VScale(m_weaponFramePosition, -1.0f));
-
-	//auto weaponFrameMatrix = MV1GetFrameLocalMatrix(handle, frame);
-
-	//m_mixMatrix = MMult(m_transMatrix, weaponFrameMatrix);
-
-	//MV1SetMatrix(m_weaponFrameIndex, m_mixMatrix);
-
-	//アタッチするモデルのMV1SetMatrixの設定を無効化する
-	//MV1SetMatrix(m_weaponHandle, mat);
 }
 
 void WeaponSummary::LeftUpdate(MATRIX mat)

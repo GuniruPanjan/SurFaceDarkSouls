@@ -58,6 +58,7 @@ Player::Player():
 	m_targetRadius(0.0f),
 	m_animShield(0),
 	m_shield(false),
+	m_shieldNow(false),
 	m_rate(0.0f),
 	m_oneShield(false),
 	m_moveAnimFrameLeftPosition(VGet(0.0f,0.0f,0.0f))
@@ -189,7 +190,6 @@ void Player::Init()
 		MV1DetachAnim(m_handle, m_animation[8]);
 		MV1DetachAnim(m_handle, m_animation[9]);
 		MV1DetachAnim(m_handle, m_animation[10]);
-		MV1DetachAnim(m_handle, m_animation[11]);
 		m_animation[1] = -1;
 		m_animation[2] = -1;
 		m_animation[3] = -1;
@@ -200,7 +200,10 @@ void Player::Init()
 		m_animation[8] = -1;
 		m_animation[9] = -1;
 		m_animation[10] = -1;
-		m_animation[11] = -1;
+
+		//アニメーションブレンド
+		MV1SetAttachAnimBlendRate(m_handle, m_animation[11], 0.0f);
+
 
 		se->CharaInit();
 
@@ -214,6 +217,8 @@ void Player::Init()
 	m_colAttackPos = Pos3(m_pos.x - 50.0f, m_pos.y + 35.0f, m_pos.z);
 	m_initializationPos = Pos3(0.0f, -1000.0f, 0.0f);
 	m_targetColPos = Pos3(m_pos.x, m_pos.y + 35.0f, m_pos.z);
+	m_rectPos = Pos3(m_pos.x - 50.0f, m_pos.y + 35.0f, m_pos.z);
+	m_rectSize = Size(20.0f, 60.0f, 10.0f);
 	m_vec = Vec3(0.0f, m_vec.y + 2.0f, 0.0f);
 	m_len = 40.0f;
 	m_capsuleRadius = 12.0f;
@@ -223,6 +228,7 @@ void Player::Init()
 	m_capsuleCol.Init(m_colPos, m_vec, m_len, m_capsuleRadius);
 	m_sphereCol.Init(m_colAttackPos, m_sphereRadius);
 	m_targetCunCol.Init(m_targetColPos, m_targetRadius);
+	m_rectCol.Init(m_rectPos, m_rectSize);
 
 	m_posX = m_updatePosX;
 	m_posY = m_updatePosY;
@@ -273,7 +279,7 @@ void Player::Update()
 {
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 	m_targetColPos = Pos3(m_pos.x, m_pos.y + 35.0f, m_pos.z);
-
+	//m_rectPos = Pos3(m_pos.x - 50.0f, m_pos.y + 35.0f, m_pos.z);
 
 	//初期化
 	if (m_notWeapon == false)
@@ -302,12 +308,6 @@ void Player::Update()
 
 	//武器をアタッチするフレームのローカル→ワールド変換行列を取得する
 	m_moveShieldFrameMatrix = MV1GetFrameLocalWorldMatrix(m_handle, m_moveAnimShieldFrameHandIndex);
-
-	if (m_shield == false)
-	{
-		
-	}
-	
 
 
 	//パッド入力所得
@@ -442,6 +442,35 @@ void Player::Update()
 		m_colAttackPos.z = m_pos.z - cosf(m_angle) * 25.0f;
 	}
 	
+	m_rectPos.x = m_pos.x + sinf(m_angle) * -15.0f;
+	m_rectPos.z = m_pos.z - cosf(m_angle) * 15.0f;
+
+
+	//sinでX軸のwidthのサイズを出す
+	if (sinf(m_angle) > 0)
+	{
+		m_rectSize.width = 30.0f + sinf(m_angle) * -15.0f;
+
+	}
+	else if (sinf(m_angle) < 0)
+	{
+		m_rectSize.width = 30.0f - sinf(m_angle) * -15.0f;
+	}
+
+	//cosでZ軸のdepthのサイズを出す
+	if (cosf(m_angle) > 0)
+	{
+		m_rectSize.depth = 30.0f + cosf(m_angle) * -15.0f;
+
+	}
+	else if (cosf(m_angle) < 0)
+	{
+		m_rectSize.depth = 30.0f - cosf(m_angle) * -15.0f;
+
+	}
+
+	m_rectCol.Update(m_rectPos, m_rectSize);
+
 
 
 	//アニメーション時間を進める前のアニメーションで移動をしているフレームの座標取得
@@ -508,7 +537,7 @@ void Player::Update()
 	if (m_playTime <= m_totalAnimTime[3] && m_animation[3] != -1)
 	{
 		//フレーム回避
-		if (m_playTime >= 0.0f && m_playTime <= 25.0f)
+		if (m_playTime >= 0.0f && m_playTime <= 20.0f)
 		{
 			m_avoidanceNow = true;
 		}
@@ -569,10 +598,21 @@ void Player::Update()
 	//スタミナ回復
 	if (m_dashMove == false && m_moveAttack == false && m_avoidance == false)
 	{
-		if (m_stamina <= 100.0f)
+		if (m_shieldNow == true)
 		{
-			m_stamina += 0.3f;
+			if (m_stamina <= 100.0f)
+			{
+				m_stamina += 0.1f;
+			}
 		}
+		else
+		{
+			if (m_stamina <= 100.0f)
+			{
+				m_stamina += 0.3f;
+			}
+		}
+		
 	}
 
 	Animation(m_playTime, m_pos);
@@ -697,6 +737,17 @@ void Player::WeaponUpdate(Equipment& eq)
 	{
 		weapon->LeftUpdate(m_moveShieldFrameMatrix);
 	}
+
+	//盾を持った上で盾を構えた時
+	if (eq.GetShield() == true && m_shield == true)
+	{
+		m_shieldNow = true;
+	}
+	else
+	{
+		m_shieldNow = false;
+	}
+
 }
 
 void Player::PlaySE(int volume)
@@ -782,13 +833,26 @@ void Player::Action()
 	}
 
 
-	//Lボタンで防御
-	if (m_xpad.Buttons[8] == 1)
+	//行動中は防御できない
+	if (m_moveAttack == false && m_avoidance == false && m_staminaBroke == false)
 	{
-		DrawFormatString(0, 10, 0xffffff, "防御");
+		//Lボタンで防御
+		if (m_xpad.Buttons[8] == 1)
+		{
+			DrawFormatString(0, 10, 0xffffff, "防御");
 
-		m_shield = true;
+			m_shield = true;
 
+		}
+		else
+		{
+			m_shield = false;
+
+			m_oneShield = false;
+
+			m_rate = 0.0f;
+		}
+		
 	}
 	else
 	{
@@ -798,8 +862,6 @@ void Player::Action()
 
 		m_rate = 0.0f;
 	}
-
-	//MV1SetAttachAnimBlendRate
 
 	//攻撃時のアニメーションを速くする
 	if (m_moveAttack == true)
@@ -1381,14 +1443,10 @@ void Player::Animation(float& time, VECTOR& pos)
 			{
 				if (m_oneShield == false)
 				{
-					m_animation[11] = MV1AttachAnim(m_handle, 0, m_animShield, FALSE);
-
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[0], 1.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[1], 1.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[2], 1.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[11], 0.0f);
-
-					time = 0.0f;
 
 					m_oneShield = true;
 				}
@@ -1396,14 +1454,10 @@ void Player::Animation(float& time, VECTOR& pos)
 			else
 			{
 
-				MV1DetachAnim(m_handle, m_animation[11]);
-
 				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[11], m_moveAnimShieldFrameIndex, 0.0f);
 				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[0], m_moveAnimShieldFrameIndex, 1.0f);
 				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[1], m_moveAnimShieldFrameIndex, 1.0f);
 				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[2], m_moveAnimShieldFrameIndex, 1.0f);
-
-				m_animation[11] = -1;
 			}
 
 			//プレイヤーが回復したとき
@@ -1589,7 +1643,7 @@ void Player::Animation(float& time, VECTOR& pos)
 	{
 		MV1SetAttachAnimTime(m_handle, m_animation[10], time);
 	}
-	if (m_animation[11] != -1)
+	if (m_shield == true)
 	{	
 		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[0], m_moveAnimShieldFrameIndex, 0.0f);
 		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[1], m_moveAnimShieldFrameIndex, 0.0f);
@@ -1805,8 +1859,38 @@ void Player::Draw()
 	Pos3 pos1 = m_colPos + vec;
 	Pos3 pos2 = m_colPos - vec;
 
+	float halfW = m_rectSize.width * 0.5f;
+	float halfH = m_rectSize.height * 0.5f;
+	float halfD = m_rectSize.depth * 0.5f;
+
+	float right = m_rectPos.x + halfW;
+	float left = m_rectPos.x - halfW;
+	float top = m_rectPos.y + halfH;
+	float bottom = m_rectPos.y - halfH;
+	float front = m_rectPos.z - halfD;
+	float back = m_rectPos.z + halfD;
+
+
+	// 横の線
+	//DrawLine3D(VGet(left, bottom, front), VGet(right, bottom, front), m_rectColor);
+	//DrawLine3D(VGet(left, top, front), VGet(right, top, front), m_rectColor);
+	//DrawLine3D(VGet(left, bottom, back), VGet(right, bottom, back), m_rectColor);
+	//DrawLine3D(VGet(left, top, back), VGet(right, top, back), m_rectColor);
+	//// 縦の線
+	//DrawLine3D(VGet(left, top, front), VGet(left, bottom, front), m_rectColor);
+	//DrawLine3D(VGet(right, top, front), VGet(right, bottom, front), m_rectColor);
+	//DrawLine3D(VGet(left, top, back), VGet(left, bottom, back), m_rectColor);
+	//DrawLine3D(VGet(right, top, back), VGet(right, bottom, back), m_rectColor);
+	//// 前後の線
+	//DrawLine3D(VGet(left, top, front), VGet(left, top, back), m_rectColor);
+	//DrawLine3D(VGet(left, bottom, front), VGet(left, bottom, back), m_rectColor);
+	//DrawLine3D(VGet(right, top, front), VGet(right, top, back), m_rectColor);
+	//DrawLine3D(VGet(right, bottom, front), VGet(right, bottom, back), m_rectColor);
+
+
+
 	//カプセル3Dの描画
-	//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+	DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
 	////円の3D描画
 	if (m_fistCol == true)
@@ -1845,11 +1929,11 @@ void Player::Draw()
 	//DrawFormatString(0, 40, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
 	//DrawFormatString(0, 60, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
 	////バグで攻撃状態になるがモーションが入らない
-	//DrawFormatString(0, 100, 0xffffff, "m_playTime : %f", m_playTime);
+	DrawFormatString(0, 200, 0xffffff, "m_stamina : %f", m_stamina);
 	//DrawFormatString(200, 60, 0xffffff, "m_staminaBroke : %d", m_staminaBroke);
 	//DrawFormatString(200, 100, 0xffffff, "m_hit : %d", m_a1);
 
-	//DrawFormatString(200, 180, 0xffffff, "m_angle : %f", m_angle);
+	//DrawFormatString(200, 180, 0xffffff, "m_angle : %f", cosf(m_angle));
 	//DrawFormatString(200, 180, 0xffffff, "m_recoberyAction : %d", m_recoberyAction);
 	//DrawFormatString(200, 220, 0xffffff, "m_moveflag : %d", m_moveflag);
 	//DrawFormatString(200, 260, 0xffffff, "m_avoidance : %d", m_avoidance);
@@ -2046,6 +2130,79 @@ bool Player::isSphereHit(const SphereCol& col, const SphereCol& col1, const Sphe
 		m_damageReceived = false;
 
 		m_color = 0xffffff;
+	}
+
+	return isHit || isBossAttackHit1 || isBossAttackHit2 || isBossAttackHit3;
+}
+
+bool Player::isShieldHit(const SphereCol& col, const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float damage, float bossdamage)
+{
+	bool isHit = m_rectCol.IsHitSphere(col);
+	bool isBossAttackHit1 = m_rectCol.IsHitSphere(col1);
+	bool isBossAttackHit2 = m_rectCol.IsHitSphere(col2);
+	bool isBossAttackHit3 = m_rectCol.IsHitSphere(col3);
+
+	//雑魚敵の攻撃が入っている
+
+	//ダメージを受けた判定
+	if (isHit)
+	{
+
+		//盾を構えた時
+		if (m_shieldNow == true)
+		{
+			m_rectColor = 0xffff00;
+
+			//攻撃を一回だけ与える
+			if (m_damageReceived == false)
+			{
+				m_stamina = m_stamina - damage * 1.2f;
+
+				//スタミナを0以下にさせない
+				if (m_stamina < 0.0f)
+				{
+					m_stamina = 0.0f;
+				}
+
+				m_damageReceived = true;
+			}
+		}
+
+	}
+	else if (isBossAttackHit1 || isBossAttackHit2 || isBossAttackHit3)
+	{
+		
+
+		//盾を構えた時
+		if (m_shieldNow == true)
+		{
+			m_rectColor = 0xffff00;
+
+			//攻撃を一回だけ与える
+			if (m_damageReceived == false)
+			{
+
+				m_stamina = m_stamina - bossdamage * 1.2f;
+
+				//スタミナを0以下にさせない
+				if (m_stamina < 0.0f)
+				{
+					m_stamina = 0.0f;
+				}
+
+				m_damageReceived = true;
+			}
+		}
+	}
+	else
+	{
+		//攻撃を受けてない時　　　　　
+		if (m_hit == false)
+		{
+			m_damageReceived = false;
+		}
+		
+		m_rectColor = 0xffffff;
 	}
 
 	return isHit || isBossAttackHit1 || isBossAttackHit2 || isBossAttackHit3;

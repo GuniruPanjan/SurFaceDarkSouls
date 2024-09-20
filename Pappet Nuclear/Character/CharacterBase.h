@@ -4,6 +4,7 @@
 #include "Character/Effect/Effect.h"
 #include "Col/CapsuleCol.h"
 #include "Col/SphereCol.h"
+#include "Col/RectCol.h"
 #include<memory>
 //だいたいのアニメーション
 #define  ANIMATION   30
@@ -145,5 +146,6 @@ protected:
 	MV1_COLL_RESULT_POLY* m_Floor[PLAYER_MAX_HITCOLL];    //床ポリゴンと判断されたポリゴンの構造体のアドレスを保存しておくためのポインタ配列
 	MV1_COLL_RESULT_POLY* m_Poly;  //ポリゴンの構造体にアクセスするためにしようするポインタ
 
+	//スマートポインタ
 	std::shared_ptr<SEManager> se = std::make_shared<SEManager>();
 };

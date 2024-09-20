@@ -2,6 +2,7 @@
 #include "Vec3.h"
 
 class CapsuleCol;
+class SphereCol;
 
 class RectCol
 {
@@ -10,9 +11,10 @@ public:
 	virtual ~RectCol();
 
 	void Init(const Pos3& pos, const Size& size);
-	void Update(const Pos3& pos);
+	void Update(const Pos3& pos, const Size& size);
 
 	bool IsHitCapsule(const CapsuleCol& col);
+	bool IsHitSphere(const SphereCol& col);
 	bool IsHItRect(const RectCol& rect);
 
 	const Pos3& GetPos() const { return m_pos; }

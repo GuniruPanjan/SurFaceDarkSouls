@@ -240,7 +240,7 @@ void BossEnemy::Action(Player& player)
 				m_bossMoveAttackPattern = false;
 			}
 
-			if (m_playTime >= 38.0f && m_playTime <= 43.0f)
+			if (m_playTime >= 38.0f && m_playTime <= 45.0f)
 			{
 				if (attack == false)
 				{
@@ -264,7 +264,7 @@ void BossEnemy::Action(Player& player)
 				m_bossMoveAttackPattern = false;
 			}
 
-			if (m_playTime >= 7.0f && m_playTime <= 11.0f)
+			if (m_playTime >= 7.0f && m_playTime <= 12.0f)
 			{
 				if (attack == false)
 				{
@@ -299,7 +299,7 @@ void BossEnemy::Action(Player& player)
 				}
 			}
 
-			if (m_playTime >= 58.0f && m_playTime <= 63.0f)
+			if (m_playTime >= 58.0f && m_playTime <= 68.0f)
 			{
 				m_colBossAttackSphere3.Update(m_colBossAttackPos3);
 			}
@@ -729,17 +729,17 @@ void BossEnemy::Draw()
 		////UŒ‚‚Ì”ÍˆÍ•`‰æ
 		//DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
 
-		////UŒ‚”»’è•`‰æ
-		//DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
-		//DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
-		//DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
+		//UŒ‚”»’è•`‰æ
+		DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
+		DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
+		DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
 	}
 
 	//DrawFormatString(0, 120, 0xffffff, "m_moveAttack1 : %d", m_bossAttack1);
 	//DrawFormatString(0, 140, 0xffffff, "m_moveAttack1 : %d", m_bossAttack2);
 	//DrawFormatString(0, 160, 0xffffff, "m_moveAttack1 : %d", m_bossAttack3);
 	//DrawFormatString(0, 180, 0xffffff, "m_BossAttack : %d", m_bossAttack);
-	//DrawFormatString(0, 200, 0xffffff, "m_effectAttack : %d", m_bossMoveAttack);
+	DrawFormatString(0, 400, 0xffffff, "m_Attack : %f", m_attack);
 
 	//3Dƒ‚ƒfƒ‹ƒ|ƒWƒVƒ‡ƒ“Ý’è
 	MV1SetPosition(m_bossModelHandle, m_pos);
