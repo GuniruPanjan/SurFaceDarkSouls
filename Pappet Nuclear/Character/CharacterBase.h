@@ -69,6 +69,7 @@ public:
 		{
 			m_animation[i] = -1;
 			m_totalAnimTime[i] = 0.0f;
+			m_animOne[i] = false;
 		}
 	}
 
@@ -111,6 +112,7 @@ protected:
 	int m_animAttack3;   //キャラの攻撃アニメーション格納変数
 	int m_animation[ANIMATION];  //キャラのアニメーション格納変数
 	float m_totalAnimTime[ANIMATION];  //キャラのアニメーション再生時間
+	bool m_animOne[ANIMATION];   //キャラのアニメーションを入れる為の変数
 	VECTOR m_move;  //キャラの移動
 	VECTOR m_pos;  //キャラのポジション
 	VECTOR m_drawPos;   //キャラのモデルを描画するポジション

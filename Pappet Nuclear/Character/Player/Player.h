@@ -15,7 +15,9 @@ public:
 	void PlaySE(int volume);
 	void OtherInfluence(VECTOR outpush, VECTOR weakoutpush);
 	void Action();
+	void NotWeaponAnimation(float& time);
 	void Animation(float& time, VECTOR& pos);
+	void WeaponAnimation(float& time);
 	void HitObj(Map& map);
 	void SaveAction(Map& map);
 	void Draw();
@@ -68,8 +70,6 @@ private:
 	float m_stamina;      //スタミナ
 	float m_swordRadius;   //剣の当たり判定の半径
 	float m_targetRadius;   //ターゲットの当たり判定の半径
-	int m_animHeel;       //回復アニメーション代入
-	int m_animShield;      //盾を構えるアニメーション代入
 	int m_recoveryNumber;     //回復できる回数変数
 	float m_recoberyAmount;   //回復量
 	float m_heel;             //hpに足す回復量
@@ -106,6 +106,7 @@ private:
 	bool m_bug;           //バグの判定
 	bool m_menuOpen;      //メニューを開く
 	bool m_notWeapon;     //武器を持ってない状態
+	bool m_notShield;     //盾を持ってない状態
 	bool m_fistCol;       //拳の当たり判定初期化
 	bool m_swordCol;      //剣の当たり判定初期化判定
 	VECTOR m_nowPos;   //現在のフレームの座標を取得する
@@ -121,6 +122,16 @@ private:
 
 	unsigned int m_color = 0xffffff;   //デバッグ用の色変更
 	unsigned int m_rectColor = 0xffffff;      //デバッグ用の色変更
+
+	//アニメーション関係
+	int m_animHeel;       //回復アニメーション代入
+	int m_animShield;      //盾を構えるアニメーション代入
+	int m_animWeaponStand;     //武器を持った時の立ってるアニメーション
+	int m_animWeaponWalk;      //武器を持った時の歩いているアニメーション
+	int m_animWeaponRun;       //武器を持った時の走っているアニメーション
+	int m_animShieldStand;     //盾を構えた時の立ってるアニメーション
+	bool m_weaponAnimOne;      //武器を持った時にブレンド率を一回だけ調整する
+	bool m_notWeaponAnimOne;   //武器を持ってない時にブレンド率を一回だけ調整する
 
 	//レベル関係
 	int m_hpLevel;       //HPレベル
