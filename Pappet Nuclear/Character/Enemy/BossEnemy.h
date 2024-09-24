@@ -22,6 +22,7 @@ public:
 	float GetDamage() { return m_attack; }
 	bool GameClear() { return m_gameClear; }
 	bool GetBattle() { return m_bossBattle; }
+	bool GetPlayerHit() { return m_playerHit; }
 	VECTOR GetPos() { return m_pos; }
 	float GetPosX() { return m_pos.x; }
 	float GetPosY() { return m_pos.y; }
@@ -44,6 +45,7 @@ private:
 	bool m_bossAttack1;           //ボスの攻撃1の判断
 	bool m_bossAttack2;           //ボスの攻撃2の判断
 	bool m_bossAttack3;           //ボスの攻撃3の判断
+	bool m_playerHit;             //プレイヤーに攻撃を当てられる判定
 	int m_bossAttack;     //ボスの攻撃パターン
 	bool m_one;           //一回だけ初期化する
 	unsigned int m_color = 0xffffff;

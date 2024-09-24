@@ -39,6 +39,7 @@ public:
 	bool isBossDistanceHit(CapsuleCol col) { return boss->isCapsuleHit(col); }
 	bool GameClear() { return boss->GameClear(); }
 	bool GetBattale() { return boss->GetBattle(); }
+	bool GetBossPlayerHit() { return boss->GetPlayerHit(); }
 
 	//“G‚ÌŽæ“¾•Ï”
 	VECTOR GetPos(int max) { return enemy->GetPos(max); }
@@ -54,6 +55,7 @@ public:
 	bool isSeachHit(CapsuleCol col, int max) { return enemy->isSeachHit(col,max); }
 	bool isDistanceHit(CapsuleCol col, int max) { return enemy->isDistanceHit(col,max); }
 	bool isWeakPlayerHit(CapsuleCol col, VECTOR vec, float speed, int max) { return enemy->isPlayerHit(col, vec, speed, max); }
+	bool GetPlayerHit(int max) { return enemy->GetPlayerHit(max); }
 
 	//VECTOR GetPos() { return weakenemy[4]->GetPos(); }
 	//float GetPosX() { return weakenemy[4]->GetPosX(); }

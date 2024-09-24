@@ -63,7 +63,9 @@ public:
 		m_FloorNum(0),
 		m_HitDimNum(0),
 		m_effectActivation(false),
-		m_effect(0)
+		m_effect(0),
+		m_playerDif(VGet(0.0f,0.0f,0.0f)),
+		m_shieldDif(VGet(0.0f,0.0f,0.0f))
 	{
 		for (int i = 0; i < ANIMATION; i++)
 		{
@@ -137,6 +139,8 @@ protected:
 	CapsuleCol m_capsuleCol;  //カプセルの当たり判定
 	SphereCol m_sphereCol;  //スフィアの当たり判定
 	VECTOR m_mapHitColl;    //キャラクターのマップとの当たり判定
+	VECTOR m_playerDif;      //プレイヤーとの距離を求める
+	VECTOR m_shieldDif;     //盾との距離を求める
 
 	//マップとの当たり判定
 	bool m_HitFlag;              //ポリゴンに当たったかどうかを記憶しておくのに使う変数

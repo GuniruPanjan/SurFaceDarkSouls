@@ -66,8 +66,20 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		enemy->MapHitWenemy(*map, i);
 		player->IsCapsuleHit(enemy->GetCol(i), enemy->GetBossCol());
 		//雑魚敵のアタックコルが問題
-		player->isShieldHit(enemy->GetAttackCol(i), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
-		player->isSphereHit(enemy->GetAttackCol(i), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
+		//player->isShieldHit(enemy->GetAttackCol(i), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
+		//player->isSphereHit(enemy->GetAttackCol(i), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
+		
+		//ボス部屋に入ってないとき
+		if (map->GetRoomEntered() == false)
+		{
+			//盾の方が近かったら実行
+			if (enemy->GetPlayerHit(i) == false)
+			{
+				player->isShieldHit(enemy->GetAttackCol(i), enemy->GetDamage());
+			}
+			player->isSphereHit(enemy->GetAttackCol(i), enemy->GetDamage());
+		}
+		
 		enemy->isWeakPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetSpeed(), i);
 		player->isTargetHit(enemy->GetCol(i), i);
 	}
@@ -117,6 +129,16 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		bgmse->BossBGM();
 
 		m_one = true;
+	}
+
+	if (map->GetRoomEntered() == true)
+	{
+		//盾の方が近かったら実行
+		if (enemy->GetBossPlayerHit() == false)
+		{
+			player->isBossShieldHit(enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->BossGetDamage());
+		}
+		player->isBossSphereHit(enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->BossGetDamage());
 	}
 
 

@@ -31,6 +31,7 @@ public:
 	VECTOR GetOutPush(int max) { return m_outPush[max]; }
 	const CapsuleCol GetCol(int max) { return m_weakCapsuleCol[max]; }
 	const SphereCol GetAttackCol(int max) { return m_colAttack[max]; }
+	bool GetPlayerHit(int max) { return m_playerHit[max]; }
 
 
 private:
@@ -53,6 +54,7 @@ private:
 	float m_bounceZ[ENEMY_NOW];                          //Z軸方向算出
 	float m_bounceAngle[ENEMY_NOW];                      //押し出すアングル
 	VECTOR m_outPush[ENEMY_NOW];                         //押し出すベクトル
+	bool m_playerHit[ENEMY_NOW];                         //プレイヤーに当たる判定
 
 	//SE代入変数
 	int m_hitSE[ENEMY_NOW];

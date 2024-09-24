@@ -9,6 +9,10 @@ namespace
 	bool hitFlag[ENEMY_NOW];    //マップの当たったフラグ
 	bool  attack[ENEMY_NOW];    //敵の攻撃SEを一回流す
 	VECTOR mapHitCol[ENEMY_NOW];   //マップとの当たり判定
+	VECTOR difPlayer[ENEMY_NOW];           //プレイヤーとの距離
+	float difPSize[ENEMY_NOW];            //プレイヤーとの距離
+	VECTOR difShield[ENEMY_NOW];           //盾との距離
+	float difSSize[ENEMY_NOW];            //盾との距離
 	bool a[ENEMY_NOW];  //攻撃を一回だけ与える
 }
 
@@ -34,6 +38,7 @@ WeakEnemy::WeakEnemy()
 		m_bounceX[i] = 0.0f;
 		m_bounceZ[i] = 0.0f;
 		m_bounceAngle[i] = 0.0f;
+		m_playerHit[i] = false;
 	}
 }
 
@@ -160,7 +165,6 @@ void WeakEnemy::Update(Player& player, int max, int volume)
 	m_oneInit = true;
 	
 	m_weakColPos[max] = Pos3(m_weakEnemyPos[max].x - 2.0f, m_weakEnemyPos[max].y + 35.0f, m_weakEnemyPos[max].z);
-	//m_colSearchPos[max] = Pos3(m_weakEnemyPos[max].x, m_weakEnemyPos[max].y + 35.0f, m_weakEnemyPos[max].z);
 	m_colDistancePos[max] = Pos3(m_weakEnemyPos[max].x, m_weakEnemyPos[max].y + 35.0f, m_weakEnemyPos[max].z);
 
 	m_weakPlayTime[max] += 0.5f;
@@ -170,6 +174,14 @@ void WeakEnemy::Update(Player& player, int max, int volume)
 	m_bounceZ[max] = m_weakEnemyPos[max].z - player.GetPosX();
 
 	m_bounceAngle[max] = atan2f(m_bounceX[max], m_bounceZ[max]);
+
+	//プレイヤーとの距離
+	difPlayer[max] = VSub(player.GetPos(), m_weakDrawPos[max]);
+	//盾との距離
+	difShield[max] = VSub(player.GetShieldPos(), m_weakDrawPos[max]);
+
+	difPSize[max] = VSize(difPlayer[max]);
+	difSSize[max] = VSize(difShield[max]);
 
 	//索敵で発見された処理&敵が攻撃してない時
 	if (m_enemySearchFlag[max] == true && m_weakEnemyMoveAttack[max] == false)
@@ -229,6 +241,16 @@ void WeakEnemy::Update(Player& player, int max, int volume)
 
 		//ポジション代入
 		m_weakDrawPos[max] = m_weakEnemyPos[max];
+	}
+
+	//盾よりプレイヤーの方が距離近かったら
+	if (difPSize[max] < difSSize[max])
+	{
+		m_playerHit[max] = true;
+	}
+	else
+	{
+		m_playerHit[max] = false;
 	}
 
 	//索敵の当たり判定を正面に持ってくる

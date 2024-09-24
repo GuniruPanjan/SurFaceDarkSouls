@@ -26,8 +26,10 @@ public:
 
 	//カプセル同士の当たり判定
 	bool IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1);
-	bool isSphereHit(const SphereCol& col, const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float damage, float bossdamage);
-	bool isShieldHit(const SphereCol& col, const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float damage, float bossdamage);
+	bool isSphereHit(const SphereCol& col, float damage);
+	bool isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage);
+	bool isShieldHit(const SphereCol& col, float damage);
+	bool isBossShieldHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage);
 	bool isTargetHit(const CapsuleCol& col, int max);
 
 	void SetCameraAngle(float angle) { m_cameraAngle = angle; }
@@ -36,6 +38,7 @@ public:
 	float GetPosX() { return m_pos.x; }
 	float GetPosY() { return m_pos.y; }
 	float GetPosZ() { return m_pos.z; }
+	VECTOR GetShieldPos() { return VGet(m_rectPos.x, m_rectPos.y, m_rectPos.z); }
 	float GetDamage() { return m_attack; }
 	float GetAngle() { return m_angle; }
 	float GetBounceDis() { return m_bounceDis; }
@@ -99,8 +102,6 @@ private:
 	bool m_restAction;    //回復ができるようになる判定
 	bool m_dashMove;     //ダッシュしてる判断用変数
 	bool m_staminaBroke;   //スタミナ切れ判定
-	bool m_hit;           //怯み判定
-	bool m_shield;        //防御のアニメーション判定
 	bool m_shieldNow;     //防御中の判定
 	bool m_oneShield;     //一回だけ
 	bool m_bug;           //バグの判定
@@ -126,10 +127,13 @@ private:
 	//アニメーション関係
 	int m_animHeel;       //回復アニメーション代入
 	int m_animShield;      //盾を構えるアニメーション代入
-	int m_animWeaponStand;     //武器を持った時の立ってるアニメーション
+	int m_animShieldImpact;     //武器を持った時の立ってるアニメーション
 	int m_animWeaponWalk;      //武器を持った時の歩いているアニメーション
 	int m_animWeaponRun;       //武器を持った時の走っているアニメーション
 	int m_animShieldStand;     //盾を構えた時の立ってるアニメーション
+	bool m_hit;           //怯み判定
+	bool m_hitImpact;     //盾受け判定
+	bool m_shield;        //防御のアニメーション判定
 	bool m_weaponAnimOne;      //武器を持った時にブレンド率を一回だけ調整する
 	bool m_notWeaponAnimOne;   //武器を持ってない時にブレンド率を一回だけ調整する
 

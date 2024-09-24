@@ -6,6 +6,8 @@ namespace
 {
 	bool attack;    //攻撃SEの判定
 	int walkTime;   //歩くSE間隔
+	float difPSize;   //プレイヤーとの距離
+	float difSSize;   //盾との距離
 }
 
 BossEnemy::BossEnemy() :
@@ -23,7 +25,8 @@ BossEnemy::BossEnemy() :
 	m_bossAttackRadius2(0.0f),
 	m_bossAttackRadius3(0.0f),
 	m_bounceAngle(0.0f),
-	m_outPush(VGet(0.0f, 0.0f, 0.0f))
+	m_outPush(VGet(0.0f, 0.0f, 0.0f)),
+	m_playerHit(false)
 {
 }
 
@@ -100,6 +103,14 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 {
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 	m_bossColDistance.Update(m_colPos);
+
+	//敵とプレイヤーの相対距離
+	m_playerDif = VSub(player.GetPos(), m_pos);
+	//敵と盾の相対距離
+	m_shieldDif = VSub(player.GetShieldPos(), m_pos);
+
+	difPSize = VSize(m_playerDif);
+	difSSize = VSize(m_shieldDif);
 
 	//アニメーション再生速度
 	if (m_bossAttack1 == true)
@@ -191,6 +202,17 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 		m_colBossAttackSphere2.Update(m_initializationPos);
 		m_colBossAttackSphere3.Update(m_initializationPos);
 	}
+
+	//盾よりプレイヤーの方が近かったら
+	if (difPSize < difSSize)
+	{
+		m_playerHit = true;
+	}
+	else
+	{
+		m_playerHit = false;
+	}
+
 
 	//マップとの当たり判定用
 	m_mapHitColl = VGet(m_colPos.x, m_colPos.y, m_colPos.z);
@@ -730,16 +752,16 @@ void BossEnemy::Draw()
 		//DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
 
 		//攻撃判定描画
-		DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
-		DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
-		DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
+		//DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
+		//DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
+		//DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
 	}
 
 	//DrawFormatString(0, 120, 0xffffff, "m_moveAttack1 : %d", m_bossAttack1);
 	//DrawFormatString(0, 140, 0xffffff, "m_moveAttack1 : %d", m_bossAttack2);
 	//DrawFormatString(0, 160, 0xffffff, "m_moveAttack1 : %d", m_bossAttack3);
 	//DrawFormatString(0, 180, 0xffffff, "m_BossAttack : %d", m_bossAttack);
-	DrawFormatString(0, 400, 0xffffff, "m_Attack : %f", m_attack);
+	//DrawFormatString(0, 400, 0xffffff, "m_Attack : %f", m_attack);
 
 	//3Dモデルポジション設定
 	MV1SetPosition(m_bossModelHandle, m_pos);
