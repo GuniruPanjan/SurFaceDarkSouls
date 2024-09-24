@@ -163,7 +163,7 @@ void Player::Init()
 		m_animHeel = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRecovery.mv1");
 		m_animHit = MV1LoadModel("Data/PlayerAnimation/PlayerAnimHit.mv1");
 		m_animShield = MV1LoadModel("Data/PlayerAnimation/PlayerAnimShield.mv1");
-		m_animShieldImpact = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponStand.mv1");
+		m_animShieldImpact = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimShieldImpact.mv1");
 		m_animShieldStand = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimShieldStand.mv1");
 		m_animWeaponWalk = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponWalk.mv1");
 		m_animWeaponRun = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponRun.mv1");
@@ -1317,50 +1317,7 @@ void Player::Animation(float& time, VECTOR& pos)
 	//プレイヤーが生きていたら
 	else if (m_hp > 0.0f)
 	{
-		//盾受けしたとき
-		if (m_hitImpact == true)
-		{
-			if (m_animOne[12] == false)
-			{
-				//アニメーションデタッチ
-				MV1DetachAnim(m_handle, m_animation[0]);
-				MV1DetachAnim(m_handle, m_animation[1]);
-				MV1DetachAnim(m_handle, m_animation[2]);
-				MV1DetachAnim(m_handle, m_animation[3]);
-				MV1DetachAnim(m_handle, m_animation[4]);
-				MV1DetachAnim(m_handle, m_animation[5]);
-				MV1DetachAnim(m_handle, m_animation[6]);
-				MV1DetachAnim(m_handle, m_animation[7]);
-				MV1DetachAnim(m_handle, m_animation[9]);
-
-				//アニメーションブレンド
-				MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
-				MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
-				MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
-
-				//アニメーションアタッチ
-				MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 1.0f);
-
-				time = 0.0f;
-
-				m_animation[0] = -1;
-				m_animation[1] = -1;
-				m_animation[2] = -1;
-				m_animation[3] = -1;
-				m_animation[4] = -1;
-				m_animation[5] = -1;
-				m_animation[6] = -1;
-				m_animation[7] = -1;
-				m_animation[9] = -1;
-
-				m_animOne[13] = false;
-				m_animOne[14] = false;
-				m_animOne[15] = false;
-
-
-				m_animOne[12] = true;
-			}
-		}
+		
 		//怯み
 		if (m_hit == true)
 		{
@@ -1891,6 +1848,50 @@ void Player::WeaponAnimation(float& time)
 	//プレイヤーが生きている時
 	if (m_hp >= 0.0f)
 	{
+		//盾受けしたとき
+		if (m_hitImpact == true)
+		{
+			if (m_animOne[12] == false)
+			{
+				//アニメーションデタッチ
+				MV1DetachAnim(m_handle, m_animation[0]);
+				MV1DetachAnim(m_handle, m_animation[1]);
+				MV1DetachAnim(m_handle, m_animation[2]);
+				MV1DetachAnim(m_handle, m_animation[3]);
+				MV1DetachAnim(m_handle, m_animation[4]);
+				MV1DetachAnim(m_handle, m_animation[5]);
+				MV1DetachAnim(m_handle, m_animation[6]);
+				MV1DetachAnim(m_handle, m_animation[7]);
+				MV1DetachAnim(m_handle, m_animation[9]);
+
+				//アニメーションブレンド
+				MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
+				MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
+				MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+
+				//アニメーションアタッチ
+				MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 1.0f);
+
+				time = 0.0f;
+
+				m_animation[0] = -1;
+				m_animation[1] = -1;
+				m_animation[2] = -1;
+				m_animation[3] = -1;
+				m_animation[4] = -1;
+				m_animation[5] = -1;
+				m_animation[6] = -1;
+				m_animation[7] = -1;
+				m_animation[9] = -1;
+
+				m_animOne[13] = false;
+				m_animOne[14] = false;
+				m_animOne[15] = false;
+
+
+				m_animOne[12] = true;
+			}
+		}
 		//怯んでないとき盾受けしてない時
 		if (m_hit == false && m_hitImpact == false)
 		{
@@ -2036,7 +2037,7 @@ void Player::WeaponAnimation(float& time)
 				m_animOne[15] = false;
 			}
 			//防御
-			if (m_shieldNow == true && m_animOne[13] == false)
+			if (m_shieldNow == true && m_animOne[13] == false && m_animOne[12] == false)
 			{
 				if (m_oneShield == false)
 				{
@@ -2370,7 +2371,7 @@ void Player::Draw()
 	//DrawFormatString(200, 740, 0xffffff, "アニメ9 : %d", m_animation[9]);
 	//DrawFormatString(200, 780, 0xffffff, "アニメ10 : %d", m_animation[10]);
 	//DrawFormatString(200, 820, 0xffffff, "アニメ11 : %d", m_animation[11]);
-	//DrawFormatString(150, 400, 0xffffff, "playTime : %f", m_playTime);
+	DrawFormatString(150, 400, 0xffffff, "playTime : %f", m_playTime);
 	effect->Draw();
 }
 
