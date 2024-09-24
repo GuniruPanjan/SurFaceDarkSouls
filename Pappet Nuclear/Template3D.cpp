@@ -3,6 +3,7 @@
 #include <cmath>
 #include <memory>
 #include "Scene/SceneManager.h"
+#include "Icon/Icon.h"
 
 namespace
 {
@@ -21,6 +22,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// windowモード設定
 	SetGraphMode(1600, 1000, 32);
 	ChangeWindowMode(false);
+
+	SetWindowIconID(IDI_ICON1);    //アイコンの設定
+
 
 	if (DxLib_Init() == -1)		// ＤＸライブラリ初期化処理
 	{

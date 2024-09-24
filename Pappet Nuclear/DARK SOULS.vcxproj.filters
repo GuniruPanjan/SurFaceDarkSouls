@@ -85,6 +85,9 @@
     <Filter Include="ソース ファイル\Character\Player\Equipment">
       <UniqueIdentifier>{855fd696-1a97-44d5-9b67-a74a4a6e581e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="リソース ファイル\Icon">
+      <UniqueIdentifier>{ab7ee0fb-91a4-4724-b770-be520dd30829}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Template3D.cpp">
@@ -254,5 +257,18 @@
     <ClInclude Include="UI\UIManager.h">
       <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Icon\Icon.h">
+      <Filter>リソース ファイル\Icon</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Icon\PuppetNuclear.ico">
+      <Filter>リソース ファイル\Icon</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Icon\Icon.rc">
+      <Filter>リソース ファイル\Icon</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
