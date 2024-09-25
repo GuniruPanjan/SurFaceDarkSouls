@@ -1800,7 +1800,7 @@ void Player::Animation(float& time, VECTOR& pos)
 	{
 		MV1SetAttachAnimTime(m_handle, m_animation[10], time);
 	}
-	if (m_shieldNow == true && m_animOne[13] == false)
+	if (m_shieldNow == true && m_animOne[13] == false && m_animOne[12] == false)
 	{	
 		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[0], m_moveAnimShieldFrameIndex, 0.0f);
 		MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[1], m_moveAnimShieldFrameIndex, 0.0f);
@@ -1884,13 +1884,12 @@ void Player::WeaponAnimation(float& time)
 				m_animation[7] = -1;
 				m_animation[9] = -1;
 
-				m_animOne[13] = false;
-				m_animOne[14] = false;
-				m_animOne[15] = false;
-
-
 				m_animOne[12] = true;
 			}
+
+			m_animOne[13] = false;
+			m_animOne[14] = false;
+			m_animOne[15] = false;
 		}
 		//怯んでないとき盾受けしてない時
 		if (m_hit == false && m_hitImpact == false)
@@ -2037,7 +2036,7 @@ void Player::WeaponAnimation(float& time)
 				m_animOne[15] = false;
 			}
 			//防御
-			if (m_shieldNow == true && m_animOne[13] == false && m_animOne[12] == false)
+			if (m_shieldNow == true && m_animOne[13] == false)
 			{
 				if (m_oneShield == false)
 				{
@@ -2371,7 +2370,7 @@ void Player::Draw()
 	//DrawFormatString(200, 740, 0xffffff, "アニメ9 : %d", m_animation[9]);
 	//DrawFormatString(200, 780, 0xffffff, "アニメ10 : %d", m_animation[10]);
 	//DrawFormatString(200, 820, 0xffffff, "アニメ11 : %d", m_animation[11]);
-	DrawFormatString(150, 400, 0xffffff, "playTime : %f", m_playTime);
+	//DrawFormatString(150, 400, 0xffffff, "playTime : %f", m_playTime);
 	effect->Draw();
 }
 
