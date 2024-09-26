@@ -143,7 +143,9 @@ private:
 
 	//エフェクト関係変数
 	int m_effectHeel;        //回復のエフェクト
+	int m_effectHit;         //攻撃が当たった時のエフェクト
 	bool m_effectOneHeel;    //回復のエフェクトを一回実行
+	bool m_effectOneHit;     //攻撃ヒット時のエフェクトを一回実行
 
 	//スマートポインタ
 	std::shared_ptr<WeaponSummary> weapon = std::make_shared<WeaponSummary>();

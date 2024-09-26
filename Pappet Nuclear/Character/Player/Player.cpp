@@ -45,7 +45,9 @@ Player::Player():
 	m_heel(0.0f),
 	m_recoberyAction(false),
 	m_effectHeel(0),
+	m_effectHit(0),
 	m_effectOneHeel(false),
+	m_effectOneHit(false),
 	m_a1(false),
 	m_bug(false),
 	m_menuOpen(false),
@@ -1103,8 +1105,9 @@ void Player::Action()
 
 	}
 
+	//‰ñ•œƒ|ƒWƒVƒ‡ƒ“
 	SetPosPlayingEffekseer3DEffect(m_effectHeel, m_pos.x, m_pos.y, m_pos.z);
-	
+	SetPosPlayingEffekseer3DEffect(m_effectHit, m_moveAnimFrameRigthPosition.x, m_moveAnimFrameRigthPosition.y, m_moveAnimFrameRigthPosition.z);
 }
 
 void Player::NotWeaponAnimation(float& time)
@@ -2285,35 +2288,35 @@ void Player::Draw()
 	float back = m_rectPos.z + halfD;
 
 
-	//// ‰¡‚Ìü
-	//DrawLine3D(VGet(left, bottom, front), VGet(right, bottom, front), m_rectColor);
-	//DrawLine3D(VGet(left, top, front), VGet(right, top, front), m_rectColor);
-	//DrawLine3D(VGet(left, bottom, back), VGet(right, bottom, back), m_rectColor);
-	//DrawLine3D(VGet(left, top, back), VGet(right, top, back), m_rectColor);
-	//// c‚Ìü
-	//DrawLine3D(VGet(left, top, front), VGet(left, bottom, front), m_rectColor);
-	//DrawLine3D(VGet(right, top, front), VGet(right, bottom, front), m_rectColor);
-	//DrawLine3D(VGet(left, top, back), VGet(left, bottom, back), m_rectColor);
-	//DrawLine3D(VGet(right, top, back), VGet(right, bottom, back), m_rectColor);
-	//// ‘OŒã‚Ìü
-	//DrawLine3D(VGet(left, top, front), VGet(left, top, back), m_rectColor);
-	//DrawLine3D(VGet(left, bottom, front), VGet(left, bottom, back), m_rectColor);
-	//DrawLine3D(VGet(right, top, front), VGet(right, top, back), m_rectColor);
-	//DrawLine3D(VGet(right, bottom, front), VGet(right, bottom, back), m_rectColor);
+	// ‰¡‚Ìü
+	DrawLine3D(VGet(left, bottom, front), VGet(right, bottom, front), m_rectColor);
+	DrawLine3D(VGet(left, top, front), VGet(right, top, front), m_rectColor);
+	DrawLine3D(VGet(left, bottom, back), VGet(right, bottom, back), m_rectColor);
+	DrawLine3D(VGet(left, top, back), VGet(right, top, back), m_rectColor);
+	// c‚Ìü
+	DrawLine3D(VGet(left, top, front), VGet(left, bottom, front), m_rectColor);
+	DrawLine3D(VGet(right, top, front), VGet(right, bottom, front), m_rectColor);
+	DrawLine3D(VGet(left, top, back), VGet(left, bottom, back), m_rectColor);
+	DrawLine3D(VGet(right, top, back), VGet(right, bottom, back), m_rectColor);
+	// ‘OŒã‚Ìü
+	DrawLine3D(VGet(left, top, front), VGet(left, top, back), m_rectColor);
+	DrawLine3D(VGet(left, bottom, front), VGet(left, bottom, back), m_rectColor);
+	DrawLine3D(VGet(right, top, front), VGet(right, top, back), m_rectColor);
+	DrawLine3D(VGet(right, bottom, front), VGet(right, bottom, back), m_rectColor);
 
 
 
 	//ƒJƒvƒZƒ‹3D‚Ì•`‰æ
-	//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+	DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
 	////‰~‚Ì3D•`‰æ
 	if (m_fistCol == true)
 	{
-		//DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
+		DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
 	}
 	if (m_swordCol == true)
 	{
-		//DrawSphere3D(m_colAttackPos.GetVector(), m_swordRadius, 16, 0xffffff, 0xffffff, false);
+		DrawSphere3D(m_colAttackPos.GetVector(), m_swordRadius, 16, 0xffffff, 0xffffff, false);
 
 	}
 	//DrawSphere3D(map->GetVectorMapPos(), 1500.0f, 16, 0xffffff, 0xffffff, false);

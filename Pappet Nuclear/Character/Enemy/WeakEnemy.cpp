@@ -722,7 +722,7 @@ void WeakEnemy::Draw(int max)
 
 	if (m_weakEnemyHp[max] > 0.0f)
 	{
-		//DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
+		DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
 		////õ“G”ÍˆÍ‰~‚Ì3D•`‰æ
 		//DrawSphere3D(m_colSearchPos[max].GetVector(), m_searchRadius, 16, m_seachColor, m_seachColor, false);
@@ -731,7 +731,7 @@ void WeakEnemy::Draw(int max)
 		//DrawSphere3D(m_colDistancePos[max].GetVector(), m_distanceRadius, 16, m_distanceColor, m_distanceColor, false);
 
 		//UŒ‚”»’è•`‰æ
-		//DrawSphere3D(m_colAttackPos[max].GetVector(), m_attackRadius, 16, 0xffffff, 0xffffff, false);
+		DrawSphere3D(m_colAttackPos[max].GetVector(), m_attackRadius, 16, 0xffffff, 0xffffff, false);
 	}
 
 	//3Dƒ‚ƒfƒ‹ƒ|ƒWƒVƒ‡ƒ“İ’è
