@@ -32,6 +32,7 @@ void SceneGame::Init()
 	bgmse->GameInit();
 	bgmse->GameBGM();
 	equipment->Init();
+	effect->AllInit();
 
 	a = 0;
 }
@@ -49,7 +50,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	enemy->BossUpdate(*player, *map, setting->GetVolume());
 	camera->HitObj(*map);
 
-	enemy->isSphereBossHit(player->GetSphereCol(), player->GetDamage());
+	enemy->isSphereBossHit(player->GetSphereCol(), player->GetDamage(), *effect);
 	enemy->isBossPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetBounceDis());
 	enemy->isBossDistanceHit(player->GetCapsuleCol());
 	map->CapsuleIsHit(player->GetCapsuleCol());
@@ -62,12 +63,9 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		enemy->isSeachHit(player->GetCapsuleCol(), i);
 		enemy->isDistanceHit(player->GetCapsuleCol(), i);
 		camera->LockUpdate(*player, *enemy, i);
-		enemy->isSphereHit(player->GetSphereCol(), player->GetDamage(), i);
+		enemy->isSphereHit(player->GetSphereCol(), player->GetDamage(), i, *effect);
 		enemy->MapHitWenemy(*map, i);
 		player->IsCapsuleHit(enemy->GetCol(i), enemy->GetBossCol());
-		//雑魚敵のアタックコルが問題
-		//player->isShieldHit(enemy->GetAttackCol(i), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
-		//player->isSphereHit(enemy->GetAttackCol(i), enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->GetDamage(), enemy->BossGetDamage());
 		
 		//ボス部屋に入ってないとき
 		if (map->GetRoomEntered() == false)
@@ -77,7 +75,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 			{
 				player->isShieldHit(enemy->GetAttackCol(i), enemy->GetDamage());
 			}
-			player->isSphereHit(enemy->GetAttackCol(i), enemy->GetDamage());
+			player->isSphereHit(enemy->GetAttackCol(i), enemy->GetDamage(), *effect);
 		}
 		
 		enemy->isWeakPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetSpeed(), i);
@@ -138,7 +136,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		{
 			player->isBossShieldHit(enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->BossGetDamage());
 		}
-		player->isBossSphereHit(enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->BossGetDamage());
+		player->isBossSphereHit(enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->BossGetDamage(), *effect);
 	}
 
 

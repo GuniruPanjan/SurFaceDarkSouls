@@ -743,13 +743,15 @@ void BossEnemy::Draw()
 	Pos3 pos1 = m_colPos + vec;
 	Pos3 pos2 = m_colPos - vec;
 
+#if false
+
 	//敵が生きている時は描画
 	if (m_hp > 0.0f)
 	{
 		DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
-		////攻撃の範囲描画
-		//DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
+		//攻撃の範囲描画
+		DrawSphere3D(m_colPos.GetVector(), m_sphereRadius, 16, m_distanceColor, m_distanceColor, false);
 
 		//攻撃判定描画
 		DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
@@ -757,11 +759,14 @@ void BossEnemy::Draw()
 		DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
 	}
 
-	//DrawFormatString(0, 120, 0xffffff, "m_moveAttack1 : %d", m_bossAttack1);
-	//DrawFormatString(0, 140, 0xffffff, "m_moveAttack1 : %d", m_bossAttack2);
-	//DrawFormatString(0, 160, 0xffffff, "m_moveAttack1 : %d", m_bossAttack3);
-	//DrawFormatString(0, 180, 0xffffff, "m_BossAttack : %d", m_bossAttack);
+	DrawFormatString(0, 120, 0xffffff, "m_moveAttack1 : %d", m_bossAttack1);
+	DrawFormatString(0, 180, 0xffffff, "m_moveAttack1 : %d", m_bossAttack2);
+	DrawFormatString(0, 240, 0xffffff, "m_moveAttack1 : %d", m_bossAttack3);
+	DrawFormatString(0, 300, 0xffffff, "m_BossAttack : %d", m_bossAttack);
+	DrawFormatString(0, 360, 0xffffff, "m_PlayTime : %f", m_playTime);
 	//DrawFormatString(0, 400, 0xffffff, "m_Attack : %f", m_attack);
+
+#endif
 
 	//3Dモデルポジション設定
 	MV1SetPosition(m_bossModelHandle, m_pos);
@@ -771,6 +776,9 @@ void BossEnemy::Draw()
 
 	//3Dモデルの回転地をセットする
 	MV1SetRotationXYZ(m_bossModelHandle, VGet(0.0f, m_angle, 0.0f));
+
+	//攻撃された時のエフェクトのポジション
+	SetPosPlayingEffekseer3DEffect(m_effectHit, m_pos.x, m_pos.y + 70.0f, m_pos.z);
 
 	//エフェクトの描画
 	effect->Draw();
@@ -782,7 +790,7 @@ void BossEnemy::End()
 	effect->End();
 }
 
-bool BossEnemy::isSphereHit(const SphereCol& col, float damage)
+bool BossEnemy::isSphereHit(const SphereCol& col, float damage, Effect& ef)
 {
 	bool isHit = m_capsuleCol.IsHitSphere(col);
 
@@ -794,6 +802,8 @@ bool BossEnemy::isSphereHit(const SphereCol& col, float damage)
 		//ダメージを一回だけ与える
 		if (m_damageReceived == false)
 		{
+			m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
+
 			m_hp = m_hp - damage;
 
 			m_damageReceived = true;

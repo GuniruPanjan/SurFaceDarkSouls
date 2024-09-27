@@ -49,7 +49,7 @@ void SceneTitle::Init()
 	m_setting = MyLoadGraph("Data/UI/SettingButtonMini.png", 1, 1);
 	m_end = MyLoadGraph("Data/UI/EndButtonMini.png", 1, 1);
 
-	m_playerHandle = MV1LoadModel("Data/Player/PlayerModel.mv1");
+	m_playerHandle = MV1LoadModel("Data/Player/PuppetPlayerModel.mv1");
 	m_anim = MV1LoadModel("Data/PlayerAnimation/JumpingDown.mv1");
 
 	//アニメーションアタッチ

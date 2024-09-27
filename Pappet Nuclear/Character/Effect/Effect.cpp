@@ -21,12 +21,16 @@ void Effect::PlayerInit()
 {
 	m_effectRest = LoadEffekseerEffect("Data/Effect/Benediction.efkefc", 10.0f);
 	m_effectHeel = LoadEffekseerEffect("Data/Effect/AnotherEffect/Sylph13.efkefc", 20.0f);
-	m_effectHit = LoadEffekseerEffect("Data/Effect/AnotherEffect/HitEffect.efkefc", 1.0f);
 }
 
 void Effect::BossInit()
 {
 	m_effectJump = LoadEffekseerEffect("Data/Effect/BloodLance.efkefc", 10.0f);
+}
+
+void Effect::AllInit()
+{
+	m_effectHit = LoadEffekseerEffect("Data/Effect/HitEffect.efkefc", 7.0f);
 }
 
 void Effect::Update()

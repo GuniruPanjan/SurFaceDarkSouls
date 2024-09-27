@@ -39,6 +39,7 @@ WeakEnemy::WeakEnemy()
 		m_bounceZ[i] = 0.0f;
 		m_bounceAngle[i] = 0.0f;
 		m_playerHit[i] = false;
+		m_effectWeakHit[i] = 0;
 	}
 }
 
@@ -265,6 +266,8 @@ void WeakEnemy::Update(Player& player, int max, int volume)
 	Animation(m_weakPlayTime[max], max);
 
 	se->Update(volume);
+	//エフェクト更新
+	//effect->Update();
 }
 
 /// <summary>
@@ -720,28 +723,21 @@ void WeakEnemy::Draw(int max)
 	Pos3 pos1 = m_weakColPos[max] + vec;
 	Pos3 pos2 = m_weakColPos[max] - vec;
 
+#if false
+
 	if (m_weakEnemyHp[max] > 0.0f)
 	{
 		DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
-		////索敵範囲円の3D描画
-		//DrawSphere3D(m_colSearchPos[max].GetVector(), m_searchRadius, 16, m_seachColor, m_seachColor, false);
+		//索敵範囲円の3D描画
+		DrawSphere3D(m_colSearchPos[max].GetVector(), m_searchRadius, 16, m_seachColor, m_seachColor, false);
 
-		////一定距離の範囲描画
-		//DrawSphere3D(m_colDistancePos[max].GetVector(), m_distanceRadius, 16, m_distanceColor, m_distanceColor, false);
+		//一定距離の範囲描画
+		DrawSphere3D(m_colDistancePos[max].GetVector(), m_distanceRadius, 16, m_distanceColor, m_distanceColor, false);
 
 		//攻撃判定描画
 		DrawSphere3D(m_colAttackPos[max].GetVector(), m_attackRadius, 16, 0xffffff, 0xffffff, false);
 	}
-
-	//3Dモデルポジション設定
-	MV1SetPosition(m_weakEnemyHandle[max], m_weakDrawPos[max]);
-
-	//3Dモデル描画
-	MV1DrawModel(m_weakEnemyHandle[max]);
-
-	//3Dモデルの回転地をセットする
-	MV1SetRotationXYZ(m_weakEnemyHandle[max], VGet(0.0f, m_weakEnemyAngle[max], 0.0f));
 
 	//DrawFormatString(0, 320, 0xffffff, "m_colposX : %f m_colposY : %f m_colposZ : %f", m_colPos.x, m_colPos.y, m_colPos.z);
 	//DrawFormatString(0, 220, 0xffffff, "m_EnemyHp : %f", m_hp);
@@ -753,6 +749,24 @@ void WeakEnemy::Draw(int max)
 	//{
 	//	DrawFormatString(0, 250, 0xffffff, "発見された");
 	//}
+
+#endif
+
+	//3Dモデルポジション設定
+	MV1SetPosition(m_weakEnemyHandle[max], m_weakDrawPos[max]);
+
+	//3Dモデル描画
+	MV1DrawModel(m_weakEnemyHandle[max]);
+
+	//3Dモデルの回転地をセットする
+	MV1SetRotationXYZ(m_weakEnemyHandle[max], VGet(0.0f, m_weakEnemyAngle[max], 0.0f));
+
+	
+
+	//攻撃された時のエフェクトのポジション
+	SetPosPlayingEffekseer3DEffect(m_effectWeakHit[max], m_weakDrawPos[max].x, m_weakDrawPos[max].y + 40.0f, m_weakDrawPos[max].z);
+
+	//effect->Draw();
 }
 
 void WeakEnemy::End(int max)
@@ -764,7 +778,7 @@ void WeakEnemy::End(int max)
 	}
 }
 
-bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max)
+bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max, Effect& ef)
 {
 	bool isHit = m_weakCapsuleCol[max].IsHitSphere(col);
 
@@ -777,6 +791,9 @@ bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max)
 		if (m_damageReceived == false)
 		{
 			m_weakEnemyHp[max] = m_weakEnemyHp[max] - damage;
+
+			//m_effectHit[max] = PlayEffekseer3DEffect(effect->GetHitEffect());
+			m_effectWeakHit[max] = PlayEffekseer3DEffect(ef.GetHitEffect());
 
 			PlaySoundMem(m_hitSE[max], DX_PLAYTYPE_BACK, true);
 

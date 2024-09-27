@@ -3,6 +3,7 @@
 #include "Character/Player/Player.h"
 #include "Character/Enemy/Enemy.h"
 #include "Character/Player/Equipment/Equipment.h"
+#include "Character/Effect/Effect.h"
 #include "Map/Map.h"
 #include "UI/UI.h"
 #include "SceneBase.h"
@@ -26,5 +27,6 @@ private:
 	std::shared_ptr<Map> map = std::make_shared<Map>();
 	std::shared_ptr<UI> ui = std::make_shared<UI>();
 	std::shared_ptr<Equipment> equipment = std::make_shared<Equipment>();
+	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 };
 

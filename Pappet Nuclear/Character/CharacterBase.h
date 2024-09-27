@@ -64,6 +64,7 @@ public:
 		m_HitDimNum(0),
 		m_effectActivation(false),
 		m_effect(0),
+		m_effectHit(0),
 		m_playerDif(VGet(0.0f,0.0f,0.0f)),
 		m_shieldDif(VGet(0.0f,0.0f,0.0f))
 	{
@@ -125,6 +126,7 @@ protected:
 	//エフェクトに関する変数
 	bool m_effectActivation;     //エフェクトを発動する
 	int m_effect;             //エフェクトの配列
+	int m_effectHit;         //攻撃が当たった時のエフェクト
 
 	//当たり判定用のメンバ変数
 	Pos3 m_colPos; //当たり判定用のメンバ変数
@@ -154,4 +156,5 @@ protected:
 
 	//スマートポインタ
 	std::shared_ptr<SEManager> se = std::make_shared<SEManager>();
+	//std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 };

@@ -15,7 +15,7 @@ public:
 	void Draw();
 	void End();
 
-	bool isSphereHit(const SphereCol& col, float damage);
+	bool isSphereHit(const SphereCol& col, float damage, Effect& ef);
 	bool isPlayerHit(const CapsuleCol& col, VECTOR vec,float bounce);
 	bool isCapsuleHit(const CapsuleCol& col);
 

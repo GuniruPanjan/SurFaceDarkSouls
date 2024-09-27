@@ -9,6 +9,7 @@ public:
 
 	void PlayerInit();
 	void BossInit();
+	void AllInit();
 	void Update();
 	void Draw();
 	void End();

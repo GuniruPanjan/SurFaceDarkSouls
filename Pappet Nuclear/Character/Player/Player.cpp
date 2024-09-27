@@ -45,9 +45,7 @@ Player::Player():
 	m_heel(0.0f),
 	m_recoberyAction(false),
 	m_effectHeel(0),
-	m_effectHit(0),
 	m_effectOneHeel(false),
-	m_effectOneHit(false),
 	m_a1(false),
 	m_bug(false),
 	m_menuOpen(false),
@@ -147,7 +145,7 @@ void Player::Init()
 		effect->PlayerInit();
 
 		//プレイヤーもモデル読み込み
-		m_handle = MV1LoadModel("Data/Player/PlayerModel.mv1");
+		m_handle = MV1LoadModel("Data/Player/PuppetPlayerModel.mv1");
 
 		//プレイヤーの大きさを変える
 		MV1SetScale(m_handle, VGet(m_modelSize, m_modelSize, m_modelSize));
@@ -1105,9 +1103,8 @@ void Player::Action()
 
 	}
 
-	//回復ポジション
+	//回復エフェクトのポジション
 	SetPosPlayingEffekseer3DEffect(m_effectHeel, m_pos.x, m_pos.y, m_pos.z);
-	SetPosPlayingEffekseer3DEffect(m_effectHit, m_moveAnimFrameRigthPosition.x, m_moveAnimFrameRigthPosition.y, m_moveAnimFrameRigthPosition.z);
 }
 
 void Player::NotWeaponAnimation(float& time)
@@ -1361,6 +1358,8 @@ void Player::Animation(float& time, VECTOR& pos)
 				m_animation[6] = -1;
 				m_animation[7] = -1;
 				m_animation[9] = -1;
+
+				m_hitImpact = false;
 
 				m_animOne[12] = false;
 				m_animOne[13] = false;
@@ -2265,6 +2264,7 @@ void Player::SaveAction(Map& map)
 		m_effectActivation = false;
 	}
 
+	//休息するポイントのエフェクトポジション
 	SetPosPlayingEffekseer3DEffect(m_effect, map.GetRestPos().x, map.GetRestPos().y, map.GetRestPos().z);
 }
 
@@ -2275,6 +2275,8 @@ void Player::Draw()
 
 	Pos3 pos1 = m_colPos + vec;
 	Pos3 pos2 = m_colPos - vec;
+
+#if false
 
 	float halfW = m_rectSize.width * 0.5f;
 	float halfH = m_rectSize.height * 0.5f;
@@ -2309,7 +2311,7 @@ void Player::Draw()
 	//カプセル3Dの描画
 	DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
 
-	////円の3D描画
+	//円の3D描画
 	if (m_fistCol == true)
 	{
 		DrawSphere3D(m_colAttackPos.GetVector(), m_sphereRadius, 16, 0xffffff, 0xffffff, false);
@@ -2319,18 +2321,9 @@ void Player::Draw()
 		DrawSphere3D(m_colAttackPos.GetVector(), m_swordRadius, 16, 0xffffff, 0xffffff, false);
 
 	}
-	//DrawSphere3D(map->GetVectorMapPos(), 1500.0f, 16, 0xffffff, 0xffffff, false);
+	DrawSphere3D(map->GetVectorMapPos(), 1500.0f, 16, 0xffffff, 0xffffff, false);
 
-	//DrawSphere3D(m_targetColPos.GetVector(), m_targetRadius, 16, 0xffffff, 0xffffff, false);
-
-	//3Dモデルのポジション設定
-	MV1SetPosition(m_handle, m_drawPos);
-
-	//3Dモデルの回転地をセットする
-	MV1SetRotationXYZ(m_handle, VGet(0.0f, m_angle - angleShield, 0.0f));
-
-	//3Dモデル描画
-	MV1DrawModel(m_handle);
+	DrawSphere3D(m_targetColPos.GetVector(), m_targetRadius, 16, 0xffffff, 0xffffff, false);
 
 	//if (m_HitFlag == true)
 	//{
@@ -2355,7 +2348,7 @@ void Player::Draw()
 	//DrawFormatString(200, 220, 0xffffff, "m_moveflag : %d", m_moveflag);
 	//DrawFormatString(200, 260, 0xffffff, "m_avoidance : %d", m_avoidance);
 	//DrawFormatString(200, 300, 0xffffff, "m_attack : %d", m_moveAttack);
-	//DrawFormatString(200, 340, 0xffffff, "m_rest: %d", m_restAction);
+	//DrawFormatString(200, 340, 0xffffff, "m_effect: %d", m_effectHit);
 
 	//DrawFormatString(200, 220, 0xffffff, "アニメ12 : %d", m_animOne[12]);
 	//DrawFormatString(200, 260, 0xffffff, "アニメ13 : %d", m_animOne[13]);
@@ -2374,6 +2367,20 @@ void Player::Draw()
 	//DrawFormatString(200, 780, 0xffffff, "アニメ10 : %d", m_animation[10]);
 	//DrawFormatString(200, 820, 0xffffff, "アニメ11 : %d", m_animation[11]);
 	//DrawFormatString(150, 400, 0xffffff, "playTime : %f", m_playTime);
+
+#endif
+
+	//3Dモデルのポジション設定
+	MV1SetPosition(m_handle, m_drawPos);
+
+	//3Dモデルの回転地をセットする
+	MV1SetRotationXYZ(m_handle, VGet(0.0f, m_angle - angleShield, 0.0f));
+
+	//3Dモデル描画
+	MV1DrawModel(m_handle);
+
+	//攻撃された時のエフェクトのポジション
+	SetPosPlayingEffekseer3DEffect(m_effectHit, m_pos.x, m_pos.y + 40.0f, m_pos.z);
 	effect->Draw();
 }
 
@@ -2481,7 +2488,7 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 	return isHit || isHitBoss;
 }
 
-bool Player::isSphereHit(const SphereCol& col, float damage)
+bool Player::isSphereHit(const SphereCol& col, float damage, Effect& ef)
 {
 	bool isHit = m_capsuleCol.IsHitSphere(col);
 
@@ -2500,6 +2507,9 @@ bool Player::isSphereHit(const SphereCol& col, float damage)
 			//回避中のフレームだとダメージを受けない
 			if (m_avoidanceNow == false)
 			{
+				//m_effectHit = PlayEffekseer3DEffect(effect->GetHitEffect());
+				m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
+
 				m_hp = m_hp - damage;
 
 				m_hit = true;
@@ -2519,7 +2529,7 @@ bool Player::isSphereHit(const SphereCol& col, float damage)
 	return isHit;
 }
 
-bool Player::isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage)
+bool Player::isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage, Effect& ef)
 {
 	bool isBossAttackHit1 = m_capsuleCol.IsHitSphere(col1);
 	bool isBossAttackHit2 = m_capsuleCol.IsHitSphere(col2);
@@ -2537,6 +2547,9 @@ bool Player::isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const
 			//回避中のフレームだとダメージを受けない
 			if (m_avoidanceNow == false)
 			{
+				//m_effectHit = PlayEffekseer3DEffect(effect->GetHitEffect());
+				m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
+
 				m_hp = m_hp - bossdamage;
 
 				m_hit = true;

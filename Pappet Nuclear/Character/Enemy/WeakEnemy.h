@@ -17,7 +17,7 @@ public:
 	void Draw(int max);
 	void End(int max);
 
-	bool isSphereHit(const SphereCol& col, float damage,int max);
+	bool isSphereHit(const SphereCol& col, float damage,int max, Effect& ef);
 	bool isSeachHit(const CapsuleCol& col,int max);
 	bool isPlayerHit(const CapsuleCol& col,VECTOR& vec, float speed, int max);
 	bool isDistanceHit(const CapsuleCol& col,int max);
@@ -61,5 +61,11 @@ private:
 	int m_attackSE[ENEMY_NOW];
 	int m_walkSE[ENEMY_NOW];
 	int m_diedSE[ENEMY_NOW];
+
+	//エフェクト変数
+	int m_effectWeakHit[ENEMY_NOW];                          //攻撃が当たった時のエフェクト
+
+	//スマートポインタ
+	//std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 };
 

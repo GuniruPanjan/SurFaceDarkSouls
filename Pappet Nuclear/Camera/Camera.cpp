@@ -45,7 +45,7 @@ void Camera::Init()
 	//カメラのアングル初期設定
 	m_cameraAngle = VGet(D2R(-20.0f), 97.4f, 0.0f);
 
-	SetCameraNearFar(0.1f, 1000.0f);
+	SetCameraNearFar(0.001f, 1000.0f);
 }
 
 void Camera::Update(Player& player)
@@ -88,7 +88,7 @@ void Camera::Update(Player& player)
 		}
 
 		//基準のベクトル
-		VECTOR Direction = VGet(0.0f, 100.0f, -100.0f);
+		VECTOR Direction = VGet(0.0f, 112.0f, -112.0f);
 
 		//X軸回転行列
 		MATRIX matrixX = MGetRotX(m_cameraAngle.x);

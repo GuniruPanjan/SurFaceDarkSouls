@@ -34,7 +34,7 @@ public:
 	SphereCol GetBossAttackCol2() const { return boss->GetAttackCol2(); }
 	SphereCol GetBossAttackCol3() const { return boss->GetAttackCol3(); }
 	VECTOR GetOutPush() { return boss->GetOutPush(); }
-	bool isSphereBossHit(SphereCol col, float damage) { return boss->isSphereHit(col, damage); }
+	bool isSphereBossHit(SphereCol col, float damage, Effect& ef) { return boss->isSphereHit(col, damage, ef); }
 	bool isBossPlayerHit(CapsuleCol col, VECTOR vec, float bounce) { return boss->isPlayerHit(col, vec, bounce); }
 	bool isBossDistanceHit(CapsuleCol col) { return boss->isCapsuleHit(col); }
 	bool GameClear() { return boss->GameClear(); }
@@ -51,7 +51,7 @@ public:
 	VECTOR GetWeakOutPush(int max) { return enemy->GetOutPush(max); }
 	CapsuleCol GetCol(int max) const { return enemy->GetCol(max); }
 	SphereCol GetAttackCol(int max);
-	bool isSphereHit(SphereCol col, float damage, int max) { return enemy->isSphereHit(col, damage,max); }
+	bool isSphereHit(SphereCol col, float damage, int max, Effect& ef) { return enemy->isSphereHit(col, damage, max, ef); }
 	bool isSeachHit(CapsuleCol col, int max) { return enemy->isSeachHit(col,max); }
 	bool isDistanceHit(CapsuleCol col, int max) { return enemy->isDistanceHit(col,max); }
 	bool isWeakPlayerHit(CapsuleCol col, VECTOR vec, float speed, int max) { return enemy->isPlayerHit(col, vec, speed, max); }
