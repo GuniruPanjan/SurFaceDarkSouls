@@ -38,6 +38,7 @@ public:
 	float GetPosX() { return m_pos.x; }
 	float GetPosY() { return m_pos.y; }
 	float GetPosZ() { return m_pos.z; }
+	float SetAngle(float lockangle) { return m_lockAngle = lockangle; }
 	VECTOR GetShieldPos() { return VGet(m_rectPos.x, m_rectPos.y, m_rectPos.z); }
 	float GetDamage() { return m_attack; }
 	float GetAngle() { return m_angle; }
@@ -70,6 +71,7 @@ private:
 	float m_updatePosX;   //X座標更新用変数
 	float m_updatePosY;   //Y座標更新用変数
 	float m_updatePosZ;   //Z座標更新用変数
+	float m_lockAngle;    //ロックオンした時のアングル 
 	float m_stamina;      //スタミナ
 	float m_swordRadius;   //剣の当たり判定の半径
 	float m_targetRadius;   //ターゲットの当たり判定の半径
@@ -94,6 +96,7 @@ private:
 	int m_bugTime;         //一定時間経ったらバグと判断する
 	int m_button;          //ボタン変数
 	bool m_one;            //一回だけ判定をする
+	bool m_oneAvoidance;   //一回だけ回避の方向を判定する
 	bool m_avoidance;   //回避入力を判断するための変数
 	bool m_nextAttack1;  //次の攻撃判定
 	bool m_nextAttack2;  //次の攻撃判定

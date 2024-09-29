@@ -138,12 +138,17 @@ void Camera::LockUpdate(Player& player, Enemy& enemy, int max)
 
 			//プレイヤーとエネミーのX座標の差を求める
 			float X = enemy.GetBossPosX() - player.GetPosX();
+			float lockX = player.GetPosX() - enemy.GetBossPosX();
 
 			//プレイヤーとエネミーのZ座標の差を求める
 			float Z = enemy.GetBossPosZ() - player.GetPosZ();
+			float lockZ = player.GetPosZ() - enemy.GetBossPosZ();
 
 			//角度を出す
 			float angle = atan2f(X, Z);
+
+			//プレイヤーの方向も変える
+			player.SetAngle(atan2f(lockX, lockZ));
 
 			m_x = X;
 			m_z = Z;
@@ -243,12 +248,17 @@ void Camera::WeakLockUpdate(Player& player, Enemy& enemy, int weak)
 
 	//プレイヤーとエネミーのX座標の差を求める
 	float X = enemy.GetPosX(weak) - player.GetPosX();
+	float lockX = player.GetPosX() - enemy.GetPosX(weak);
 
 	//プレイヤーとエネミーのZ座標の差を求める
 	float Z = enemy.GetPosZ(weak) - player.GetPosZ();
+	float lockZ = player.GetPosZ() - enemy.GetPosZ(weak);
 
 	//角度を出す
 	float angle = atan2f(X, Z);
+
+	//プレイヤーの方向も変える
+	player.SetAngle(atan2f(lockX, lockZ));
 
 	m_x = X;
 	m_z = Z;

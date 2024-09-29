@@ -17,6 +17,7 @@ Player::Player():
 	m_updatePosX(485.0f),
 	m_updatePosY(0.0f),
 	m_updatePosZ(-800.0f),
+	m_lockAngle(0.0f),
 	m_stamina(0.0f),
 	m_lockonTarget(false),
 	m_moveAnimFrameIndex(0),
@@ -70,7 +71,8 @@ Player::Player():
 	m_animWeaponRun(0),
 	m_hitImpact(false),
 	m_weaponAnimOne(false),
-	m_notWeaponAnimOne(false)
+	m_notWeaponAnimOne(false),
+	m_oneAvoidance(false)
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
@@ -99,6 +101,7 @@ void Player::Init()
 {
 	m_button = 0;
 	m_one = false;
+	m_oneAvoidance = false;
 
 	//プレイヤーHPの初期化
 	m_hp = 150.0f;
@@ -117,6 +120,7 @@ void Player::Init()
 
 	//プレイヤーのロックオン初期化
 	m_lockonTarget = false;
+	m_lockAngle = 0.0f;
 
 	//回復関係の初期化
 	m_recoberyAmount = 100.0f;
@@ -356,6 +360,16 @@ void Player::Update()
 		m_hit == false && m_hp >= 0.0f && m_hitImpact == false)
 	{
 		GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+
+		m_oneAvoidance = false;
+	}
+
+	//回避の移動先を入力するため
+	if (m_avoidance == true && m_oneAvoidance == false)
+	{
+		GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+
+		m_oneAvoidance = true;
 	}
 	
 
@@ -399,11 +413,22 @@ void Player::Update()
 
 	//移動方向からプレイヤーへの向く方向を決定する
 	//移動していない場合(ゼロベクトル)の場合は変更しない
-	if (VSquareSize(m_move) > 0.0f && m_avoidance == false && m_moveAttack == false && m_recoberyAction == false &&
+	if (VSquareSize(m_move) > 0.0f && m_moveAttack == false && m_recoberyAction == false &&
 		m_hit == false && m_hp >= 0.0f && m_hitImpact == false)
 	{
-		//アングルを決定
-		m_angle = atan2f(-m_move.z, m_move.x) - DX_PI_F / 2;
+		//ロックオンしてない時と走った時のアングル
+		if (m_lockonTarget == false || m_dashMove == true || m_avoidance == true)
+		{
+			//アングルを決定
+			m_angle = atan2f(-m_move.z, m_move.x) - DX_PI_F / 2;
+		}
+		//ロックオンした時のアングル
+		else if (m_lockonTarget == true && m_avoidance == false)
+		{
+			//アングルを決定
+			m_angle = m_lockAngle;
+		}
+		
 
 		SetAngleX += D2R(1.0f);
 		SetAngleY += D2R(1.0f);
