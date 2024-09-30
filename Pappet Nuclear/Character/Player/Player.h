@@ -58,6 +58,8 @@ public:
 	bool GetMenu() { return m_menuOpen; }
 	bool SetMenu(bool menu) { return m_menuOpen = menu; }
 	int GetButton() { return m_button; }
+	int GetCore() { return m_coreAllLevel; }
+	int SetCore(int core) { return m_coreAllLevel + core; }
 	bool GetOne() { return m_one; }
 	bool GetTarget(int max) { return m_targetNumber[max]; }
 
@@ -128,19 +130,24 @@ private:
 	unsigned int m_rectColor = 0xffffff;      //デバッグ用の色変更
 
 	//アニメーション関係
+	int m_animLeft;       //左に歩くアニメーション代入
+	int m_animRight;      //右に歩くアニメーション代入
 	int m_animHeel;       //回復アニメーション代入
 	int m_animShield;      //盾を構えるアニメーション代入
 	int m_animShieldImpact;     //武器を持った時の立ってるアニメーション
 	int m_animWeaponWalk;      //武器を持った時の歩いているアニメーション
+	int m_animWeaponLeftWalk;   //武器を持った時左に歩くアニメーション
 	int m_animWeaponRun;       //武器を持った時の走っているアニメーション
 	int m_animShieldStand;     //盾を構えた時の立ってるアニメーション
 	bool m_hit;           //怯み判定
+	bool m_weaponMoveRight;     //武器を持った時の右歩きアニメーションにするための判定
 	bool m_hitImpact;     //盾受け判定
 	bool m_shield;        //防御のアニメーション判定
 	bool m_weaponAnimOne;      //武器を持った時にブレンド率を一回だけ調整する
 	bool m_notWeaponAnimOne;   //武器を持ってない時にブレンド率を一回だけ調整する
 
 	//レベル関係
+	int m_coreAllLevel;        //レベルを上げるための変数
 	int m_hpLevel;       //HPレベル
 	int m_staminaLevel;    //スタミナレベル
 

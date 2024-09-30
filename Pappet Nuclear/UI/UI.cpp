@@ -172,9 +172,14 @@ void UI::Draw(Player& player, Enemy& enemy, Equipment& eq)
 
 		DrawFormatString(140, 840, 0x000000, "%d", player.GetRecoveryNumber());
 
+
 		//フォントのサイズを戻す
 		SetFontSize(40);
 	}
+
+	//レベルを上げるための変数描画
+	DrawFormatString(1400, 950, 0x000000, "%d", player.GetCore());
+
 
 	//BossHP
 	if (enemy.GetBattale() == true)

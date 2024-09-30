@@ -75,6 +75,8 @@ void WeakEnemy::Init(int max)
 	m_weakEnemyPos[3] = VGet(650.0f, m_posY, -200.0f);
 	m_weakEnemyPos[4] = VGet(300.0f, m_posY, 100.0f);
 
+	//ƒRƒA‰Šú‰»
+	m_core = 100;
 
 	m_weakEnemyMoveAttack[max] = false;
 

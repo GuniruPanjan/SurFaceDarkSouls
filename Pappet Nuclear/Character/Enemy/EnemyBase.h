@@ -22,6 +22,7 @@ protected:
 	int m_animLeftWalking;   //敵の左周りのモーション格納変数
 	int m_animRightWalking;   //敵の右周りのモーション格納変数
 	int m_weakEnemyAnimation[ANIMATION][ENEMY_NOW];      //敵のアニメーション
+	int m_core;               //倒したときにもらえるコア
 	float m_weakEnemyTotalAnimationTime[ANIMATION][ENEMY_NOW];    //敵のアニメーションの総時間
 	float m_searchRadius;  //円の当たり判定
 	float m_distanceRadius;  //円の半径

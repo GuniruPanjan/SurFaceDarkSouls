@@ -10,6 +10,9 @@ namespace
 	bool attack;        //攻撃SEを再生させる時
 	int a;
 	float angleShield;   //盾を構えた時少しのずれを直す変数
+
+	float anX;         //アナログスティックを格納する変数
+	float anY;         //アナログスティックを格納する変数
 }
 
 Player::Player():
@@ -38,6 +41,7 @@ Player::Player():
 	m_staminaBroke(false),
 	m_nowPos(VGet(0.0f,0.0f,0.0f)),
 	m_bounceMove(VGet(0.0f,0.0f,0.0f)),
+	m_coreAllLevel(0),
 	m_hpLevel(0),
 	m_staminaLevel(0),
 	m_animHeel(0),
@@ -65,10 +69,14 @@ Player::Player():
 	m_rate(0.0f),
 	m_oneShield(false),
 	m_moveAnimFrameLeftPosition(VGet(0.0f,0.0f,0.0f)),
+	m_animLeft(0),
+	m_animRight(0),
 	m_animShieldImpact(0),
 	m_animShieldStand(0),
 	m_animWeaponWalk(0),
+	m_animWeaponLeftWalk(0),
 	m_animWeaponRun(0),
+	m_weaponMoveRight(false),
 	m_hitImpact(false),
 	m_weaponAnimOne(false),
 	m_notWeaponAnimOne(false),
@@ -94,6 +102,8 @@ Player::~Player()
 	MV1DeleteModel(m_animDeath);
 	MV1DeleteModel(m_animHeel);
 	MV1DeleteModel(m_animShield);
+	MV1DeleteModel(m_animLeft);
+	MV1DeleteModel(m_animRight);
 
 }
 
@@ -140,6 +150,7 @@ void Player::Init()
 		weapon->Init();
 
 		//レベル初期化
+		m_coreAllLevel = 0;
 		m_hpLevel = 1;
 		m_staminaLevel = 1;
 
@@ -171,6 +182,9 @@ void Player::Init()
 		m_animShieldStand = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimShieldStand.mv1");
 		m_animWeaponWalk = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponWalk.mv1");
 		m_animWeaponRun = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponRun.mv1");
+		m_animLeft = MV1LoadModel("Data/PlayerAnimation/PlayerAnimLeftWalk.mv1");
+		m_animRight = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRightWalk.mv1");
+		m_animWeaponLeftWalk = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponLeftWalk.mv1");
 
 		//アニメーションアタッチ
 		m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
@@ -189,6 +203,9 @@ void Player::Init()
 		m_animation[13] = MV1AttachAnim(m_handle, 0, m_animShieldStand, TRUE);
 		m_animation[14] = MV1AttachAnim(m_handle, 0, m_animWeaponWalk, TRUE);
 		m_animation[15] = MV1AttachAnim(m_handle, 0, m_animWeaponRun, TRUE);
+		m_animation[16] = MV1AttachAnim(m_handle, 0, m_animLeft, TRUE);
+		m_animation[17] = MV1AttachAnim(m_handle, 0, m_animRight, TRUE);
+		m_animation[18] = MV1AttachAnim(m_handle, 0, m_animWeaponLeftWalk, TRUE);
 
 
 		//アタッチしたアニメーションの総再生時間を取得する
@@ -208,6 +225,9 @@ void Player::Init()
 		m_totalAnimTime[13] = MV1GetAttachAnimTotalTime(m_handle, m_animation[13]);
 		m_totalAnimTime[14] = MV1GetAttachAnimTotalTime(m_handle, m_animation[14]);
 		m_totalAnimTime[15] = MV1GetAttachAnimTotalTime(m_handle, m_animation[15]);
+		m_totalAnimTime[16] = MV1GetAttachAnimTotalTime(m_handle, m_animation[16]);
+		m_totalAnimTime[17] = MV1GetAttachAnimTotalTime(m_handle, m_animation[17]);
+		m_totalAnimTime[18] = MV1GetAttachAnimTotalTime(m_handle, m_animation[18]);
 
 
 
@@ -239,6 +259,9 @@ void Player::Init()
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+		MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+		MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
+		MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
 
 		se->CharaInit();
@@ -371,7 +394,11 @@ void Player::Update()
 
 		m_oneAvoidance = true;
 	}
-	
+
+	//アナログスティックの入力を格納
+	anX = analogX;
+	anY = analogY;
+
 
 	m_move = VGet(-analogX, 0.0f, analogY);  //ベクトルの長さ
 	m_bounceMove = VGet(analogX, 0.0f, -analogY);  //ベクトルの長さ
@@ -537,10 +564,32 @@ void Player::Update()
 	m_moveAnimFrameRigthPosition = MV1GetFramePosition(m_handle, m_moveAnimFrameRight);
 
 	//攻撃していない時のアニメーション速度
-	if(m_moveAttack == false)
+	//ターゲットしてない時のアニメーション速度
+	if(m_moveAttack == false && m_lockonTarget == false)
 	{
 		//再生時間を進める
 		m_playTime += 0.5f;
+	}
+	//右に歩かせる
+	else if (m_lockonTarget == true && m_weaponMoveRight == true)
+	{
+		//再生時間を進める
+		m_playTime -= 0.5f;
+	}
+	//後ろ歩き
+	else if (m_lockonTarget == true && m_dashMove == false && anY > 0 && anX < 500 && anX > -500)
+	{
+		//再生時間を進める
+		m_playTime -= 0.5f;
+	}
+	else
+	{
+		if (m_moveAttack == false)
+		{
+			//再生時間を進める
+			m_playTime += 0.5f;
+		}
+		
 	}
 
 
@@ -1137,9 +1186,12 @@ void Player::NotWeaponAnimation(float& time)
 	//武器を持ってる時のアニメーションブレンドを0にする一回だけ実行
 	if (m_notWeaponAnimOne == false)
 	{
+		MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 0.0f);
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+		MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
+
 
 		m_notWeaponAnimOne = true;
 	}
@@ -1153,49 +1205,6 @@ void Player::NotWeaponAnimation(float& time)
 		//怯んでないとき
 		if (m_hit == false)
 		{
-			////プレイヤーが動いていないなら
-			//if (m_moveflag == false && m_avoidance == false && m_moveAttack == false &&
-			//	m_recoberyAction == false)
-			//{
-			//	if (m_animation[1] != -1 || m_animation[2] != -1 || m_animation[3] != -1
-			//		|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
-			//		|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1 ||
-			//		m_animOne[12] == true || m_animOne[14] == true || m_animOne[15] == true)
-			//	{
-
-			//		//アニメーションデタッチ
-			//		MV1DetachAnim(m_handle, m_animation[1]);
-			//		MV1DetachAnim(m_handle, m_animation[2]);
-			//		MV1DetachAnim(m_handle, m_animation[3]);
-			//		MV1DetachAnim(m_handle, m_animation[4]);
-			//		MV1DetachAnim(m_handle, m_animation[5]);
-			//		MV1DetachAnim(m_handle, m_animation[6]);
-			//		MV1DetachAnim(m_handle, m_animation[7]);
-			//		MV1DetachAnim(m_handle, m_animation[9]);
-			//		MV1DetachAnim(m_handle, m_animation[10]);
-
-			//		//アニメーションアタッチ
-			//		m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
-
-			//		time = 0.0f;
-
-			//		m_animation[1] = -1;
-			//		m_animation[2] = -1;
-			//		m_animation[3] = -1;
-			//		m_animation[4] = -1;
-			//		m_animation[5] = -1;
-			//		m_animation[6] = -1;
-			//		m_animation[7] = -1;
-			//		m_animation[9] = -1;
-			//		m_animation[10] = -1;
-
-			//		m_animOne[12] = false;
-			//		m_animOne[14] = false;
-			//		m_animOne[15] = false;
-
-			//	}
-
-			//}
 			//プレイヤーが動いたら
 			//Aボタン長押し
 			if (m_dashMove == true && m_moveflag == true && m_avoidance == false &&
@@ -1204,7 +1213,8 @@ void Player::NotWeaponAnimation(float& time)
 				if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[3] != -1
 					|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
 					|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1 ||
-					m_animOne[13] == true || m_animOne[14] == true || m_animOne[15] == true)
+					m_animOne[13] == true || m_animOne[14] == true || m_animOne[15] == true || 
+					m_animOne[16] == true || m_animOne[17] == true)
 				{
 
 					//アニメーションデタッチ
@@ -1217,6 +1227,9 @@ void Player::NotWeaponAnimation(float& time)
 					MV1DetachAnim(m_handle, m_animation[7]);
 					MV1DetachAnim(m_handle, m_animation[9]);
 					MV1DetachAnim(m_handle, m_animation[10]);
+
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
 
 					//アニメーションアタッチ
 					m_animation[2] = MV1AttachAnim(m_handle, 1, m_animRun, TRUE);
@@ -1236,48 +1249,202 @@ void Player::NotWeaponAnimation(float& time)
 					m_animOne[13] = false;
 					m_animOne[14] = false;
 					m_animOne[15] = false;
+					m_animOne[16] = false;
+					m_animOne[17] = false;
 				}
 			}
 			//歩きアニメーション
 			else if (m_moveflag == true && m_avoidance == false && m_moveAttack == false &&
 				m_recoberyAction == false)
 			{
-				if (m_animation[0] != -1 || m_animation[2] != -1 || m_animation[3] != -1
-					|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
-					|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1 ||
-					m_animOne[13] == true || m_animOne[14] == true || m_animOne[15] == true)
+				//ターゲットしてない時
+				if (m_lockonTarget == false)
+				{
+					if (m_animation[0] != -1 || m_animation[2] != -1 || m_animation[3] != -1
+						|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
+						|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1 ||
+						m_animOne[13] == true || m_animOne[14] == true || m_animOne[15] == true || 
+						m_animOne[16] == true || m_animOne[17] == true)
+					{
+
+						//アニメーションデタッチ
+						MV1DetachAnim(m_handle, m_animation[0]);
+						MV1DetachAnim(m_handle, m_animation[2]);
+						MV1DetachAnim(m_handle, m_animation[3]);
+						MV1DetachAnim(m_handle, m_animation[4]);
+						MV1DetachAnim(m_handle, m_animation[5]);
+						MV1DetachAnim(m_handle, m_animation[6]);
+						MV1DetachAnim(m_handle, m_animation[7]);
+						MV1DetachAnim(m_handle, m_animation[9]);
+						MV1DetachAnim(m_handle, m_animation[10]);
+
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
+
+
+						//アニメーションアタッチ
+						m_animation[1] = MV1AttachAnim(m_handle, 1, m_animWalk, TRUE);
+
+						time = 0.0f;
+
+						m_animation[0] = -1;
+						m_animation[2] = -1;
+						m_animation[3] = -1;
+						m_animation[4] = -1;
+						m_animation[5] = -1;
+						m_animation[6] = -1;
+						m_animation[7] = -1;
+						m_animation[9] = -1;
+						m_animation[10] = -1;
+
+						m_animOne[13] = false;
+						m_animOne[14] = false;
+						m_animOne[15] = false;
+						m_animOne[16] = false;
+						m_animOne[17] = false;
+
+					}
+				}
+				//ターゲットしている時
+				else if (m_lockonTarget == true)
 				{
 
-					//アニメーションデタッチ
-					MV1DetachAnim(m_handle, m_animation[0]);
-					MV1DetachAnim(m_handle, m_animation[2]);
-					MV1DetachAnim(m_handle, m_animation[3]);
-					MV1DetachAnim(m_handle, m_animation[4]);
-					MV1DetachAnim(m_handle, m_animation[5]);
-					MV1DetachAnim(m_handle, m_animation[6]);
-					MV1DetachAnim(m_handle, m_animation[7]);
-					MV1DetachAnim(m_handle, m_animation[9]);
-					MV1DetachAnim(m_handle, m_animation[10]);
+					//Yが0より上が後ろ歩き
+					//Yが0より下が前歩き
+					//Xが0より上が右歩き
+					//Xが0より下が左歩き
 
-					//アニメーションアタッチ
-					m_animation[1] = MV1AttachAnim(m_handle, 1, m_animWalk, TRUE);
+					
+					//左歩き
+					if (m_animOne[16] == false && anX < -500)
+					{
 
-					time = 0.0f;
+						//アニメーションデタッチ
+						MV1DetachAnim(m_handle, m_animation[0]);
+						MV1DetachAnim(m_handle, m_animation[1]);
+						MV1DetachAnim(m_handle, m_animation[2]);
+						MV1DetachAnim(m_handle, m_animation[3]);
+						MV1DetachAnim(m_handle, m_animation[4]);
+						MV1DetachAnim(m_handle, m_animation[5]);
+						MV1DetachAnim(m_handle, m_animation[6]);
+						MV1DetachAnim(m_handle, m_animation[7]);
+						MV1DetachAnim(m_handle, m_animation[9]);
+						MV1DetachAnim(m_handle, m_animation[10]);
 
-					m_animation[0] = -1;
-					m_animation[2] = -1;
-					m_animation[3] = -1;
-					m_animation[4] = -1;
-					m_animation[5] = -1;
-					m_animation[6] = -1;
-					m_animation[7] = -1;
-					m_animation[9] = -1;
-					m_animation[10] = -1;
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
 
-					m_animOne[13] = false;
-					m_animOne[14] = false;
-					m_animOne[15] = false;
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 1.0f);
 
+
+						time = 0.0f;
+
+						m_animation[0] = -1;
+						m_animation[1] = -1;
+						m_animation[2] = -1;
+						m_animation[3] = -1;
+						m_animation[4] = -1;
+						m_animation[5] = -1;
+						m_animation[6] = -1;
+						m_animation[7] = -1;
+						m_animation[9] = -1;
+						m_animation[10] = -1;
+
+						m_animOne[13] = false;
+						m_animOne[14] = false;
+						m_animOne[15] = false;
+						m_animOne[17] = false;
+
+						m_animOne[16] = true;
+					}
+					//右歩き
+					if (m_animOne[17] == false && anX > 500)
+					{
+
+						//アニメーションデタッチ
+						MV1DetachAnim(m_handle, m_animation[0]);
+						MV1DetachAnim(m_handle, m_animation[1]);
+						MV1DetachAnim(m_handle, m_animation[2]);
+						MV1DetachAnim(m_handle, m_animation[3]);
+						MV1DetachAnim(m_handle, m_animation[4]);
+						MV1DetachAnim(m_handle, m_animation[5]);
+						MV1DetachAnim(m_handle, m_animation[6]);
+						MV1DetachAnim(m_handle, m_animation[7]);
+						MV1DetachAnim(m_handle, m_animation[9]);
+						MV1DetachAnim(m_handle, m_animation[10]);
+
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 1.0f);
+
+
+						time = 0.0f;
+
+						m_animation[0] = -1;
+						m_animation[1] = -1;
+						m_animation[2] = -1;
+						m_animation[3] = -1;
+						m_animation[4] = -1;
+						m_animation[5] = -1;
+						m_animation[6] = -1;
+						m_animation[7] = -1;
+						m_animation[9] = -1;
+						m_animation[10] = -1;
+
+						m_animOne[13] = false;
+						m_animOne[14] = false;
+						m_animOne[15] = false;
+						m_animOne[16] = false;
+
+						m_animOne[17] = true;
+					}
+
+					if (anX < 500 && anX > -500)
+					{
+						//歩き
+						if (m_animation[0] != -1 || m_animation[2] != -1 || m_animation[3] != -1
+							|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
+							|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1 ||
+							m_animOne[13] == true || m_animOne[14] == true || m_animOne[15] == true ||
+							m_animOne[16] == true || m_animOne[17] == true)
+						{
+
+							//アニメーションデタッチ
+							MV1DetachAnim(m_handle, m_animation[0]);
+							MV1DetachAnim(m_handle, m_animation[2]);
+							MV1DetachAnim(m_handle, m_animation[3]);
+							MV1DetachAnim(m_handle, m_animation[4]);
+							MV1DetachAnim(m_handle, m_animation[5]);
+							MV1DetachAnim(m_handle, m_animation[6]);
+							MV1DetachAnim(m_handle, m_animation[7]);
+							MV1DetachAnim(m_handle, m_animation[9]);
+							MV1DetachAnim(m_handle, m_animation[10]);
+
+							MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+							MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
+
+							//アニメーションアタッチ
+							m_animation[1] = MV1AttachAnim(m_handle, 1, m_animWalk, TRUE);
+
+							time = 0.0f;
+
+							m_animation[0] = -1;
+							m_animation[2] = -1;
+							m_animation[3] = -1;
+							m_animation[4] = -1;
+							m_animation[5] = -1;
+							m_animation[6] = -1;
+							m_animation[7] = -1;
+							m_animation[9] = -1;
+							m_animation[10] = -1;
+
+							m_animOne[13] = false;
+							m_animOne[14] = false;
+							m_animOne[15] = false;
+							m_animOne[16] = false;
+							m_animOne[17] = false;
+
+						}
+					}
 				}
 			}
 		}
@@ -1296,7 +1463,8 @@ void Player::Animation(float& time, VECTOR& pos)
 			m_animation[3] != -1 || m_animation[4] != -1 || m_animation[5] != -1 ||
 			m_animation[6] != -1 || m_animation[7] != -1 || m_animation[9] != -1 ||
 			m_animation[10] != -1 || m_animOne[12] == true || m_animOne[13] == true || 
-			m_animOne[14] == true || m_animOne[15] == true)
+			m_animOne[14] == true || m_animOne[15] == true || m_animOne[16] == true ||
+			m_animOne[17] == true || m_animOne[18] == true || m_weaponMoveRight == true)
 		{
 			//アニメーションデタッチ
 			MV1DetachAnim(m_handle, m_animation[0]);
@@ -1315,6 +1483,9 @@ void Player::Animation(float& time, VECTOR& pos)
 			MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
 			MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
 			MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+			MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+			MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
+			MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
 			//アニメーションアタッチ
 			m_animation[8] = MV1AttachAnim(m_handle, 1, m_animDeath, TRUE);
@@ -1332,11 +1503,15 @@ void Player::Animation(float& time, VECTOR& pos)
 			m_animation[9] = -1;
 			m_animation[10] = -1;
 
+			m_weaponMoveRight = false;
+
 			m_animOne[12] = false;
 			m_animOne[13] = false;
 			m_animOne[14] = false;
 			m_animOne[15] = false;
-
+			m_animOne[16] = false;
+			m_animOne[17] = false;
+			m_animOne[18] = false;
 		}
 	}
 	//プレイヤーが生きていたら
@@ -1350,7 +1525,8 @@ void Player::Animation(float& time, VECTOR& pos)
 				m_animation[3] != -1 || m_animation[4] != -1 || m_animation[5] != -1 ||
 				m_animation[6] != -1 || m_animation[7] != -1 || m_animation[9] != -1 ||
 				m_animOne[12] == true || m_animOne[13] == true || m_animOne[14] == true || 
-				m_animOne[15] == true)
+				m_animOne[15] == true || m_animOne[16] == true || m_animOne[17] == true ||
+				m_animOne[18] == true || m_weaponMoveRight == true)
 			{
 				//アニメーションデタッチ
 				MV1DetachAnim(m_handle, m_animation[0]);
@@ -1368,6 +1544,9 @@ void Player::Animation(float& time, VECTOR& pos)
 				MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
 				MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
 				MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+				MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+				MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
+				MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
 				//アニメーションアタッチ
 				m_animation[10] = MV1AttachAnim(m_handle, 1, m_animHit, TRUE);
@@ -1386,10 +1565,15 @@ void Player::Animation(float& time, VECTOR& pos)
 
 				m_hitImpact = false;
 
+				m_weaponMoveRight = false;
+
 				m_animOne[12] = false;
 				m_animOne[13] = false;
 				m_animOne[14] = false;
 				m_animOne[15] = false;
+				m_animOne[16] = false;
+				m_animOne[17] = false;
+				m_animOne[18] = false;
 			}
 		}
 		else if (m_hit == false && m_hitImpact == false)
@@ -1402,7 +1586,8 @@ void Player::Animation(float& time, VECTOR& pos)
 					|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
 					|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1 ||
 					m_animOne[12] == true || m_animOne[13] == true || m_animOne[14] == true || 
-					m_animOne[15] == true)
+					m_animOne[15] == true || m_animOne[16] == true || m_animOne[17] == true ||
+					m_animOne[18] == true || m_weaponMoveRight == true)
 				{
 
 					//アニメーションデタッチ
@@ -1421,6 +1606,9 @@ void Player::Animation(float& time, VECTOR& pos)
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
 					//アニメーションアタッチ
 					m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
@@ -1437,11 +1625,15 @@ void Player::Animation(float& time, VECTOR& pos)
 					m_animation[9] = -1;
 					m_animation[10] = -1;
 
+					m_weaponMoveRight = false;
+
 					m_animOne[12] = false;
 					m_animOne[13] = false;
 					m_animOne[14] = false;
 					m_animOne[15] = false;
-
+					m_animOne[16] = false;
+					m_animOne[17] = false;
+					m_animOne[18] = false;
 				}
 
 			}
@@ -1453,7 +1645,8 @@ void Player::Animation(float& time, VECTOR& pos)
 					|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
 					|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1 ||
 					m_animOne[12] == true || m_animOne[13] == true || m_animOne[14] == true || 
-					m_animOne[15] == true)
+					m_animOne[15] == true || m_animOne[16] == true || m_animOne[17] == true ||
+					m_animOne[18] == true || m_weaponMoveRight == true)
 				{
 					m_stamina = m_stamina - 10.0f;
 
@@ -1473,7 +1666,9 @@ void Player::Animation(float& time, VECTOR& pos)
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
-
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
 					//アニメーションアタッチ
 					m_animation[3] = MV1AttachAnim(m_handle, 1, m_animRoll, TRUE);
@@ -1490,10 +1685,15 @@ void Player::Animation(float& time, VECTOR& pos)
 					m_animation[9] = -1;
 					m_animation[10] = -1;
 
+					m_weaponMoveRight = false;
+
 					m_animOne[12] = false;
 					m_animOne[13] = false;
 					m_animOne[14] = false;
 					m_animOne[15] = false;
+					m_animOne[16] = false;
+					m_animOne[17] = false;
+					m_animOne[18] = false;
 
 				}
 			}
@@ -1502,7 +1702,8 @@ void Player::Animation(float& time, VECTOR& pos)
 				if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1
 					|| m_animation[3] != -1 || m_animation[7] != -1 || m_animation[9] != -1
 					|| m_animation[10] != -1 || m_animOne[12] == true || m_animOne[13] == true || 
-					m_animOne[14] == true || m_animOne[15] == true)
+					m_animOne[14] == true || m_animOne[15] == true || m_animOne[16] == true ||
+					m_animOne[17] == true || m_animOne[18] == true || m_weaponMoveRight == true)
 				{
 					//攻撃1段階目
 					if (m_attackNumber == 1)
@@ -1524,6 +1725,9 @@ void Player::Animation(float& time, VECTOR& pos)
 						MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
 						MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
 						MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
 						//アニメーションアタッチ
 						m_animation[4] = MV1AttachAnim(m_handle, 1, m_animAttack1, TRUE);
@@ -1538,11 +1742,15 @@ void Player::Animation(float& time, VECTOR& pos)
 						m_animation[9] = -1;
 						m_animation[10] = -1;
 
+						m_weaponMoveRight = false;
+
 						m_animOne[12] = false;
 						m_animOne[13] = false;
 						m_animOne[14] = false;
 						m_animOne[15] = false;
-
+						m_animOne[16] = false;
+						m_animOne[17] = false;
+						m_animOne[18] = false;
 
 						m_moveAttackEnd = false;
 					}
@@ -1610,7 +1818,8 @@ void Player::Animation(float& time, VECTOR& pos)
 			{
 				if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1 ||
 					m_animation[10] != -1 || m_animOne[12] == true || m_animOne[13] == true || 
-					m_animOne[14] == true || m_animOne[15] == true)
+					m_animOne[14] == true || m_animOne[15] == true || m_animOne[16] == true ||
+					m_animOne[17] == true || m_animOne[18] == true || m_weaponMoveRight == true)
 				{
 					//アニメーションデタッチ
 					MV1DetachAnim(m_handle, m_animation[0]);
@@ -1623,6 +1832,9 @@ void Player::Animation(float& time, VECTOR& pos)
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
 					//アニメーションアタッチ
 					m_animation[9] = MV1AttachAnim(m_handle, 1, m_animHeel, TRUE);
@@ -1634,11 +1846,15 @@ void Player::Animation(float& time, VECTOR& pos)
 					m_animation[2] = -1;
 					m_animation[10] = -1;
 
+					m_weaponMoveRight = false;
+
 					m_animOne[12] = false;
 					m_animOne[13] = false;
 					m_animOne[14] = false;
 					m_animOne[15] = false;
-
+					m_animOne[16] = false;
+					m_animOne[17] = false;
+					m_animOne[18] = false;
 				}
 			}
 		}
@@ -1652,6 +1868,11 @@ void Player::Animation(float& time, VECTOR& pos)
 	if (time >= m_totalAnimTime[1] && m_animation[1] != -1)
 	{
 		time = 0.0f;
+	}
+	//後ろ歩き
+	if (time < 0.0f && m_animation[1] != -1)
+	{
+		time = m_totalAnimTime[1];
 	}
 	if (time >= m_totalAnimTime[2] && m_animation[2] != -1)
 	{
@@ -1742,9 +1963,32 @@ void Player::Animation(float& time, VECTOR& pos)
 	{
 		time = 0.0f;
 	}
+	//武器を持った時の後ろ歩き
+	if (time < 0.0f && m_animOne[14] == true)
+	{
+		time = m_totalAnimTime[14];
+	}
 	if (time >= m_totalAnimTime[15] && m_animOne[15] == true)
 	{
 		time = 0.0f;
+	}
+	if (time >= m_totalAnimTime[16] && m_animOne[16] == true)
+	{
+		time = 0.0f;
+	}
+	if (time >= m_totalAnimTime[17] && m_animOne[17] == true)
+	{
+		time = 0.0f;
+	}
+	//左歩き
+	if (time >= m_totalAnimTime[18] && m_animOne[18] == true)
+	{
+		time = 0.0f;
+	}
+	//右歩き
+	if (time < 0.0f && m_weaponMoveRight == true)
+	{
+		time = m_totalAnimTime[18];
 	}
 
 	//応急処置
@@ -1855,6 +2099,18 @@ void Player::Animation(float& time, VECTOR& pos)
 	{
 		MV1SetAttachAnimTime(m_handle, m_animation[15], time);
 	}
+	if (m_animOne[16] == true)
+	{
+		MV1SetAttachAnimTime(m_handle, m_animation[16], time);
+	}
+	if (m_animOne[17] == true)
+	{
+		MV1SetAttachAnimTime(m_handle, m_animation[17], time);
+	}
+	if (m_animOne[18] == true || m_weaponMoveRight == true)
+	{
+		MV1SetAttachAnimTime(m_handle, m_animation[18], time);
+	}
 }
 
 void Player::WeaponAnimation(float& time)
@@ -1865,6 +2121,8 @@ void Player::WeaponAnimation(float& time)
 		//MV1SetAttachAnimBlendRate(m_handle, m_animation[0], 0.0f);
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[1], 0.0f);
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[2], 0.0f);
+		MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
+		MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
 
 		m_weaponAnimOne = true;
 	}
@@ -1895,6 +2153,7 @@ void Player::WeaponAnimation(float& time)
 				MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
 				MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
 				MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+				MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
 				//アニメーションアタッチ
 				MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 1.0f);
@@ -1911,12 +2170,16 @@ void Player::WeaponAnimation(float& time)
 				m_animation[7] = -1;
 				m_animation[9] = -1;
 
+				m_weaponMoveRight = false;
+
 				m_animOne[12] = true;
 			}
 
 			m_animOne[13] = false;
 			m_animOne[14] = false;
 			m_animOne[15] = false;
+			m_animOne[18] = false;
+
 		}
 		//怯んでないとき盾受けしてない時
 		if (m_hit == false && m_hitImpact == false)
@@ -1942,6 +2205,7 @@ void Player::WeaponAnimation(float& time)
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 0.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
 					//アニメーションブレンド
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 1.0f);
@@ -1960,12 +2224,16 @@ void Player::WeaponAnimation(float& time)
 					m_animation[9] = -1;
 					m_animation[10] = -1;
 
+					m_weaponMoveRight = false;
+
+
 					m_animOne[13] = true;
 				}
 				
 				m_animOne[12] = false;
 				m_animOne[14] = false;
 				m_animOne[15] = false;
+				m_animOne[18] = false;
 
 			}
 			else
@@ -1995,7 +2263,7 @@ void Player::WeaponAnimation(float& time)
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 0.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
-
+					MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
 					//アニメーションブレンド
 					MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 1.0f);
@@ -2012,50 +2280,186 @@ void Player::WeaponAnimation(float& time)
 					m_animation[9] = -1;
 					m_animation[10] = -1;
 
+					m_weaponMoveRight = false;
+
 					m_animOne[15] = true;
 				}
 
 				m_animOne[12] = false;
 				m_animOne[13] = false;
 				m_animOne[14] = false;
+				m_animOne[18] = false;
+
 			}
 			//歩きアニメーション
 			else if (m_moveflag == true && m_avoidance == false && m_moveAttack == false &&
 				m_recoberyAction == false)
 			{
-				if (m_animOne[14] == false)
+				//ターゲットしてない時
+				if (m_lockonTarget == false)
 				{
-					//アニメーションデタッチ
-					MV1DetachAnim(m_handle, m_animation[0]);
-					MV1DetachAnim(m_handle, m_animation[2]);
-					MV1DetachAnim(m_handle, m_animation[3]);
-					MV1DetachAnim(m_handle, m_animation[4]);
-					MV1DetachAnim(m_handle, m_animation[5]);
-					MV1DetachAnim(m_handle, m_animation[6]);
-					MV1DetachAnim(m_handle, m_animation[7]);
-					MV1DetachAnim(m_handle, m_animation[9]);
-					MV1DetachAnim(m_handle, m_animation[10]);
+					if (m_animOne[14] == false)
+					{
+						//アニメーションデタッチ
+						MV1DetachAnim(m_handle, m_animation[0]);
+						MV1DetachAnim(m_handle, m_animation[2]);
+						MV1DetachAnim(m_handle, m_animation[3]);
+						MV1DetachAnim(m_handle, m_animation[4]);
+						MV1DetachAnim(m_handle, m_animation[5]);
+						MV1DetachAnim(m_handle, m_animation[6]);
+						MV1DetachAnim(m_handle, m_animation[7]);
+						MV1DetachAnim(m_handle, m_animation[9]);
+						MV1DetachAnim(m_handle, m_animation[10]);
 
-					MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 0.0f);
-					MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
-					MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
 
-					//アニメーションブレンド
-					MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 1.0f);
+						//アニメーションブレンド
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 1.0f);
 
-					time = 0.0f;
+						time = 0.0f;
 
-					m_animation[0] = -1;
-					m_animation[2] = -1;
-					m_animation[3] = -1;
-					m_animation[4] = -1;
-					m_animation[5] = -1;
-					m_animation[6] = -1;
-					m_animation[7] = -1;
-					m_animation[9] = -1;
-					m_animation[10] = -1;
+						m_animation[0] = -1;
+						m_animation[2] = -1;
+						m_animation[3] = -1;
+						m_animation[4] = -1;
+						m_animation[5] = -1;
+						m_animation[6] = -1;
+						m_animation[7] = -1;
+						m_animation[9] = -1;
+						m_animation[10] = -1;
 
-					m_animOne[14] = true;
+						m_animOne[14] = true;
+					}
+				}
+				//ターゲットしてる時
+				else if (m_lockonTarget == true)
+				{
+					//左歩き
+					if (m_animOne[18] == false && anX < -500)
+					{
+						//アニメーションデタッチ
+						MV1DetachAnim(m_handle, m_animation[0]);
+						MV1DetachAnim(m_handle, m_animation[2]);
+						MV1DetachAnim(m_handle, m_animation[3]);
+						MV1DetachAnim(m_handle, m_animation[4]);
+						MV1DetachAnim(m_handle, m_animation[5]);
+						MV1DetachAnim(m_handle, m_animation[6]);
+						MV1DetachAnim(m_handle, m_animation[7]);
+						MV1DetachAnim(m_handle, m_animation[9]);
+						MV1DetachAnim(m_handle, m_animation[10]);
+
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
+
+						//アニメーションブレンド
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 1.0f);
+
+						time = 0.0f;
+
+						m_animation[0] = -1;
+						m_animation[2] = -1;
+						m_animation[3] = -1;
+						m_animation[4] = -1;
+						m_animation[5] = -1;
+						m_animation[6] = -1;
+						m_animation[7] = -1;
+						m_animation[9] = -1;
+						m_animation[10] = -1;
+
+
+						m_weaponMoveRight = false;
+						m_animOne[14] = false;
+
+						m_animOne[18] = true;
+					}
+					//右歩き
+					if (m_weaponMoveRight == false && anX > 500)
+					{
+						//アニメーションデタッチ
+						MV1DetachAnim(m_handle, m_animation[0]);
+						MV1DetachAnim(m_handle, m_animation[2]);
+						MV1DetachAnim(m_handle, m_animation[3]);
+						MV1DetachAnim(m_handle, m_animation[4]);
+						MV1DetachAnim(m_handle, m_animation[5]);
+						MV1DetachAnim(m_handle, m_animation[6]);
+						MV1DetachAnim(m_handle, m_animation[7]);
+						MV1DetachAnim(m_handle, m_animation[9]);
+						MV1DetachAnim(m_handle, m_animation[10]);
+
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
+
+						//アニメーションブレンド
+						MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 1.0f);
+
+						time = 0.0f;
+
+						m_animation[0] = -1;
+						m_animation[2] = -1;
+						m_animation[3] = -1;
+						m_animation[4] = -1;
+						m_animation[5] = -1;
+						m_animation[6] = -1;
+						m_animation[7] = -1;
+						m_animation[9] = -1;
+						m_animation[10] = -1;
+
+						m_animOne[18] = false;
+						m_animOne[14] = false;
+
+						m_weaponMoveRight = true;
+					}
+					if (anX < 500 && anX > -500)
+					{
+						//歩き
+						if (m_animOne[14] == false)
+						{
+							//アニメーションデタッチ
+							MV1DetachAnim(m_handle, m_animation[0]);
+							MV1DetachAnim(m_handle, m_animation[2]);
+							MV1DetachAnim(m_handle, m_animation[3]);
+							MV1DetachAnim(m_handle, m_animation[4]);
+							MV1DetachAnim(m_handle, m_animation[5]);
+							MV1DetachAnim(m_handle, m_animation[6]);
+							MV1DetachAnim(m_handle, m_animation[7]);
+							MV1DetachAnim(m_handle, m_animation[9]);
+							MV1DetachAnim(m_handle, m_animation[10]);
+
+							MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 0.0f);
+							MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
+							MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
+							MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
+
+							//アニメーションブレンド
+							MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 1.0f);
+
+							time = 0.0f;
+
+							m_animation[0] = -1;
+							m_animation[2] = -1;
+							m_animation[3] = -1;
+							m_animation[4] = -1;
+							m_animation[5] = -1;
+							m_animation[6] = -1;
+							m_animation[7] = -1;
+							m_animation[9] = -1;
+							m_animation[10] = -1;
+
+							m_weaponMoveRight = false;
+
+							m_animOne[18] = false;
+
+							m_animOne[14] = true;
+						}
+					}
+					
 				}
 
 				m_animOne[12] = false;
@@ -2089,6 +2493,10 @@ void Player::WeaponAnimation(float& time)
 				if (m_animOne[15] == true)
 				{
 					MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[15], m_moveAnimShieldFrameIndex, 1.0f);
+				}
+				if (m_animOne[18] == true || m_weaponMoveRight == true)
+				{
+					MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[18], m_moveAnimShieldFrameIndex, 1.0f);
 				}
 			}
 		}
@@ -2395,6 +2803,9 @@ void Player::Draw()
 
 #endif
 
+	//Yの1000が下-1000が上
+	//Xの1000が右-1000が左
+
 	//3Dモデルのポジション設定
 	MV1SetPosition(m_handle, m_drawPos);
 
@@ -2436,6 +2847,8 @@ void Player::End()
 	MV1DeleteModel(m_animAttack3);
 	MV1DeleteModel(m_animDeath);
 	MV1DeleteModel(m_animHeel);
+	MV1DeleteModel(m_animLeft);
+	MV1DeleteModel(m_animRight);
 	weapon->End();
 	effect->End();
 	se->End();

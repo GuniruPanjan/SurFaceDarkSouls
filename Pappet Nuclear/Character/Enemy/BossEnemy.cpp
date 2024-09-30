@@ -49,6 +49,9 @@ void BossEnemy::Init()
 	m_posY = 0.0f;
 	m_posZ = 0.0f;
 
+	//ÉRÉAèâä˙âª
+	m_core = 2500;
+
 	m_pos = VGet(m_posX, m_posY, m_posZ);
 
 	m_bossBattle = false;
