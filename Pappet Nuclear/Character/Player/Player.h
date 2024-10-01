@@ -58,8 +58,7 @@ public:
 	bool GetMenu() { return m_menuOpen; }
 	bool SetMenu(bool menu) { return m_menuOpen = menu; }
 	int GetButton() { return m_button; }
-	int GetCore() { return m_coreAllLevel; }
-	int SetCore(int core) { return m_coreAllLevel + core; }
+	int SetCore(int core) { return m_coreAllLevel = core; }
 	bool GetOne() { return m_one; }
 	bool GetTarget(int max) { return m_targetNumber[max]; }
 

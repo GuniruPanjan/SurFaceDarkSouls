@@ -35,6 +35,9 @@ public:
 	SphereCol GetAttackCol2() { return m_colBossAttackSphere2; }
 	SphereCol GetAttackCol3() { return m_colBossAttackSphere3; }
 
+	//コア所得
+	int GetCore() { return m_baseCore; }
+
 
 private:
 	bool m_gameClear;        //ボスを倒したらゲームクリア

@@ -179,6 +179,8 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		equipment->LeftUpdate();
 	}
 
+	//ƒRƒAŽæ“¾
+	player->SetCore(enemy->GetCore());
 
 	//else
 	//{

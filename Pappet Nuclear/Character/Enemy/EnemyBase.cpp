@@ -3,10 +3,12 @@
 EnemyBase::EnemyBase():
 	m_bossModelHandle(0),
 	m_core(0),
+	m_baseCore(0),
 	m_bossSize(0.0f),
 	m_searchRadius(0.0f),
 	m_distanceRadius(0.0f),
-	m_attackRadius(0.0f)
+	m_attackRadius(0.0f),
+	m_enemyDeath(false)
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
@@ -16,6 +18,12 @@ EnemyBase::EnemyBase():
 		m_moveTurning[i] = 0.0f;
 		m_moveReverseTurning[i] = 0.0f;
 		m_randomNextActionTime[i] = 0.0f;
+		m_weakAnimBlend[i] = 1.0f;
+
+		for (int j = 0; j < ANIMATION; j++)
+		{
+			m_weakAnimOne[j][i] = false;
+		}
 	}
 
 
@@ -39,24 +47,14 @@ EnemyBase::EnemyBase():
 	m_bossAnimAttack3 = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack3.mv1");
 
 	//アニメーションアタッチ
-	m_animation[0] = MV1AttachAnim(m_handle, 0, m_animStand, TRUE);
-	m_animation[1] = MV1AttachAnim(m_handle, 0, m_animHit, TRUE);
-	m_animation[2] = MV1AttachAnim(m_handle, 0, m_animDeath, TRUE);
-	m_animation[3] = MV1AttachAnim(m_handle, 0, m_animWalk, TRUE);
-	m_animation[4] = MV1AttachAnim(m_handle, 0, m_animLeftWalking, TRUE);
-	m_animation[5] = MV1AttachAnim(m_handle, 0, m_animRightWalking, TRUE);
-	m_animation[6] = MV1AttachAnim(m_handle, 0, m_animAttack1, TRUE);
-	for (int i = 0; i < ENEMY_NOW; i++)
-	{
-		m_weakEnemyAnimation[0][i] = MV1AttachAnim(m_handle, 0, m_animStand, TRUE);
-		m_weakEnemyAnimation[1][i] = MV1AttachAnim(m_handle, 0, m_animHit, TRUE);
-		m_weakEnemyAnimation[2][i] = MV1AttachAnim(m_handle, 0, m_animDeath, TRUE);
-		m_weakEnemyAnimation[3][i] = MV1AttachAnim(m_handle, 0, m_animWalk, TRUE);
-		m_weakEnemyAnimation[4][i] = MV1AttachAnim(m_handle, 0, m_animLeftWalking, TRUE);
-		m_weakEnemyAnimation[5][i] = MV1AttachAnim(m_handle, 0, m_animRightWalking, TRUE);
-		m_weakEnemyAnimation[6][i] = MV1AttachAnim(m_handle, 0, m_animAttack1, TRUE);
-
-	}
+	//m_animation[0] = MV1AttachAnim(m_handle, 0, m_animStand, TRUE);
+	//m_animation[1] = MV1AttachAnim(m_handle, 0, m_animHit, TRUE);
+	//m_animation[2] = MV1AttachAnim(m_handle, 0, m_animDeath, TRUE);
+	//m_animation[3] = MV1AttachAnim(m_handle, 0, m_animWalk, TRUE);
+	//m_animation[4] = MV1AttachAnim(m_handle, 0, m_animLeftWalking, TRUE);
+	//m_animation[5] = MV1AttachAnim(m_handle, 0, m_animRightWalking, TRUE);
+	//m_animation[6] = MV1AttachAnim(m_handle, 0, m_animAttack1, TRUE);
+	
 	m_bossAnimation[0] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimStand, TRUE);
 	m_bossAnimation[1] = MV1AttachAnim(m_bossModelHandle, 0, m_bossModelHandle, TRUE);
 	m_bossAnimation[2] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimDeath, TRUE);
@@ -74,17 +72,17 @@ EnemyBase::EnemyBase():
 	//m_totalAnimTime[5] = MV1GetAttachAnimTotalTime(m_handle, m_animation[5]);
 	//m_totalAnimTime[6] = MV1GetAttachAnimTotalTime(m_handle, m_animation[6]);
 
-	for (int i = 0; i < ENEMY_NOW; i++)
-	{
-		m_weakEnemyTotalAnimationTime[0][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[0][i]);
-		m_weakEnemyTotalAnimationTime[1][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[1][i]);
-		m_weakEnemyTotalAnimationTime[2][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[2][i]);
-		m_weakEnemyTotalAnimationTime[3][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[3][i]);
-		m_weakEnemyTotalAnimationTime[4][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[4][i]);
-		m_weakEnemyTotalAnimationTime[5][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[5][i]);
-		m_weakEnemyTotalAnimationTime[6][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[6][i]);
+	//for (int i = 0; i < ENEMY_NOW; i++)
+	//{
+	//	m_weakEnemyTotalAnimationTime[0][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[0][i]);
+	//	m_weakEnemyTotalAnimationTime[1][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[1][i]);
+	//	m_weakEnemyTotalAnimationTime[2][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[2][i]);
+	//	m_weakEnemyTotalAnimationTime[3][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[3][i]);
+	//	m_weakEnemyTotalAnimationTime[4][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[4][i]);
+	//	m_weakEnemyTotalAnimationTime[5][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[5][i]);
+	//	m_weakEnemyTotalAnimationTime[6][i] = MV1GetAttachAnimTotalTime(m_handle, m_weakEnemyAnimation[6][i]);
 
-	}
+	//}
 
 	
 	m_bossTotalAnimTime[0] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[0]);
@@ -111,21 +109,21 @@ EnemyBase::EnemyBase():
 	//m_animation[5] = -1;
 	//m_animation[6] = -1;
 
-	for (int i = 0; i < ENEMY_NOW; i++)
-	{
-		MV1DetachAnim(m_handle, m_weakEnemyAnimation[1][i]);
-		MV1DetachAnim(m_handle, m_weakEnemyAnimation[2][i]);
-		MV1DetachAnim(m_handle, m_weakEnemyAnimation[3][i]);
-		MV1DetachAnim(m_handle, m_weakEnemyAnimation[4][i]);
-		MV1DetachAnim(m_handle, m_weakEnemyAnimation[5][i]);
-		MV1DetachAnim(m_handle, m_weakEnemyAnimation[6][i]);
-		m_weakEnemyAnimation[1][i] = -1;
-		m_weakEnemyAnimation[2][i] = -1;
-		m_weakEnemyAnimation[3][i] = -1;
-		m_weakEnemyAnimation[4][i] = -1;
-		m_weakEnemyAnimation[5][i] = -1;
-		m_weakEnemyAnimation[6][i] = -1;
-	}
+	//for (int i = 0; i < ENEMY_NOW; i++)
+	//{
+	//	MV1DetachAnim(m_handle, m_weakEnemyAnimation[1][i]);
+	//	MV1DetachAnim(m_handle, m_weakEnemyAnimation[2][i]);
+	//	MV1DetachAnim(m_handle, m_weakEnemyAnimation[3][i]);
+	//	MV1DetachAnim(m_handle, m_weakEnemyAnimation[4][i]);
+	//	MV1DetachAnim(m_handle, m_weakEnemyAnimation[5][i]);
+	//	MV1DetachAnim(m_handle, m_weakEnemyAnimation[6][i]);
+	//	m_weakEnemyAnimation[1][i] = -1;
+	//	m_weakEnemyAnimation[2][i] = -1;
+	//	m_weakEnemyAnimation[3][i] = -1;
+	//	m_weakEnemyAnimation[4][i] = -1;
+	//	m_weakEnemyAnimation[5][i] = -1;
+	//	m_weakEnemyAnimation[6][i] = -1;
+	//}
 
 	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[1]);
 	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[2]);

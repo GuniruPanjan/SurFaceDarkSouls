@@ -18,11 +18,15 @@ public:
 protected:
 	bool m_enemySearchFlag[ENEMY_NOW];  //敵の索敵フラグ
 	bool m_enemyWait[ENEMY_NOW];    //敵が一定距離を保つフラグ
+	bool m_enemyDeath;              //敵が死んだ判定
 	int m_randomAction[ENEMY_NOW];    //敵のランダム行動を判断する変数
 	int m_animLeftWalking;   //敵の左周りのモーション格納変数
 	int m_animRightWalking;   //敵の右周りのモーション格納変数
 	int m_weakEnemyAnimation[ANIMATION][ENEMY_NOW];      //敵のアニメーション
+	bool m_weakAnimOne[ANIMATION][ENEMY_NOW];            //敵のアニメーションを一回だけ実行
+	float m_weakAnimBlend[ENEMY_NOW];                    //敵のアニメーションブレンド率
 	int m_core;               //倒したときにもらえるコア
+	int m_baseCore;           //コアをまとめる変数
 	float m_weakEnemyTotalAnimationTime[ANIMATION][ENEMY_NOW];    //敵のアニメーションの総時間
 	float m_searchRadius;  //円の当たり判定
 	float m_distanceRadius;  //円の半径

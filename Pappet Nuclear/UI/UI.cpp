@@ -177,9 +177,6 @@ void UI::Draw(Player& player, Enemy& enemy, Equipment& eq)
 		SetFontSize(40);
 	}
 
-	//ƒŒƒxƒ‹‚ğã‚°‚é‚½‚ß‚Ì•Ï”•`‰æ
-	DrawFormatString(1400, 950, 0x000000, "%d", player.GetCore());
-
 
 	//BossHP
 	if (enemy.GetBattale() == true)

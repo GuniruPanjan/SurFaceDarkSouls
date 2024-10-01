@@ -13,6 +13,7 @@ public:
 	void Update(Player& player, int max, int volume);
 	void Action(Player& player, int max);
 	void Animation(float& time, int max);
+	void BlendAnimation(float& time, int max, int blendNumber, int DNumber);
 	void HitMap(Map& map, int max);
 	void Draw(int max);
 	void End(int max);
@@ -33,6 +34,9 @@ public:
 	const SphereCol GetAttackCol(int max) { return m_colAttack[max]; }
 	bool GetPlayerHit(int max) { return m_playerHit[max]; }
 
+	//コア所得
+	int GetCore() { return m_baseCore; }
+
 
 private:
 	unsigned int m_color = 0xffffff;
@@ -44,7 +48,6 @@ private:
 	float m_weakEnemyHp[ENEMY_NOW];                      //敵のHP
 	VECTOR m_weakEnemyPos[ENEMY_NOW];                    //敵のポジション
 	VECTOR m_weakDrawPos[ENEMY_NOW];                     //敵のDrawポジション
-	float m_weakPlayTime[ENEMY_NOW];                     //敵のアニメーション時間
 	VECTOR m_weakEnemyMove[ENEMY_NOW];                   //敵の移動ベクトル
 	bool m_weakEnemyMoveAttack[ENEMY_NOW];               //敵の攻撃判定
 	float m_weakEnemyAngle[ENEMY_NOW];                   //敵のアングル
@@ -55,6 +58,10 @@ private:
 	float m_bounceAngle[ENEMY_NOW];                      //押し出すアングル
 	VECTOR m_outPush[ENEMY_NOW];                         //押し出すベクトル
 	bool m_playerHit[ENEMY_NOW];                         //プレイヤーに当たる判定
+	bool m_death[ENEMY_NOW];                             //死んだ判定
+
+	//アニメーション関係
+	float m_weakPlayTime[ENEMY_NOW];                     //敵のアニメーション時間
 
 	//SE代入変数
 	int m_hitSE[ENEMY_NOW];

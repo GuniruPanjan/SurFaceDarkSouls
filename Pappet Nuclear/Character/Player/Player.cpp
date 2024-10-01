@@ -2806,6 +2806,9 @@ void Player::Draw()
 	//Yの1000が下-1000が上
 	//Xの1000が右-1000が左
 
+	//レベルを上げるための変数描画
+	DrawFormatString(1400, 950, 0x000000, "%d", m_coreAllLevel);
+
 	//3Dモデルのポジション設定
 	MV1SetPosition(m_handle, m_drawPos);
 

@@ -52,6 +52,9 @@ void BossEnemy::Init()
 	//ƒRƒA‰Šú‰»
 	m_core = 2500;
 
+	//€–S”»’è‚ğ‰Šú‰»‚·‚é
+	m_death = false;
+
 	m_pos = VGet(m_posX, m_posY, m_posZ);
 
 	m_bossBattle = false;
@@ -193,6 +196,13 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 	//“G‚ª€–S‚µ‚½‚ç
 	if (m_hp <= 0.0f)
 	{
+		//ˆê‰ñ‚¾‚¯Às
+		if (m_death == false)
+		{
+			m_baseCore = m_baseCore + m_core;
+
+			m_death = true;
+		}
 	}
 	else
 	{

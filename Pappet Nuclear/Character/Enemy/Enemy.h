@@ -57,6 +57,9 @@ public:
 	bool isWeakPlayerHit(CapsuleCol col, VECTOR vec, float speed, int max) { return enemy->isPlayerHit(col, vec, speed, max); }
 	bool GetPlayerHit(int max) { return enemy->GetPlayerHit(max); }
 
+	//ƒRƒA‚ÌŠ“¾•Ï”
+	int GetCore() { return m_baseCore + enemy->GetCore() + boss->GetCore(); }
+
 	//VECTOR GetPos() { return weakenemy[4]->GetPos(); }
 	//float GetPosX() { return weakenemy[4]->GetPosX(); }
 	//float GetPosY() { return weakenemy[4]->GetPosY(); }
