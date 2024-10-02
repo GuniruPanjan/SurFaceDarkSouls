@@ -1,7 +1,7 @@
 #include "EnemyBase.h"
 
 EnemyBase::EnemyBase():
-	m_bossModelHandle(0),
+	m_bossModelHandle(-1),
 	m_core(0),
 	m_baseCore(0),
 	m_bossSize(0.0f),
@@ -26,10 +26,9 @@ EnemyBase::EnemyBase():
 		}
 	}
 
-
 	//敵のモデル読み込み
-	//m_handle = MV1LoadModel("Data/Enemy/EnemyModel.mv1");
-	//m_bossModelHandle = MV1LoadModel("Data/Enemy/BossEnemy.mv1");
+	m_handle = MV1LoadModel("Data/Enemy/EnemyModel.mv1");
+	m_bossModelHandle = MV1LoadModel("Data/Enemy/BossEnemy.mv1");
 
 	//敵のアニメーション読み込み
 	m_animStand = MV1LoadModel("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyStand1.mv1");

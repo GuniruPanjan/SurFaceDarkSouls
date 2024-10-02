@@ -1,10 +1,14 @@
 #pragma once
+#include "Singleton/Singleton.h"
 #include "Character/CharacterBase.h"
 
 class Player;
 
 class EnemyBase : public CharacterBase
 {
+	//シングルトンのテンプレート引数に自身を指定したものだけに生成を許す
+	friend Singleton<EnemyBase>;
+
 public:
 	EnemyBase();
 	virtual ~EnemyBase();
@@ -14,7 +18,7 @@ public:
 	void Update() {};
 	void Draw() {};
 	virtual void End();
-	
+
 protected:
 	bool m_enemySearchFlag[ENEMY_NOW];  //敵の索敵フラグ
 	bool m_enemyWait[ENEMY_NOW];    //敵が一定距離を保つフラグ

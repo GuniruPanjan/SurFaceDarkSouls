@@ -80,7 +80,8 @@ Player::Player():
 	m_hitImpact(false),
 	m_weaponAnimOne(false),
 	m_notWeaponAnimOne(false),
-	m_oneAvoidance(false)
+	m_oneAvoidance(false),
+	m_hit(false)
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
@@ -400,8 +401,8 @@ void Player::Update()
 	anY = analogY;
 
 
-	m_move = VGet(-analogX, 0.0f, analogY);  //ベクトルの長さ
-	m_bounceMove = VGet(analogX, 0.0f, -analogY);  //ベクトルの長さ
+	m_move = VGet(static_cast<float>(-analogX), 0.0f, static_cast<float>(analogY));  //ベクトルの長さ
+	m_bounceMove = VGet(static_cast<float>(analogX), 0.0f, static_cast<float>(-analogY));  //ベクトルの長さ
 
 	//ベクトルの長さを取得する
 	float len = VSize(m_move);

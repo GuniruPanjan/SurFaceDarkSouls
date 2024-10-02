@@ -1,8 +1,8 @@
 #include "Map.h"
 
 Map::Map() :
-	m_handle(0),
-	m_collisionHandle(0),
+	m_handle(-1),
+	m_collisionHandle(-1),
 	m_light(0),
 	m_size(0.0f),
 	m_Xposition(0.0f),

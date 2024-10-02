@@ -66,7 +66,11 @@ public:
 		m_effect(0),
 		m_effectHit(0),
 		m_playerDif(VGet(0.0f,0.0f,0.0f)),
-		m_shieldDif(VGet(0.0f,0.0f,0.0f))
+		m_shieldDif(VGet(0.0f,0.0f,0.0f)),
+		HitDim(),
+		m_Wall(),
+		m_Floor(),
+		m_Poly()
 	{
 		for (int i = 0; i < ANIMATION; i++)
 		{

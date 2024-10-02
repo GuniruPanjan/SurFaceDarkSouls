@@ -20,7 +20,7 @@ WeakEnemy::WeakEnemy()
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
-		m_weakEnemyHandle[i] = 0;
+		m_weakEnemyHandle[i] = -1;
 		m_weakEnemyHp[i] = 0;
 		m_weakEnemyPos[i] = VGet(0.0f, 0.0f, 0.0f);
 		m_weakDrawPos[i] = VGet(0.0f, 0.0f, 0.0f);
@@ -431,58 +431,59 @@ void WeakEnemy::Animation(float& time, int max)
 	{
 		m_weakAnimBlend[max] += 0.1f;
 	}
-
-
-	//敵がプレイヤーを見つけてないとき
-	if (m_enemySearchFlag[max] == false)
+	//敵が生きていたら
+	if (m_weakEnemyHp[max] > 0.0f)
 	{
+		//敵がプレイヤーを見つけてないとき
+		if (m_enemySearchFlag[max] == false)
+		{
 
-		BlendAnimation(time, max, 0, 3);
-		BlendAnimation(time, max, 0, 4);
-		BlendAnimation(time, max, 0, 5);
-		BlendAnimation(time, max, 0, 6);
+			BlendAnimation(time, max, 0, 3);
+			BlendAnimation(time, max, 0, 4);
+			BlendAnimation(time, max, 0, 5);
+			BlendAnimation(time, max, 0, 6);
 
+		}
+		//敵がプレイヤーを見つけた時(臨戦態勢)
+		if (m_enemySearchFlag[max] == true && m_enemyWait[max] == false && m_weakEnemyMoveAttack[max] == false)
+		{
+			BlendAnimation(time, max, 3, 0);
+			BlendAnimation(time, max, 3, 4);
+			BlendAnimation(time, max, 3, 5);
+			BlendAnimation(time, max, 3, 6);
+		}
+		//敵の射程圏内に入ったとき
+		//左周り
+		if (m_randomAction[max] == 0 && m_enemyWait[max] == true)
+		{
+
+			BlendAnimation(time, max, 4, 0);
+			BlendAnimation(time, max, 4, 3);
+			BlendAnimation(time, max, 4, 5);
+			BlendAnimation(time, max, 4, 6);
+
+		}
+		//右周り
+		if (m_randomAction[max] == 1 && m_enemyWait[max] == true)
+		{
+
+			BlendAnimation(time, max, 5, 0);
+			BlendAnimation(time, max, 5, 3);
+			BlendAnimation(time, max, 5, 4);
+			BlendAnimation(time, max, 5, 6);
+
+		}
+		//攻撃モーション
+		if (m_randomAction[max] == 2 && m_enemyWait[max] == true)
+		{
+
+			BlendAnimation(time, max, 6, 0);
+			BlendAnimation(time, max, 6, 3);
+			BlendAnimation(time, max, 6, 4);
+			BlendAnimation(time, max, 6, 5);
+
+		}
 	}
-	//敵がプレイヤーを見つけた時(臨戦態勢)
-	if (m_enemySearchFlag[max] == true && m_enemyWait[max] == false && m_weakEnemyMoveAttack[max] == false)
-	{
-		BlendAnimation(time, max, 3, 0);
-		BlendAnimation(time, max, 3, 4);
-		BlendAnimation(time, max, 3, 5);
-		BlendAnimation(time, max, 3, 6);
-	}
-	//敵の射程圏内に入ったとき
-	//左周り
-	if (m_randomAction[max] == 0 && m_enemyWait[max] == true)
-	{
-
-		BlendAnimation(time, max, 4, 0);
-		BlendAnimation(time, max, 4, 3);
-		BlendAnimation(time, max, 4, 5);
-		BlendAnimation(time, max, 4, 6);
-
-	}
-	//右周り
-	if (m_randomAction[max] == 1 && m_enemyWait[max] == true)
-	{
-
-		BlendAnimation(time, max, 5, 0);
-		BlendAnimation(time, max, 5, 3);
-		BlendAnimation(time, max, 5, 4);
-		BlendAnimation(time, max, 5, 6);
-
-	}
-	//攻撃モーション
-	if (m_randomAction[max] == 2 && m_enemyWait[max] == true)
-	{
-
-		BlendAnimation(time, max, 6, 0);
-		BlendAnimation(time, max, 6, 3);
-		BlendAnimation(time, max, 6, 4);
-		BlendAnimation(time, max, 6, 5);
-
-	}
-
 	//敵が死んだら死ぬアニメーションを入れる
 	if (m_weakEnemyHp[max] <= 0.0f)
 	{

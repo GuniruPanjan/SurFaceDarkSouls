@@ -11,6 +11,7 @@ namespace
 SceneGame::SceneGame():
 	m_one(false)
 {
+	auto& result = Singleton<EnemyBase>::GetInstance();
 }
 
 SceneGame::~SceneGame()
@@ -19,6 +20,7 @@ SceneGame::~SceneGame()
 
 void SceneGame::Init()
 {
+
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
 		enemy->Init(i);
