@@ -28,8 +28,8 @@ EnemyBase::EnemyBase():
 
 
 	//敵のモデル読み込み
-	m_handle = MV1LoadModel("Data/Enemy/EnemyModel.mv1");
-	m_bossModelHandle = MV1LoadModel("Data/Enemy/BossEnemy.mv1");
+	//m_handle = MV1LoadModel("Data/Enemy/EnemyModel.mv1");
+	//m_bossModelHandle = MV1LoadModel("Data/Enemy/BossEnemy.mv1");
 
 	//敵のアニメーション読み込み
 	m_animStand = MV1LoadModel("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyStand1.mv1");

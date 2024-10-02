@@ -41,6 +41,7 @@ WeakEnemy::WeakEnemy()
 		m_playerHit[i] = false;
 		m_effectWeakHit[i] = 0;
 		m_death[i] = false;
+		m_weakAnimBlendOne[i] = false;
 	}
 }
 
@@ -130,6 +131,8 @@ void WeakEnemy::Init(int max)
 		m_weakAnimOne[i][max] = false;
 	}
 
+	m_weakAnimBlendOne[max] = false;
+
 
 	//サイズ変更
 	MV1SetScale(m_weakEnemyHandle[max], VGet(m_modelSize, m_modelSize, m_modelSize));
@@ -157,31 +160,6 @@ void WeakEnemy::Init(int max)
 	attack[max] = false;
 
 	walkTime = 0;
-
-	//エネミーが死んだアニメーションだった場合
-	//if (m_weakEnemyAnimation[1][max] != -1 || m_weakEnemyAnimation[2][max] != -1 || m_weakEnemyAnimation[3][max] != -1 ||
-	//	m_weakEnemyAnimation[4][max] != -1 || m_weakEnemyAnimation[5][max] != -1 || m_weakEnemyAnimation[6][max] != -1)
-	//{
-	//	//アニメーションデタッチ
-	//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[1][max]);
-	//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[2][max]);
-	//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[3][max]);
-	//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[4][max]);
-	//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[5][max]);
-	//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[6][max]);
-
-	//	m_weakEnemyAnimation[0][max] = MV1AttachAnim(m_weakEnemyHandle[max], 0, m_animStand, TRUE);
-
-	//	m_weakPlayTime[max] = 0.0f;
-
-	//	m_weakEnemyAnimation[1][max] = -1;
-	//	m_weakEnemyAnimation[2][max] = -1;
-	//	m_weakEnemyAnimation[3][max] = -1;
-	//	m_weakEnemyAnimation[4][max] = -1;
-	//	m_weakEnemyAnimation[5][max] = -1;
-	//	m_weakEnemyAnimation[6][max] = -1;
-
-	//}
 
 	//エネミーが死んだアニメーションだった場合
 	if (m_weakAnimOne[1][max] == true || m_weakAnimOne[2][max] == true || m_weakAnimOne[3][max] == true ||
@@ -449,63 +427,25 @@ void WeakEnemy::Action(Player& player, int max)
 
 void WeakEnemy::Animation(float& time, int max)
 {
+	if (m_weakAnimBlend[max] < 1.0f)
+	{
+		m_weakAnimBlend[max] += 0.1f;
+	}
+
+
 	//敵がプレイヤーを見つけてないとき
 	if (m_enemySearchFlag[max] == false)
 	{
-		//if (m_weakEnemyAnimation[3][max] != -1 || m_weakEnemyAnimation[4][max] != -1 || m_weakEnemyAnimation[5][max] != -1 ||
-		//	m_weakEnemyAnimation[6][max] != -1)
-		//{
-		//	//アニメーションデタッチ
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[3][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[4][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[5][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[6][max]);
-
-
-		//	//アニメーションアタッチ
-		//	m_weakEnemyAnimation[0][max] = MV1AttachAnim(m_weakEnemyHandle[max], 0, m_animStand, TRUE);
-
-		//	time = 0.0f;
-
-		//	m_weakEnemyAnimation[3][max] = -1;
-		//	m_weakEnemyAnimation[4][max] = -1;
-		//	m_weakEnemyAnimation[5][max] = -1;
-		//	m_weakEnemyAnimation[6][max] = -1;
-
-		//}
 
 		BlendAnimation(time, max, 0, 3);
 		BlendAnimation(time, max, 0, 4);
 		BlendAnimation(time, max, 0, 5);
 		BlendAnimation(time, max, 0, 6);
 
-
 	}
 	//敵がプレイヤーを見つけた時(臨戦態勢)
 	if (m_enemySearchFlag[max] == true && m_enemyWait[max] == false && m_weakEnemyMoveAttack[max] == false)
 	{
-		//if (m_weakEnemyAnimation[0][max] != -1 || m_weakEnemyAnimation[4][max] != -1 || m_weakEnemyAnimation[5][max] != -1 ||
-		//	m_weakEnemyAnimation[6][max] != -1)
-		//{
-		//	//アニメーションデタッチ
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[0][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[4][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[5][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[6][max]);
-
-
-		//	//アニメーションアタッチ
-		//	m_weakEnemyAnimation[3][max] = MV1AttachAnim(m_weakEnemyHandle[max], 0, m_animWalk, TRUE);
-
-		//	time = 0.0f;
-
-		//	m_weakEnemyAnimation[0][max] = -1;
-		//	m_weakEnemyAnimation[4][max] = -1;
-		//	m_weakEnemyAnimation[5][max] = -1;
-		//	m_weakEnemyAnimation[6][max] = -1;
-
-		//}
-
 		BlendAnimation(time, max, 3, 0);
 		BlendAnimation(time, max, 3, 4);
 		BlendAnimation(time, max, 3, 5);
@@ -515,26 +455,6 @@ void WeakEnemy::Animation(float& time, int max)
 	//左周り
 	if (m_randomAction[max] == 0 && m_enemyWait[max] == true)
 	{
-		//if (m_weakEnemyAnimation[0][max] != -1 || m_weakEnemyAnimation[3][max] != -1 || m_weakEnemyAnimation[5][max] != -1 ||
-		//	m_weakEnemyAnimation[6][max] != -1)
-		//{
-		//	//アニメーションデタッチ
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[0][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[3][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[5][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[6][max]);
-
-		//	//アニメーションアタッチ
-		//	m_weakEnemyAnimation[4][max] = MV1AttachAnim(m_weakEnemyHandle[max], 0, m_animLeftWalking, TRUE);
-
-		//	time = 0.0f;
-
-		//	m_weakEnemyAnimation[0][max] = -1;
-		//	m_weakEnemyAnimation[3][max] = -1;
-		//	m_weakEnemyAnimation[5][max] = -1;
-		//	m_weakEnemyAnimation[6][max] = -1;
-
-		//}
 
 		BlendAnimation(time, max, 4, 0);
 		BlendAnimation(time, max, 4, 3);
@@ -545,26 +465,6 @@ void WeakEnemy::Animation(float& time, int max)
 	//右周り
 	if (m_randomAction[max] == 1 && m_enemyWait[max] == true)
 	{
-		//if (m_weakEnemyAnimation[0][max] != -1 || m_weakEnemyAnimation[3][max] != -1 || m_weakEnemyAnimation[4][max] != -1 ||
-		//	m_weakEnemyAnimation[6][max] != -1)
-		//{
-		//	//アニメーションデタッチ
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[0][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[3][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[4][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[6][max]);
-
-		//	//アニメーションアタッチ
-		//	m_weakEnemyAnimation[5][max] = MV1AttachAnim(m_weakEnemyHandle[max], 0, m_animRightWalking, TRUE);
-
-		//	time = 0.0f;
-
-		//	m_weakEnemyAnimation[0][max] = -1;
-		//	m_weakEnemyAnimation[3][max] = -1;
-		//	m_weakEnemyAnimation[4][max] = -1;
-		//	m_weakEnemyAnimation[6][max] = -1;
-
-		//}
 
 		BlendAnimation(time, max, 5, 0);
 		BlendAnimation(time, max, 5, 3);
@@ -575,25 +475,6 @@ void WeakEnemy::Animation(float& time, int max)
 	//攻撃モーション
 	if (m_randomAction[max] == 2 && m_enemyWait[max] == true)
 	{
-		//if (m_weakEnemyAnimation[0][max] != -1 || m_weakEnemyAnimation[3][max] != -1 || m_weakEnemyAnimation[4][max] != -1 ||
-		//	m_weakEnemyAnimation[5][max] != -1)
-		//{
-		//	//アニメーションデタッチ
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[0][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[3][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[4][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[5][max]);
-
-		//	//アニメーションアタッチ
-		//	m_weakEnemyAnimation[6][max] = MV1AttachAnim(m_weakEnemyHandle[max], 0, m_animAttack1, TRUE);
-
-		//	time = 0.0f;
-
-		//	m_weakEnemyAnimation[0][max] = -1;
-		//	m_weakEnemyAnimation[3][max] = -1;
-		//	m_weakEnemyAnimation[4][max] = -1;
-		//	m_weakEnemyAnimation[5][max] = -1;
-		//}
 
 		BlendAnimation(time, max, 6, 0);
 		BlendAnimation(time, max, 6, 3);
@@ -605,30 +486,6 @@ void WeakEnemy::Animation(float& time, int max)
 	//敵が死んだら死ぬアニメーションを入れる
 	if (m_weakEnemyHp[max] <= 0.0f)
 	{
-		//if (m_weakEnemyAnimation[0][max] != -1 || m_weakEnemyAnimation[1][max] != -1 || m_weakEnemyAnimation[3][max] != -1 ||
-		//	m_weakEnemyAnimation[4][max] != -1 || m_weakEnemyAnimation[5][max] != -1 || m_weakEnemyAnimation[6][max] != -1)
-		//{
-		//	//アニメーションデタッチ
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[0][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[1][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[3][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[4][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[5][max]);
-		//	MV1DetachAnim(m_weakEnemyHandle[max], m_weakEnemyAnimation[6][max]);
-
-		//	//アニメーションアタッチ
-		//	m_weakEnemyAnimation[2][max] = MV1AttachAnim(m_weakEnemyHandle[max], 0, m_animDeath, TRUE);
-
-		//	time = 0.0f;
-
-		//	m_weakEnemyAnimation[0][max] = -1;
-		//	m_weakEnemyAnimation[1][max] = -1;
-		//	m_weakEnemyAnimation[3][max] = -1;
-		//	m_weakEnemyAnimation[4][max] = -1;
-		//	m_weakEnemyAnimation[5][max] = -1;
-		//	m_weakEnemyAnimation[6][max] = -1;
-
-		//}
 
 		BlendAnimation(time, max, 2, 0);
 		BlendAnimation(time, max, 2, 1);
@@ -639,54 +496,26 @@ void WeakEnemy::Animation(float& time, int max)
 	}
 
 	//再生時間がアニメーションの総再生時間に達したら再生時間を0に戻す
-	//if (time >= m_weakEnemyTotalAnimationTime[0][max] && m_weakEnemyAnimation[0][max] != -1)
-	//{
-	//	time = 0.0f;
-	//}
 	if (time >= m_weakEnemyTotalAnimationTime[0][max] && m_weakAnimOne[0][max] == true)
 	{
 		time = 0.0f;
 	}
-	//if (time >= m_weakEnemyTotalAnimationTime[2][max] && m_weakEnemyAnimation[2][max] != -1)
-	//{
-	//	time = 120.0f;
-	//}
 	if (time >= m_weakEnemyTotalAnimationTime[2][max] && m_weakAnimOne[2][max] == true)
 	{
 		time = 120.0f;
 	}
-	//if (time >= m_weakEnemyTotalAnimationTime[3][max] && m_weakEnemyAnimation[3][max] != -1)
-	//{
-	//	time = 0.0f;
-	//}
 	if (time >= m_weakEnemyTotalAnimationTime[3][max] && m_weakAnimOne[3][max] == true)
 	{
 		time = 0.0f;
 	}
-	//if (time >= m_weakEnemyTotalAnimationTime[4][max] && m_weakEnemyAnimation[4][max] != -1)
-	//{
-	//	time = 0.0f;
-	//}
 	if (time >= m_weakEnemyTotalAnimationTime[4][max] && m_weakAnimOne[4][max] == true)
 	{
 		time = 0.0f;
 	}
-	//if (time >= m_weakEnemyTotalAnimationTime[5][max] && m_weakEnemyAnimation[5][max] != -1)
-	//{
-	//	time = 0.0f;
-	//}
 	if (time >= m_weakEnemyTotalAnimationTime[5][max] && m_weakAnimOne[5][max] == true)
 	{
 		time = 0.0f;
 	}
-	//if (time >= m_weakEnemyTotalAnimationTime[6][max] && m_weakEnemyAnimation[6][max] != -1)
-	//{
-	//	m_weakEnemyMoveAttack[max] = false;
-
-	//	m_randomNextActionTime[max] = 50.0f;
-
-	//	time = 0.0f;
-	//}
 	if (time >= m_weakEnemyTotalAnimationTime[6][max] && m_weakAnimOne[6][max] == true)
 	{
 		m_weakEnemyMoveAttack[max] = false;
@@ -697,50 +526,26 @@ void WeakEnemy::Animation(float& time, int max)
 	}
 
 	//再生時間をセットする
-	//if (m_weakEnemyAnimation[0][max] != -1)
-	//{
-	//	MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[0][max], time);
-	//}
 	if (m_weakAnimOne[0][max] == true)
 	{
 		MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[0][max], time);
 	}
-	//if (m_weakEnemyAnimation[2][max] != -1)
-	//{
-	//	MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[2][max], time);
-	//}
 	if (m_weakAnimOne[2][max] == true)
 	{
 		MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[2][max], time);
 	}
-	//if (m_weakEnemyAnimation[3][max] != -1)
-	//{
-	//	MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[3][max], time);
-	//}
 	if (m_weakAnimOne[3][max] == true)
 	{
 		MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[3][max], time);
 	}
-	//if (m_weakEnemyAnimation[4][max] != -1)
-	//{
-	//	MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[4][max], time);
-	//}
 	if (m_weakAnimOne[4][max] == true)
 	{
 		MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[4][max], time);
 	}
-	//if (m_weakEnemyAnimation[5][max] != -1)
-	//{
-	//	MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[5][max], time);
-	//}
 	if (m_weakAnimOne[5][max] == true)
 	{
 		MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[5][max], time);
 	}
-	//if (m_weakEnemyAnimation[6][max] != -1)
-	//{
-	//	MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[6][max], time);
-	//}
 	if (m_weakAnimOne[6][max] == true)
 	{
 		MV1SetAttachAnimTime(m_weakEnemyHandle[max], m_weakEnemyAnimation[6][max], time);
@@ -751,21 +556,31 @@ void WeakEnemy::BlendAnimation(float& time, int max, int blendNumber, int DNumbe
 {
 	if (m_weakAnimOne[DNumber][max] == true && m_weakAnimOne[blendNumber][max] == false)
 	{
-		m_weakAnimBlend[max] = 0.0f;
-
-		for (m_weakAnimBlend[max] = 0.0f; m_weakAnimBlend[max] < 1.0f; m_weakAnimBlend[max]++)
+		//一回だけ実行
+		if (m_weakAnimBlendOne[max] == false)
 		{
-			//ブレンドを0にする
-			MV1SetAttachAnimBlendRate(m_weakEnemyHandle[max], m_weakEnemyAnimation[DNumber][max], 1.0f - m_weakAnimBlend[max]);
+			m_weakAnimBlend[max] = 0.0f;
 
-			//アニメーションブレンド
-			MV1SetAttachAnimBlendRate(m_weakEnemyHandle[max], m_weakEnemyAnimation[blendNumber][max], m_weakAnimBlend[max]);
+			m_weakAnimBlendOne[max] = true;
 		}
 
-		time = 0.0f;
-		m_weakAnimOne[blendNumber][max] = true;
-		m_weakAnimOne[DNumber][max] = false;
+		//ブレンドを0にする
+		MV1SetAttachAnimBlendRate(m_weakEnemyHandle[max], m_weakEnemyAnimation[DNumber][max], 1.0f - m_weakAnimBlend[max]);
 
+		//アニメーションブレンド
+		MV1SetAttachAnimBlendRate(m_weakEnemyHandle[max], m_weakEnemyAnimation[blendNumber][max], m_weakAnimBlend[max]);
+
+		time = 0.0f;
+
+		if (m_weakAnimBlend[max] >= 1.0f)
+		{
+			m_weakAnimOne[blendNumber][max] = true;
+			m_weakAnimOne[DNumber][max] = false;
+		}
+	}
+	else if(m_weakAnimOne[blendNumber][max] == true)
+	{
+		m_weakAnimBlendOne[max] = false;
 	}
 }
 
@@ -939,22 +754,22 @@ void WeakEnemy::Draw(int max)
 	//	DrawFormatString(0, 250, 0xffffff, "発見された");
 	//}
 
-	DrawFormatString(0, 140, 0xffffff, "m_anim0 : %f", m_weakEnemyTotalAnimationTime[0][max]);
-	DrawFormatString(0, 200, 0xffffff, "m_anim1 : %f", m_weakEnemyTotalAnimationTime[1][max]);
-	DrawFormatString(0, 260, 0xffffff, "m_anim2 : %f", m_weakEnemyTotalAnimationTime[2][max]);
-	DrawFormatString(0, 320, 0xffffff, "m_anim3 : %f", m_weakEnemyTotalAnimationTime[3][max]);
-	DrawFormatString(0, 380, 0xffffff, "m_anim4 : %f", m_weakEnemyTotalAnimationTime[4][max]);
-	DrawFormatString(0, 440, 0xffffff, "m_anim5 : %f", m_weakEnemyTotalAnimationTime[5][max]);
-	DrawFormatString(0, 500, 0xffffff, "m_anim6 : %f", m_weakEnemyTotalAnimationTime[6][max]);
+
+	//DrawFormatString(0, 140, 0xffffff, "m_anim0 : %f", m_weakEnemyTotalAnimationTime[0][max]);
+	//DrawFormatString(0, 200, 0xffffff, "m_anim1 : %f", m_weakEnemyTotalAnimationTime[1][max]);
+	//DrawFormatString(0, 260, 0xffffff, "m_anim2 : %f", m_weakEnemyTotalAnimationTime[2][max]);
+	//DrawFormatString(0, 320, 0xffffff, "m_anim3 : %f", m_weakEnemyTotalAnimationTime[3][max]);
+	//DrawFormatString(0, 380, 0xffffff, "m_anim4 : %f", m_weakEnemyTotalAnimationTime[4][max]);
+	//DrawFormatString(0, 440, 0xffffff, "m_anim5 : %f", m_weakEnemyTotalAnimationTime[5][max]);
+	//DrawFormatString(0, 500, 0xffffff, "m_anim6 : %f", m_weakEnemyTotalAnimationTime[6][max]);
 
 #endif
 
-	//DrawFormatString(0, 260, 0xffffff, "m_animblend : %f", m_weakAnimBlend[0]);
-	//DrawFormatString(0, 320, 0xffffff, "m_animblend : %f", m_weakAnimBlend[1]);
-	//DrawFormatString(0, 380, 0xffffff, "m_animblend : %f", m_weakAnimBlend[2]);
-	//DrawFormatString(0, 440, 0xffffff, "m_animblend : %f", m_weakAnimBlend[3]);
-	//DrawFormatString(0, 500, 0xffffff, "m_animblend : %f", m_weakAnimBlend[4]);
-
+	DrawFormatString(0, 260, 0xffffff, "m_animblend : %f", m_weakAnimBlend[0]);
+	DrawFormatString(0, 320, 0xffffff, "m_animblend : %f", m_weakAnimBlend[1]);
+	DrawFormatString(0, 380, 0xffffff, "m_animblend : %f", m_weakAnimBlend[2]);
+	DrawFormatString(0, 440, 0xffffff, "m_animblend : %f", m_weakAnimBlend[3]);
+	DrawFormatString(0, 500, 0xffffff, "m_animblend : %f", m_weakAnimBlend[4]);
 
 	//3Dモデルポジション設定
 	MV1SetPosition(m_weakEnemyHandle[max], m_weakDrawPos[max]);

@@ -62,6 +62,7 @@ private:
 
 	//アニメーション関係
 	float m_weakPlayTime[ENEMY_NOW];                     //敵のアニメーション時間
+	bool m_weakAnimBlendOne[ENEMY_NOW];                       //敵のブレンドを0にする判定
 
 	//SE代入変数
 	int m_hitSE[ENEMY_NOW];
