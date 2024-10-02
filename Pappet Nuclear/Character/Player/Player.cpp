@@ -87,6 +87,11 @@ Player::Player():
 	{
 		m_targetNumber[i] = false;
 	}
+
+	//シングルトン
+	auto& result = HandleManager::GetInstance();
+
+	m_handle = result.GetModelHandle("Data/Player/PuppetPlayerModel.mv1");
 }
 
 Player::~Player()
@@ -161,7 +166,7 @@ void Player::Init()
 		effect->PlayerInit();
 
 		//プレイヤーもモデル読み込み
-		m_handle = MV1LoadModel("Data/Player/PuppetPlayerModel.mv1");
+		//m_handle = MV1LoadModel("Data/Player/PuppetPlayerModel.mv1");
 
 		//プレイヤーの大きさを変える
 		MV1SetScale(m_handle, VGet(m_modelSize, m_modelSize, m_modelSize));

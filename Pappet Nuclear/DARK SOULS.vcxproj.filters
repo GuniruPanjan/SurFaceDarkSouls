@@ -180,7 +180,7 @@
     <ClCompile Include="Character\Player\Equipment\Equipment.cpp">
       <Filter>ソース ファイル\Character\Player\Equipment</Filter>
     </ClCompile>
-    <ClCompile Include="Singleton\Singleton.cpp">
+    <ClCompile Include="Singleton\HandleManager.cpp">
       <Filter>ソース ファイル\Singleton</Filter>
     </ClCompile>
   </ItemGroup>
@@ -269,7 +269,7 @@
     <ClInclude Include="Icon\Icon.h">
       <Filter>リソース ファイル\Icon</Filter>
     </ClInclude>
-    <ClInclude Include="Singleton\Singleton.h">
+    <ClInclude Include="Singleton\HandleManager.h">
       <Filter>ヘッダー ファイル\Singleton</Filter>
     </ClInclude>
   </ItemGroup>

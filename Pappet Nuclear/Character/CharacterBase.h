@@ -5,6 +5,7 @@
 #include "Col/CapsuleCol.h"
 #include "Col/SphereCol.h"
 #include "Col/RectCol.h"
+#include "Singleton/HandleManager.h"
 #include<memory>
 //だいたいのアニメーション
 #define  ANIMATION   30

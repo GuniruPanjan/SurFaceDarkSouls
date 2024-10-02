@@ -11,7 +11,6 @@ namespace
 SceneGame::SceneGame():
 	m_one(false)
 {
-	auto& result = Singleton<EnemyBase>::GetInstance();
 }
 
 SceneGame::~SceneGame()

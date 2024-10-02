@@ -1,13 +1,10 @@
 #pragma once
-#include "Singleton/Singleton.h"
 #include "Character/CharacterBase.h"
 
 class Player;
 
 class EnemyBase : public CharacterBase
 {
-	//シングルトンのテンプレート引数に自身を指定したものだけに生成を許す
-	friend Singleton<EnemyBase>;
 
 public:
 	EnemyBase();

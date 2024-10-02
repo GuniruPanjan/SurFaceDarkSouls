@@ -163,7 +163,7 @@
     <ClCompile Include="Scene\SceneGame.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\SceneTitle.cpp" />
-    <ClCompile Include="Singleton\Singleton.cpp" />
+    <ClCompile Include="Singleton\HandleManager.cpp" />
     <ClCompile Include="Template3D.cpp" />
     <ClCompile Include="UI\Setting.cpp" />
     <ClCompile Include="UI\UI.cpp" />
@@ -195,7 +195,7 @@
     <ClInclude Include="Scene\SceneGame.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneTitle.h" />
-    <ClInclude Include="Singleton\Singleton.h" />
+    <ClInclude Include="Singleton\HandleManager.h" />
     <ClInclude Include="UI\Setting.h" />
     <ClInclude Include="UI\UI.h" />
     <ClInclude Include="UI\UIManager.h" />

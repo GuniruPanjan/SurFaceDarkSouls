@@ -1,4 +1,5 @@
 #include "EnemyBase.h"
+#include "Singleton/HandleManager.h"
 
 EnemyBase::EnemyBase():
 	m_bossModelHandle(-1),
