@@ -13,6 +13,9 @@ namespace
 
 	float anX;         //アナログスティックを格納する変数
 	float anY;         //アナログスティックを格納する変数
+
+	//シングルトン
+	auto& result = HandleManager::GetInstance();
 }
 
 Player::Player():
@@ -88,9 +91,6 @@ Player::Player():
 		m_targetNumber[i] = false;
 	}
 
-	//シングルトン
-	auto& result = HandleManager::GetInstance();
-
 	m_handle = result.GetModelHandle("Data/Player/PuppetPlayerModel.mv1");
 }
 
@@ -111,6 +111,8 @@ Player::~Player()
 	MV1DeleteModel(m_animLeft);
 	MV1DeleteModel(m_animRight);
 
+	//メモリ削除
+	result.Clear();
 }
 
 void Player::Init()
@@ -2861,6 +2863,9 @@ void Player::End()
 	weapon->End();
 	effect->End();
 	se->End();
+
+	//メモリ削除
+	result.Clear();
 }
 
 bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)

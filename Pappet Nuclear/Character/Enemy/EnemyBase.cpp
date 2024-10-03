@@ -1,5 +1,10 @@
 #include "EnemyBase.h"
-#include "Singleton/HandleManager.h"
+
+namespace
+{
+	//シングルトン
+	auto& handle = HandleManager::GetInstance();
+}
 
 EnemyBase::EnemyBase():
 	m_bossModelHandle(-1),
@@ -28,8 +33,11 @@ EnemyBase::EnemyBase():
 	}
 
 	//敵のモデル読み込み
-	m_handle = MV1LoadModel("Data/Enemy/EnemyModel.mv1");
-	m_bossModelHandle = MV1LoadModel("Data/Enemy/BossEnemy.mv1");
+	m_handle = handle.GetModelHandle("Data/Enemy/EnemyModel.mv1");
+	m_bossModelHandle = handle.GetModelHandle("Data/Enemy/BossEnemy.mv1");
+
+	//m_handle = MV1LoadModel("Data/Enemy/EnemyModel.mv1");
+	//m_bossModelHandle = MV1LoadModel("Data/Enemy/BossEnemy.mv1");
 
 	//敵のアニメーション読み込み
 	m_animStand = MV1LoadModel("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyStand1.mv1");
@@ -164,6 +172,9 @@ EnemyBase::~EnemyBase()
 	MV1DeleteModel(m_bossAnimAttack2);
 	MV1DeleteModel(m_bossAnimAttack3);
 
+	//メモリ削除
+	handle.Clear();
+
 }
 
 void EnemyBase::End()
@@ -185,4 +196,6 @@ void EnemyBase::End()
 	MV1DeleteModel(m_bossAnimAttack2);
 	MV1DeleteModel(m_bossAnimAttack3);
 
+	//メモリ削除
+	handle.Clear();
 }
