@@ -142,7 +142,7 @@
     <ClCompile Include="BGM・SE\BgmAndSeManager.cpp" />
     <ClCompile Include="BGM・SE\SEManager.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
-    <ClCompile Include="Character\Animation\AnimationManager.cpp" />
+    <ClCompile Include="Character\Animation\BlendAnimation.cpp" />
     <ClCompile Include="Character\CharacterBase.cpp" />
     <ClCompile Include="Character\Effect\Effect.cpp" />
     <ClCompile Include="Character\Enemy\BossEnemy.cpp" />
@@ -173,7 +173,7 @@
     <ClInclude Include="BGM・SE\BgmAndSeManager.h" />
     <ClInclude Include="BGM・SE\SEManager.h" />
     <ClInclude Include="Camera\Camera.h" />
-    <ClInclude Include="Character\Animation\AnimationManager.h" />
+    <ClInclude Include="Character\Animation\BlendAnimation.h" />
     <ClInclude Include="Character\CharacterBase.h" />
     <ClInclude Include="Character\Effect\Effect.h" />
     <ClInclude Include="Character\Enemy\BossEnemy.h" />

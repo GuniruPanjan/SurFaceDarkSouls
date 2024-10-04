@@ -49,6 +49,8 @@ private:
 	bool m_bossAttack2;           //ボスの攻撃2の判断
 	bool m_bossAttack3;           //ボスの攻撃3の判断
 	bool m_playerHit;             //プレイヤーに攻撃を当てられる判定
+	bool m_turnRight;             //右に回転する判定
+	bool m_turnLeft;              //左に回転する判定
 	int m_bossAttack;     //ボスの攻撃パターン
 	bool m_one;           //一回だけ初期化する
 	unsigned int m_color = 0xffffff;

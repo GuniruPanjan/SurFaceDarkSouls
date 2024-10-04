@@ -8,6 +8,7 @@ namespace
 	int walkTime;   //歩くSE間隔
 	float difPSize;   //プレイヤーとの距離
 	float difSSize;   //盾との距離
+	float correctionAngle;    //敵がプレイヤーの位置によって方向を補正するための変数
 }
 
 BossEnemy::BossEnemy() :
@@ -26,7 +27,9 @@ BossEnemy::BossEnemy() :
 	m_bossAttackRadius3(0.0f),
 	m_bounceAngle(0.0f),
 	m_outPush(VGet(0.0f, 0.0f, 0.0f)),
-	m_playerHit(false)
+	m_playerHit(false),
+	m_turnLeft(false),
+	m_turnRight(false)
 {
 }
 
@@ -132,19 +135,6 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 		m_playTime += 0.5f;
 	}
 
-	//if (m_bossAttack1 == true)
-	//{
-	//	m_playTime += 0.5f;
-	//}
-	//else if (m_bossAttack2 == true)
-	//{
-	//	m_playTime += 0.5f;
-	//}
-	//else
-	//{
-	//	m_playTime += 0.5f;
-	//}
-
 	//プレイヤーを押し出す方向算出
 	float bounceX = m_pos.x - player.GetPosX();
 	float bounceZ = m_pos.z - player.GetPosZ();
@@ -155,12 +145,28 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 	//ボスの部屋に入った
 	if (map.GetRoomEntered() == true)
 	{
+		//敵がプレイヤーの位置によって方向を補正する
+		float Cx = m_pos.x - player.GetPosX();
+		float Cz = m_pos.z - player.GetPosZ();
+
+		correctionAngle = atan2f(Cx, Cz);
+
 		if (m_bossDistance == false || m_bossMoveAttackPattern == true)
 		{
 
 			float X = m_pos.x - player.GetPosX();
 			float Z = m_pos.z - player.GetPosZ();
 
+			//左に回転する
+			if (correctionAngle < m_angle - 0.8f)
+			{
+				m_turnLeft = true;
+			}
+			//右に回転する
+			if (correctionAngle > m_angle + 0.8f)
+			{
+				m_turnRight = true;
+			}
 			//攻撃パターン1の時はプレイヤーの方を向く
 			if (m_bossBattle == true && m_bossMoveAttack == false || m_bossMoveAttackPattern == true)
 			{
@@ -173,7 +179,6 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 			m_bossBattle = true;
 		}
 	}
-
 	if (m_bossDistance == false && m_bossBattle == true && m_bossMoveAttack == false)
 	{
 		walkTime++;
@@ -317,23 +322,28 @@ void BossEnemy::Action(Player& player)
 		}
 		if (m_bossAttack == 2 && m_bossAttack3 == true)
 		{	
-			if (m_playTime >= 25.0f)
+
+			if (m_playTime >= 5.0f)
 			{
+
 				if (m_effectActivation == false)
 				{
 					m_effect = PlayEffekseer3DEffect(effect->GetBossAttackEffect3());
 
 					m_effectActivation = true;
 				}
-
-				if (attack == false)
-				{
-					PlaySoundMem(se->GetBossAttackSE3(), DX_PLAYTYPE_BACK, true);
-
-					attack = true;
-				}
 			}
+			if (m_playTime >= 25.0f)
+			{
 
+					if (attack == false)
+					{
+						PlaySoundMem(se->GetBossAttackSE3(), DX_PLAYTYPE_BACK, true);
+
+						attack = true;
+					}
+	
+			}
 			if (m_playTime >= 58.0f && m_playTime <= 68.0f)
 			{
 				m_colBossAttackSphere3.Update(m_colBossAttackPos3);
@@ -349,7 +359,7 @@ void BossEnemy::Action(Player& player)
 	SetPosPlayingEffekseer3DEffect(m_effect, m_pos.x, 0.0f, m_pos.z);
 
 	//エフェクト更新
-	effect->Update();
+	//effect->Update();
 }
 
 void BossEnemy::Animation(float& time)
@@ -781,6 +791,13 @@ void BossEnemy::Draw()
 
 #endif
 
+	DrawFormatString(0, 120, 0xffffff, "m_angle : %f", m_angle);
+	DrawFormatString(0, 180, 0xffffff, "correctionAngle : %f", correctionAngle);
+
+	//プレイヤーがボスより左にいると-がかかるし、差がー１くらいで１アニメーション
+	//プレイヤーがボスより右にいると+がかかるし、差が+1くらいで1アニメーション
+
+
 	//3Dモデルポジション設定
 	MV1SetPosition(m_bossModelHandle, m_pos);
 
@@ -794,7 +811,7 @@ void BossEnemy::Draw()
 	SetPosPlayingEffekseer3DEffect(m_effectHit, m_pos.x, m_pos.y + 70.0f, m_pos.z);
 
 	//エフェクトの描画
-	effect->Draw();
+	//effect->Draw();
 }
 
 void BossEnemy::End()

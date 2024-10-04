@@ -120,9 +120,6 @@
     <ClCompile Include="Scene\SceneManager.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Character\Animation\AnimationManager.cpp">
-      <Filter>ソース ファイル\Character\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="Character\Enemy\EnemyBase.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
@@ -183,6 +180,9 @@
     <ClCompile Include="Singleton\HandleManager.cpp">
       <Filter>ソース ファイル\Singleton</Filter>
     </ClCompile>
+    <ClCompile Include="Character\Animation\BlendAnimation.cpp">
+      <Filter>ソース ファイル\Character\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneBase.h">
@@ -205,9 +205,6 @@
     </ClInclude>
     <ClInclude Include="Scene\SceneManager.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Character\Animation\AnimationManager.h">
-      <Filter>ヘッダー ファイル\Character\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Character\Enemy\EnemyBase.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
@@ -271,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="Singleton\HandleManager.h">
       <Filter>ヘッダー ファイル\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Animation\BlendAnimation.h">
+      <Filter>ヘッダー ファイル\Character\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

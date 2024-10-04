@@ -836,6 +836,7 @@ void Player::WeaponUpdate(Equipment& eq)
 			m_swordCol = true;
 		}
 
+		//装備の付け替えを行ったときに攻撃当たり判定がでるため敵が一撃で死ぬバグがある
 		//攻撃の当たり判定をプレイヤーの正面に持ってくる
 		m_colAttackPos.x = m_pos.x + sinf(m_angle) * -35.0f;
 		m_colAttackPos.z = m_pos.z - cosf(m_angle) * 35.0f;

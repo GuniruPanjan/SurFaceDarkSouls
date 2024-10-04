@@ -48,6 +48,7 @@ protected:
 	int m_bossAnimStand;     //ボスの立ちアニメーション格納変数
 	int m_bossAnimDeath;     //ボスの死亡アニメーション格納変数
 	int m_bossAnimWalk;      //ボスの歩きアニメーション格納変数
+	int m_bossAnimTurn;      //ボスの回転アニメーション格納変数
 	int m_bossAnimAttack1;   //ボスの攻撃アニメーション格納変数
 	int m_bossAnimAttack2;   //ボスの攻撃アニメーション格納変数
 	int m_bossAnimAttack3;   //ボスの攻撃アニメーション格納変数
