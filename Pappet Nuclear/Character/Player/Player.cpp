@@ -217,26 +217,32 @@ void Player::Init()
 
 
 		//アタッチしたアニメーションの総再生時間を取得する
-		m_totalAnimTime[0] = MV1GetAttachAnimTotalTime(m_handle, m_animation[0]);
-		m_totalAnimTime[1] = MV1GetAttachAnimTotalTime(m_handle, m_animation[1]);
-		m_totalAnimTime[2] = MV1GetAttachAnimTotalTime(m_handle, m_animation[2]);
-		m_totalAnimTime[3] = MV1GetAttachAnimTotalTime(m_handle, m_animation[3]);
-		m_totalAnimTime[4] = MV1GetAttachAnimTotalTime(m_handle, m_animation[4]);
-		m_totalAnimTime[5] = MV1GetAttachAnimTotalTime(m_handle, m_animation[5]);
-		m_totalAnimTime[6] = MV1GetAttachAnimTotalTime(m_handle, m_animation[6]);
-		m_totalAnimTime[7] = MV1GetAttachAnimTotalTime(m_handle, m_animation[7]);
-		m_totalAnimTime[8] = MV1GetAttachAnimTotalTime(m_handle, m_animation[8]);
-		m_totalAnimTime[9] = MV1GetAttachAnimTotalTime(m_handle, m_animation[9]);
-		m_totalAnimTime[10] = MV1GetAttachAnimTotalTime(m_handle, m_animation[10]);
-		m_totalAnimTime[11] = MV1GetAttachAnimTotalTime(m_handle, m_animation[11]);
-		m_totalAnimTime[12] = MV1GetAttachAnimTotalTime(m_handle, m_animation[12]);
-		m_totalAnimTime[13] = MV1GetAttachAnimTotalTime(m_handle, m_animation[13]);
-		m_totalAnimTime[14] = MV1GetAttachAnimTotalTime(m_handle, m_animation[14]);
-		m_totalAnimTime[15] = MV1GetAttachAnimTotalTime(m_handle, m_animation[15]);
-		m_totalAnimTime[16] = MV1GetAttachAnimTotalTime(m_handle, m_animation[16]);
-		m_totalAnimTime[17] = MV1GetAttachAnimTotalTime(m_handle, m_animation[17]);
-		m_totalAnimTime[18] = MV1GetAttachAnimTotalTime(m_handle, m_animation[18]);
 
+		for (int i = 0; i < 19; i++)
+		{
+			m_totalAnimTime[i] = MV1GetAttachAnimTotalTime(m_handle, m_animation[i]);
+
+		}
+
+		//m_totalAnimTime[0] = MV1GetAttachAnimTotalTime(m_handle, m_animation[0]);
+		//m_totalAnimTime[1] = MV1GetAttachAnimTotalTime(m_handle, m_animation[1]);
+		//m_totalAnimTime[2] = MV1GetAttachAnimTotalTime(m_handle, m_animation[2]);
+		//m_totalAnimTime[3] = MV1GetAttachAnimTotalTime(m_handle, m_animation[3]);
+		//m_totalAnimTime[4] = MV1GetAttachAnimTotalTime(m_handle, m_animation[4]);
+		//m_totalAnimTime[5] = MV1GetAttachAnimTotalTime(m_handle, m_animation[5]);
+		//m_totalAnimTime[6] = MV1GetAttachAnimTotalTime(m_handle, m_animation[6]);
+		//m_totalAnimTime[7] = MV1GetAttachAnimTotalTime(m_handle, m_animation[7]);
+		//m_totalAnimTime[8] = MV1GetAttachAnimTotalTime(m_handle, m_animation[8]);
+		//m_totalAnimTime[9] = MV1GetAttachAnimTotalTime(m_handle, m_animation[9]);
+		//m_totalAnimTime[10] = MV1GetAttachAnimTotalTime(m_handle, m_animation[10]);
+		//m_totalAnimTime[11] = MV1GetAttachAnimTotalTime(m_handle, m_animation[11]);
+		//m_totalAnimTime[12] = MV1GetAttachAnimTotalTime(m_handle, m_animation[12]);
+		//m_totalAnimTime[13] = MV1GetAttachAnimTotalTime(m_handle, m_animation[13]);
+		//m_totalAnimTime[14] = MV1GetAttachAnimTotalTime(m_handle, m_animation[14]);
+		//m_totalAnimTime[15] = MV1GetAttachAnimTotalTime(m_handle, m_animation[15]);
+		//m_totalAnimTime[16] = MV1GetAttachAnimTotalTime(m_handle, m_animation[16]);
+		//m_totalAnimTime[17] = MV1GetAttachAnimTotalTime(m_handle, m_animation[17]);
+		//m_totalAnimTime[18] = MV1GetAttachAnimTotalTime(m_handle, m_animation[18]);
 
 
 		//一旦待機以外のアニメーションデタッチ
@@ -831,12 +837,11 @@ void Player::WeaponUpdate(Equipment& eq)
 		//一回だけ初期化
 		if (m_swordCol == false)
 		{
-			m_sphereCol.Init(m_colAttackPos, m_swordRadius);
+			m_sphereCol.Init(m_initializationPos, m_swordRadius);
 
 			m_swordCol = true;
 		}
 
-		//装備の付け替えを行ったときに攻撃当たり判定がでるため敵が一撃で死ぬバグがある
 		//攻撃の当たり判定をプレイヤーの正面に持ってくる
 		m_colAttackPos.x = m_pos.x + sinf(m_angle) * -35.0f;
 		m_colAttackPos.z = m_pos.z - cosf(m_angle) * 35.0f;

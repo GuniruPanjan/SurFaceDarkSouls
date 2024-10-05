@@ -267,6 +267,11 @@ void BossEnemy::Action(Player& player)
 		//s“®‚ªI‚í‚é‚Ü‚Åˆê‰ñÀs
 		if (m_bossMoveAttack == false)
 		{
+			//UŒ‚‚Ì“–‚½‚è”»’è‚ğ‰Šú‰»
+			m_colBossAttackSphere1.Update(m_initializationPos);
+			m_colBossAttackSphere2.Update(m_initializationPos);
+			m_colBossAttackSphere3.Update(m_initializationPos);
+
 			m_bossAttack = GetRand(2);
 
 			m_bossMoveAttack = true;
