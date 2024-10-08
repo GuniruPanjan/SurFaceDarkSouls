@@ -14,6 +14,8 @@ namespace
 	float anX;         //アナログスティックを格納する変数
 	float anY;         //アナログスティックを格納する変数
 
+	MATRIX AvoidancePos;    //回避したときのポジション
+
 	//シングルトン
 	auto& result = HandleManager::GetInstance();
 }
@@ -370,6 +372,7 @@ void Player::Update()
 
 	//アニメーションで移動しているフレームの番号を検索する
 	m_moveAnimFrameIndex = MV1SearchFrame(m_handle, "mixamorig:Hips");
+	//m_moveAnimFrameIndex = MV1GetPosition(m_handle);
 	m_moveAnimFrameRight = MV1SearchFrame(m_handle, "mixamorig:RightHandThumb2");
 
 	//武器をアタッチするフレームのローカル→ワールド変換行列を取得する
@@ -401,6 +404,9 @@ void Player::Update()
 		m_oneAvoidance = false;
 	}
 
+	//プレイヤーが回避する方向の前に最初に向いてる方向に回避をしてしまうためバグが発生している
+	//プレイヤーが向いている方向じゃないと回避がバグる
+	//↓が間違っているため修正
 	//回避の移動先を入力するため
 	if (m_avoidance == true && m_oneAvoidance == false)
 	{
@@ -458,7 +464,7 @@ void Player::Update()
 		m_hit == false && m_hp >= 0.0f && m_hitImpact == false)
 	{
 		//ロックオンしてない時と走った時のアングル
-		if (m_lockonTarget == false || m_dashMove == true || m_avoidance == true)
+		if (m_lockonTarget == false || m_dashMove == true && m_avoidance == false)
 		{
 			//アングルを決定
 			m_angle = atan2f(-m_move.z, m_move.x) - DX_PI_F / 2;
@@ -468,11 +474,15 @@ void Player::Update()
 		{
 			//アングルを決定
 			m_angle = m_lockAngle;
+			
+		}
+		else if (m_avoidance == true)
+		{
+			//アングルを決定
+			m_angle = atan2f(-m_move.z, m_move.x) - DX_PI_F / 2;
 		}
 		
 
-		SetAngleX += D2R(1.0f);
-		SetAngleY += D2R(1.0f);
 
 		//プレイヤーが動いたら
 		m_moveflag = true;
@@ -574,6 +584,8 @@ void Player::Update()
 	//アニメーション時間を進める前のアニメーションで移動をしているフレームの座標取得
 	m_prevPos = MV1GetFramePosition(m_handle, m_moveAnimFrameIndex);
 
+	AvoidancePos = MV1GetFrameLocalWorldMatrix(m_handle, m_moveAnimFrameIndex);
+
 	//アタッチするモデルのフレーム座標を取得する
 	m_moveAnimFrameRigthPosition = MV1GetFramePosition(m_handle, m_moveAnimFrameRight);
 
@@ -626,6 +638,7 @@ void Player::Update()
 				//スタミナ消費
 				m_stamina -= 0.1f;
 			}
+			//回避する
 			else if (m_stamina >= 10.0f && m_avoidance == false)
 			{
 				m_avoidance = true;
@@ -668,11 +681,10 @@ void Player::Update()
 	}
 	if (m_playTime >= m_totalAnimTime[3] && m_animation[3] != -1)
 	{
-		
 		m_drawPos = m_pos;
 
-		//回避終了
 		m_avoidance = false;
+
 	}
 	if (m_playTime >= m_totalAnimTime[4] && m_animation[4] != -1)
 	{
@@ -1654,7 +1666,6 @@ void Player::Animation(float& time, VECTOR& pos)
 			//回避
 			if (m_avoidance == true && m_moveAttack == false && m_recoberyAction == false)
 			{
-
 				if (m_animation[0] != -1 || m_animation[1] != -1 || m_animation[2] != -1
 					|| m_animation[4] != -1 || m_animation[5] != -1 || m_animation[6] != -1
 					|| m_animation[7] != -1 || m_animation[9] != -1 || m_animation[10] != -1 ||
@@ -1896,7 +1907,7 @@ void Player::Animation(float& time, VECTOR& pos)
 	{
 		m_drawPos = pos;
 
-		time = 0.0f;
+		//time = 0.0f;
 
 		//回避終了
 		m_avoidance = false;
@@ -2752,8 +2763,11 @@ void Player::Draw()
 	DrawLine3D(VGet(left, bottom, front), VGet(left, bottom, back), m_rectColor);
 	DrawLine3D(VGet(right, top, front), VGet(right, top, back), m_rectColor);
 	DrawLine3D(VGet(right, bottom, front), VGet(right, bottom, back), m_rectColor);
+#endif
 
+#if true
 
+	//回避が跳ぶ理由はおそらくm_drawPosがおかしい
 
 	//カプセル3Dの描画
 	DrawCapsule3D(pos1.GetVector(), pos2.GetVector(), m_capsuleRadius, 16, m_color, 0, false);
@@ -2768,7 +2782,7 @@ void Player::Draw()
 		DrawSphere3D(m_colAttackPos.GetVector(), m_swordRadius, 16, 0xffffff, 0xffffff, false);
 
 	}
-	DrawSphere3D(map->GetVectorMapPos(), 1500.0f, 16, 0xffffff, 0xffffff, false);
+	//DrawSphere3D(map->GetVectorMapPos(), 1500.0f, 16, 0xffffff, 0xffffff, false);
 
 	DrawSphere3D(m_targetColPos.GetVector(), m_targetRadius, 16, 0xffffff, 0xffffff, false);
 
@@ -2783,8 +2797,6 @@ void Player::Draw()
 
 	////DrawFormatString(0, 120, 0xffffff, "HitPoly : %d", HitDim.HitNum);
 	//DrawFormatString(0, 0, 0xffffff, "playTime : %f", m_playTime);
-	//DrawFormatString(0, 40, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
-	//DrawFormatString(0, 60, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
 	////バグで攻撃状態になるがモーションが入らない
 	//DrawFormatString(0, 200, 0xffffff, "m_stamina : %f", m_stamina);
 	//DrawFormatString(200, 60, 0xffffff, "m_staminaBroke : %d", m_staminaBroke);
@@ -2819,6 +2831,9 @@ void Player::Draw()
 
 	//Yの1000が下-1000が上
 	//Xの1000が右-1000が左
+
+	DrawFormatString(0, 140, 0xffffff, "posX : %f posY : %f posZ : %f", m_pos.x, m_pos.y, m_pos.z);
+	DrawFormatString(0, 200, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
 
 	//レベルを上げるための変数描画
 	DrawFormatString(1400, 950, 0x000000, "%d", m_coreAllLevel);

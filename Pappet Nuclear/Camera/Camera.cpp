@@ -131,45 +131,45 @@ void Camera::LockUpdate(Player& player, Enemy& enemy, int max)
 	if (player.GetLock() == true)
 	{
 		//ボス戦の時のカメラ
-		if (enemy.GetBattale() == true)
-		{
-			//注視点は敵の座標にする
-			m_cameraTarget = VAdd(enemy.GetBossPos(), VGet(0.0f, 20.0f, 0.0f));
+		//if (enemy.GetBattale() == true)
+		//{
+		//	//注視点は敵の座標にする
+		//	m_cameraTarget = VAdd(enemy.GetBossPos(), VGet(0.0f, 20.0f, 0.0f));
 
-			//プレイヤーとエネミーのX座標の差を求める
-			float X = enemy.GetBossPosX() - player.GetPosX();
-			float lockX = player.GetPosX() - enemy.GetBossPosX();
+		//	//プレイヤーとエネミーのX座標の差を求める
+		//	float X = enemy.GetBossPosX() - player.GetPosX();
+		//	float lockX = player.GetPosX() - enemy.GetBossPosX();
 
-			//プレイヤーとエネミーのZ座標の差を求める
-			float Z = enemy.GetBossPosZ() - player.GetPosZ();
-			float lockZ = player.GetPosZ() - enemy.GetBossPosZ();
+		//	//プレイヤーとエネミーのZ座標の差を求める
+		//	float Z = enemy.GetBossPosZ() - player.GetPosZ();
+		//	float lockZ = player.GetPosZ() - enemy.GetBossPosZ();
 
-			//角度を出す
-			float angle = atan2f(X, Z);
+		//	//角度を出す
+		//	float angle = atan2f(X, Z);
 
-			//プレイヤーの方向も変える
-			player.SetAngle(atan2f(lockX, lockZ));
+		//	//プレイヤーの方向も変える
+		//	player.SetAngle(atan2f(lockX, lockZ));
 
-			m_x = X;
-			m_z = Z;
+		//	m_x = X;
+		//	m_z = Z;
 
-			//敵からプレイヤーに伸びる基準のベクトルを求める
-			VECTOR pos = VSub(player.GetPos(), enemy.GetBossPos());
+		//	//敵からプレイヤーに伸びる基準のベクトルを求める
+		//	VECTOR pos = VSub(player.GetPos(), enemy.GetBossPos());
 
-			//ベクトルの正規化
-			VECTOR posTarget = VNorm(pos);
+		//	//ベクトルの正規化
+		//	VECTOR posTarget = VNorm(pos);
 
-			posTarget.x *= 130.0f;
-			posTarget.z *= 130.0f;
+		//	posTarget.x *= 130.0f;
+		//	posTarget.z *= 130.0f;
 
-			//カメラがどれだけプレイヤーの座標より高いかを設定
-			posTarget.y = 80.0f;
+		//	//カメラがどれだけプレイヤーの座標より高いかを設定
+		//	posTarget.y = 80.0f;
 
-			m_cameraAngle.y = angle;
+		//	m_cameraAngle.y = angle;
 
-			//プレイヤーの座標に求めたベクトルを足して、カメラの座標とする
-			m_cameraPos = VAdd(player.GetPos(), posTarget);
-		}
+		//	//プレイヤーの座標に求めたベクトルを足して、カメラの座標とする
+		//	m_cameraPos = VAdd(player.GetPos(), posTarget);
+		//}
 		//ボス戦以外のターゲット
 		if (enemy.GetBattale() == false)
 		{
@@ -202,40 +202,6 @@ void Camera::LockUpdate(Player& player, Enemy& enemy, int max)
 			{
 				player.SetLock(false);
 			}
-			
-			
-
-			////注視点は敵の座標にする
-			//m_cameraTarget = VAdd(enemy.GetPos(max), VGet(0.0f, 20.0f, 0.0f));
-
-			////プレイヤーとエネミーのX座標の差を求める
-			//float X = enemy.GetPosX(max) - player.GetPosX();
-
-			////プレイヤーとエネミーのZ座標の差を求める
-			//float Z = enemy.GetPosZ(max) - player.GetPosZ();
-
-			////角度を出す
-			//float angle = atan2f(X, Z);
-
-			//m_x = X;
-			//m_z = Z;
-
-			////敵からプレイヤーに伸びる基準のベクトルを求める
-			//VECTOR pos = VSub(player.GetPos(), enemy.GetPos(max));
-
-			////ベクトルの正規化
-			//VECTOR posTarget = VNorm(pos);
-
-			//posTarget.x *= 130.0f;
-			//posTarget.z *= 130.0f;
-
-			////カメラがどれだけプレイヤーの座標より高いかを設定
-			//posTarget.y = 80.0f;
-
-			//m_cameraAngle.y = angle;
-
-			////プレイヤーの座標に求めたベクトルを足して、カメラの座標とする
-			//m_cameraPos = VAdd(player.GetPos(), posTarget);
 		}
 
 	}

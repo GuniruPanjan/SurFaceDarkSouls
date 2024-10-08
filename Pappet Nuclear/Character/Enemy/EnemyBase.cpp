@@ -47,7 +47,8 @@ EnemyBase::EnemyBase():
 	m_bossAnimStand = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimStand.mv1");
 	m_bossAnimDeath = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimDeath.mv1");
 	m_bossAnimWalk = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimWalk.mv1");
-	m_bossAnimTurn = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimRightTurn.mv1");
+	m_bossAnimTurnRight = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimRightTurn.mv1");
+	m_bossAnimTurnLeft = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimLeftTurn.mv1");
 	m_bossAnimAttack1 = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack1.mv1");
 	m_bossAnimAttack2 = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack2.mv1");
 	m_bossAnimAttack3 = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack3.mv1");
@@ -60,10 +61,11 @@ EnemyBase::EnemyBase():
 	m_bossAnimation[4] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimAttack1, TRUE);
 	m_bossAnimation[5] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimAttack2, TRUE);
 	m_bossAnimation[6] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimAttack3, TRUE);
-	m_bossAnimation[7] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimTurn, TRUE);
+	m_bossAnimation[7] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimTurnRight, TRUE);
+	m_bossAnimation[8] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimTurnLeft, TRUE);
 
 	//アタッチしたアニメーションの総再生時間を取得する
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 9; i++)
 	{
 		m_bossTotalAnimTime[i] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[i]);
 	}
@@ -91,9 +93,10 @@ EnemyBase::EnemyBase():
 	m_bossAnimation[5] = -1;
 	m_bossAnimation[6] = -1;
 
+
 	//アニメーションブレンドを0にする
 	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 0.0f);
-
+	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 0.0f);
 
 	//敵のサイズ変更
 	m_modelSize = 0.4f;
@@ -119,6 +122,8 @@ EnemyBase::~EnemyBase()
 	MV1DeleteModel(m_bossAnimAttack1);
 	MV1DeleteModel(m_bossAnimAttack2);
 	MV1DeleteModel(m_bossAnimAttack3);
+	MV1DeleteModel(m_bossAnimTurnRight);
+	MV1DeleteModel(m_bossAnimTurnLeft);
 
 	//メモリ削除
 	handle.Clear();
@@ -143,6 +148,8 @@ void EnemyBase::End()
 	MV1DeleteModel(m_bossAnimAttack1);
 	MV1DeleteModel(m_bossAnimAttack2);
 	MV1DeleteModel(m_bossAnimAttack3);
+	MV1DeleteModel(m_bossAnimTurnRight);
+	MV1DeleteModel(m_bossAnimTurnLeft);
 
 	//メモリ削除
 	handle.Clear();
