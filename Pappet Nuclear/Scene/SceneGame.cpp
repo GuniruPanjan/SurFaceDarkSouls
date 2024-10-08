@@ -219,12 +219,6 @@ void SceneGame::Draw()
 	//ƒvƒŒƒCƒ„[‚ªŽ€‚ñ‚¾ê‡
 	if (player->GetDeath() == true)
 	{
-		//SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
-		//DrawBox(0, 170, 640, 260, 0x000000, true);
-		//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		//SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
-		//ui->DiedDraw();
-		//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
 		DrawBox(0, 170 * 2, 640 * 3, 260 * 2, 0x000000, true);

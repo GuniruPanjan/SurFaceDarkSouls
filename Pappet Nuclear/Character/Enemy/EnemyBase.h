@@ -55,6 +55,9 @@ protected:
 	int m_bossAnimAttack3;   //ボスの攻撃アニメーション格納変数
 	int m_bossAnimation[ANIMATION];  //ボスのアニメーション格納変数
 	float m_bossTotalAnimTime[ANIMATION];  //ボスのアニメーション再生時間
+	float m_bossAnimBlend;          //ボスのアニメーションブレンド率
+	bool m_bossAnimBlendOne;         //アニメーションのブレンドを一回だけ0に戻す事を実行する
+	bool m_bossAnimOne[ANIMATION];      //ボスのアニメーションを一回だけ実行
 	SphereCol m_bossColDistance;        //一定距離を保つスフィア型の当たり判定
 };
 

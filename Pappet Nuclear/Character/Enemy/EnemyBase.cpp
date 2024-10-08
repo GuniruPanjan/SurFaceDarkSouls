@@ -14,7 +14,9 @@ EnemyBase::EnemyBase():
 	m_searchRadius(0.0f),
 	m_distanceRadius(0.0f),
 	m_attackRadius(0.0f),
-	m_enemyDeath(false)
+	m_enemyDeath(false),
+	m_bossAnimBlend(0.0f),
+	m_bossAnimBlendOne(false)
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
@@ -29,6 +31,20 @@ EnemyBase::EnemyBase():
 		for (int j = 0; j < ANIMATION; j++)
 		{
 			m_weakAnimOne[j][i] = false;
+		}
+	}
+
+	m_bossAnimOne[0] = true;
+
+	for (int i = 1; i < ANIMATION; i++)
+	{
+		if (i == 0)
+		{
+			m_bossAnimOne[0] = true;
+		}
+		else
+		{
+			m_bossAnimOne[i] = false;
 		}
 	}
 
@@ -80,21 +96,28 @@ EnemyBase::EnemyBase():
 
 
 	//一旦待機以外のアニメーションをデタッチする
-	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[1]);
-	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[2]);
-	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
-	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
-	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[5]);
-	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[6]);
-	m_bossAnimation[1] = -1;
-	m_bossAnimation[2] = -1;
-	m_bossAnimation[3] = -1;
-	m_bossAnimation[4] = -1;
-	m_bossAnimation[5] = -1;
-	m_bossAnimation[6] = -1;
+	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[1]);
+	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[2]);
+	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
+	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
+	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[5]);
+	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[6]);
+	//m_bossAnimation[1] = -1;
+	//m_bossAnimation[2] = -1;
+	//m_bossAnimation[3] = -1;
+	//m_bossAnimation[4] = -1;
+	//m_bossAnimation[5] = -1;
+	//m_bossAnimation[6] = -1;
 
 
 	//アニメーションブレンドを0にする
+	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[0], 1.0f);
+	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[1], 0.0f);
+	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[2], 0.0f);
+	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[3], 0.0f);
+	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[4], 0.0f);
+	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[5], 0.0f);
+	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[6], 0.0f);
 	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 0.0f);
 	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 0.0f);
 

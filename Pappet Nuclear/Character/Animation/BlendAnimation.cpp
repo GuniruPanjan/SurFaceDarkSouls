@@ -1,7 +1,15 @@
 #include "BlendAnimation.h"
 #include "DxLib.h"
 
-void BlendAnimation::AnimationBlend(float& time, int handle, int BlendNumber, int DNumber, float rate, bool Done, bool Bone, bool one)
+BlendAnimation::BlendAnimation()
+{
+}
+
+BlendAnimation::~BlendAnimation()
+{
+}
+
+void BlendAnimation::AnimationBlend(float& time, int& handle, int& BlendNumber, int& DNumber, float& rate, bool& Done, bool& Bone, bool& one)
 {
 	if (Done == true && Bone == false)
 	{

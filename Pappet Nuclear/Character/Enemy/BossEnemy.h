@@ -69,7 +69,8 @@ private:
 	VECTOR m_outPush;        //押し出す方向ベクトル
 
 
-	std::shared_ptr<Map> map = std::make_shared<Map>();
 	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+	BlendAnimation *pAnim;
+	//std::shared_ptr<BlendAnimation> pAnim = std::make_shared<BlendAnimation>();
 };
 

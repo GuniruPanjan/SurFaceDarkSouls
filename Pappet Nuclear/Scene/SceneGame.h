@@ -4,6 +4,7 @@
 #include "Character/Enemy/Enemy.h"
 #include "Character/Player/Equipment/Equipment.h"
 #include "Character/Effect/Effect.h"
+#include "Character/Animation/BlendAnimation.h"
 #include "Map/Map.h"
 #include "UI/UI.h"
 #include "SceneBase.h"
@@ -28,5 +29,6 @@ private:
 	std::shared_ptr<UI> ui = std::make_shared<UI>();
 	std::shared_ptr<Equipment> equipment = std::make_shared<Equipment>();
 	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+	std::shared_ptr<BlendAnimation> panim = std::make_shared<BlendAnimation>();
 };
 
