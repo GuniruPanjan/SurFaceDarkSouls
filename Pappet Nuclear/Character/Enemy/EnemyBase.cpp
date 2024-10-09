@@ -8,7 +8,6 @@ namespace
 
 EnemyBase::EnemyBase():
 	m_bossModelHandle(-1),
-	m_bossModelHeadIndex(0),
 	m_core(0),
 	m_baseCore(0),
 	m_bossSize(0.0f),

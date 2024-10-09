@@ -10,8 +10,6 @@ namespace
 	float difPSize;   //プレイヤーとの距離
 	float difSSize;   //盾との距離
 	float correctionAngle;    //敵がプレイヤーの位置によって方向を補正するための変数
-	float motionAngle;     //モーションの動きによって決まるアングル
-	VECTOR headPos;        //頭の位置
 }
 
 BossEnemy::BossEnemy() :
@@ -73,8 +71,6 @@ void BossEnemy::Init()
 	m_bossAttack3 = false;
 	patternOne = false;
 
-	headPos = VGet(0.0f, 0.0f, 0.0f);
-
 	//当たり判定
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 	m_colBossAttackPos1 = Pos3(m_pos.x - 50.0f, m_pos.y + 35.0f, m_pos.z);
@@ -116,12 +112,6 @@ void BossEnemy::Init()
 
 void BossEnemy::Update(Player& player, Map& map, int volume)
 {
-	//ボスのモデルのフレーム検索
-	m_bossModelHeadIndex = MV1SearchFrame(m_bossModelHandle, "mixamorig:Head");
-
-	//アニメーション時間を進める前のアニメーションで移動をしているフレームの座標取得
-	headPos = MV1GetFramePosition(m_bossModelHandle, m_bossModelHeadIndex);
-
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 	m_bossColDistance.Update(m_colPos);
 
@@ -149,12 +139,6 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 		m_playTime += 0.5f;
 	}
 
-	//Leftがfalseになったらアングルをプレイヤーに向ける
-	//if (m_bossMoveAttack == false && m_turnLeft == false)
-	//{
-	//	m_angle = correctionAngle;
-	//}
-
 	//プレイヤーを押し出す方向算出
 	float bounceX = m_pos.x - player.GetPosX();
 	float bounceZ = m_pos.z - player.GetPosZ();
@@ -178,12 +162,24 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 			if (m_angle > correctionAngle + 0.8f)
 			{
 				m_turnLeft = true;
+				m_turnRight = false;
 			}
+			//else if (0.0f <= correctionAngle && correctionAngle <= 4.0f && m_angle <= 0.0f)
+			//{
+			//	m_turnLeft = true;
+			//	m_turnRight = false;
+			//}
 			//右に回転する
 			if (m_angle < correctionAngle - 0.8f)
 			{
 				m_turnRight = true;
+				m_turnLeft = false;
 			}
+			//else if (0.0f > correctionAngle && correctionAngle >= -4.0f && m_angle > 0.0f)
+			//{
+			//	m_turnRight = true;
+			//	m_turnLeft = false;
+			//}
 		}
 
 		if (m_bossDistance == false || m_bossMoveAttackPattern == true)
@@ -203,22 +199,6 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 
 			//ボスの戦闘状態移行
 			m_bossBattle = true;
-		}
-
-		//敵キャラの頭の位置とプレイヤーの位置によってモーションの方向を算出
-		//float Hx = headPos.x - player.GetPosX();
-		//float Hz = headPos.z - player.GetPosZ();
-
-		//float Hx = headPos.x - m_pos.x;
-		//float Hz = headPos.z - m_pos.z;
-
-		float Hx = m_pos.x - headPos.x;
-		float Hz = m_pos.z - headPos.z;
-
-		//攻撃パターン1の時はプレイヤーの方を向く
-		if (m_bossBattle == true && m_bossMoveAttack == false)
-		{
-			motionAngle = atan2f(Hx, Hz);
 		}
 	}
 	if (m_bossDistance == false && m_bossBattle == true && m_bossMoveAttack == false && m_turnLeft == false && m_turnRight == false)
@@ -245,6 +225,10 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 		//モーション終了後アングルを入れる
 		if (m_playTime >= m_bossTotalAnimTime[i] && m_bossAnimOne[i] == true)
 		{
+			if (i == 7)
+			{
+				m_angle = correctionAngle;
+			}
 			if (i == 8)
 			{
 				m_angle = correctionAngle;
@@ -619,18 +603,34 @@ void BossEnemy::Animation(float& time)
 			}
 			if (i == 7)
 			{
-				m_turnRight = false;
+				if (correctionAngle > m_angle + 0.8f)
+				{
+					m_turnRight = true;
+
+					time = 0.0f;
+				}
+				else if (0.0f >= correctionAngle && correctionAngle >= -4.0f && m_angle >= 0.0f)
+				{
+					m_turnRight = true;
+
+					time = 0.0f;
+				}
+				//回転しなくなる
+				else
+				{
+					m_turnRight = false;
+				}
 			}
 			if (i == 8)
 			{
-				if (correctionAngle < motionAngle - 0.8f)
+				if (correctionAngle < m_angle - 0.8f)
 				{
 					m_turnLeft = true;
 
 					time = 0.0f;
 				}
 				//アングルが負の数から正の数になった時用
-				else if (0.0f <= correctionAngle && correctionAngle <= 4.0f && motionAngle <= 0.0f)
+				else if (0.0f <= correctionAngle && correctionAngle <= 4.0f && m_angle <= 0.0f)
 				{
 					m_turnLeft = true;
 
@@ -655,7 +655,10 @@ void BossEnemy::Animation(float& time)
 			//右回り
 			if (i == 7)
 			{
-
+				if (m_angle < correctionAngle - 0.8f)
+				{
+					m_angle += 0.05f;
+				}
 			}
 			//左回り
 			if (i == 8)
@@ -823,9 +826,6 @@ void BossEnemy::Draw()
 		DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
 		DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
 		DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
-
-		//モーションの方向描画
-		DrawSphere3D(headPos, 20.0f, 16, 0xffffff, 0xffffff, false);
 	}
 
 #endif
@@ -841,7 +841,7 @@ void BossEnemy::Draw()
 	
 #endif
 
-#if false
+#if true
 	//プレイヤーがボスより左にいると-がかかるし、差がー１くらいで１アニメーション
 	//プレイヤーがボスより右にいると+がかかるし、差が+1くらいで1アニメーション
 	DrawFormatString(0, 320, 0xffffff, "m_angle : %f", m_angle);

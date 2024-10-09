@@ -44,7 +44,6 @@ protected:
 
 	//ボスだけの変数
 	int m_bossModelHandle;   //ボスのモデルハンドル
-	int m_bossModelHeadIndex;    //ボスのモデルのフレーム検索用変数
 	float m_bossSize;        //ボスのモデルサイズ変数
 	int m_bossAnimStand;     //ボスの立ちアニメーション格納変数
 	int m_bossAnimDeath;     //ボスの死亡アニメーション格納変数
