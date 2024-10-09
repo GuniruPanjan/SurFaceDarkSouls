@@ -2765,7 +2765,7 @@ void Player::Draw()
 	DrawLine3D(VGet(right, bottom, front), VGet(right, bottom, back), m_rectColor);
 #endif
 
-#if true
+#if false
 
 	//‰ñ”ğ‚ª’µ‚Ô——R‚Í‚¨‚»‚ç‚­m_drawPos‚ª‚¨‚©‚µ‚¢
 

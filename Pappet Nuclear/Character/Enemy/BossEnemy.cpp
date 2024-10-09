@@ -5,10 +5,13 @@
 namespace
 {
 	bool attack;    //攻撃SEの判定
+	bool patternOne;    //pattern変数を一回だけ変更する
 	int walkTime;   //歩くSE間隔
 	float difPSize;   //プレイヤーとの距離
 	float difSSize;   //盾との距離
 	float correctionAngle;    //敵がプレイヤーの位置によって方向を補正するための変数
+	float motionAngle;     //モーションの動きによって決まるアングル
+	VECTOR headPos;        //頭の位置
 }
 
 BossEnemy::BossEnemy() :
@@ -68,6 +71,9 @@ void BossEnemy::Init()
 	m_bossAttack1 = false;
 	m_bossAttack2 = false;
 	m_bossAttack3 = false;
+	patternOne = false;
+
+	headPos = VGet(0.0f, 0.0f, 0.0f);
 
 	//当たり判定
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
@@ -110,6 +116,12 @@ void BossEnemy::Init()
 
 void BossEnemy::Update(Player& player, Map& map, int volume)
 {
+	//ボスのモデルのフレーム検索
+	m_bossModelHeadIndex = MV1SearchFrame(m_bossModelHandle, "mixamorig:Head");
+
+	//アニメーション時間を進める前のアニメーションで移動をしているフレームの座標取得
+	headPos = MV1GetFramePosition(m_bossModelHandle, m_bossModelHeadIndex);
+
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 	m_bossColDistance.Update(m_colPos);
 
@@ -137,6 +149,12 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 		m_playTime += 0.5f;
 	}
 
+	//Leftがfalseになったらアングルをプレイヤーに向ける
+	//if (m_bossMoveAttack == false && m_turnLeft == false)
+	//{
+	//	m_angle = correctionAngle;
+	//}
+
 	//プレイヤーを押し出す方向算出
 	float bounceX = m_pos.x - player.GetPosX();
 	float bounceZ = m_pos.z - player.GetPosZ();
@@ -153,19 +171,23 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 
 		correctionAngle = atan2f(Cx, Cz);
 
-		//左に回転する
-		if (correctionAngle < m_angle - 1.0f)
+		
+		if (m_bossMoveAttack == false)
 		{
-			//m_turnLeft = true;
-		}
-		else
-		{
-			m_turnLeft = false;
+			//左に回転する
+			if (m_angle > correctionAngle + 0.8f)
+			{
+				m_turnLeft = true;
+			}
+			//右に回転する
+			if (m_angle < correctionAngle - 0.8f)
+			{
+				m_turnRight = true;
+			}
 		}
 
 		if (m_bossDistance == false || m_bossMoveAttackPattern == true)
 		{
-
 			float X = m_pos.x - player.GetPosX();
 			float Z = m_pos.z - player.GetPosZ();
 
@@ -178,17 +200,28 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 					m_angle = atan2f(X, Z);
 				}
 			}
-			//右に回転する
-			//if (correctionAngle > m_angle + 0.8f)
-			//{
-			//	m_turnRight = true;
-			//}
 
 			//ボスの戦闘状態移行
 			m_bossBattle = true;
 		}
+
+		//敵キャラの頭の位置とプレイヤーの位置によってモーションの方向を算出
+		//float Hx = headPos.x - player.GetPosX();
+		//float Hz = headPos.z - player.GetPosZ();
+
+		//float Hx = headPos.x - m_pos.x;
+		//float Hz = headPos.z - m_pos.z;
+
+		float Hx = m_pos.x - headPos.x;
+		float Hz = m_pos.z - headPos.z;
+
+		//攻撃パターン1の時はプレイヤーの方を向く
+		if (m_bossBattle == true && m_bossMoveAttack == false)
+		{
+			motionAngle = atan2f(Hx, Hz);
+		}
 	}
-	if (m_bossDistance == false && m_bossBattle == true && m_bossMoveAttack == false)
+	if (m_bossDistance == false && m_bossBattle == true && m_bossMoveAttack == false && m_turnLeft == false && m_turnRight == false)
 	{
 		walkTime++;
 
@@ -205,6 +238,18 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 	else
 	{
 		walkTime = 0;
+	}
+
+	for (int i = 7; i < 9; i++)
+	{
+		//モーション終了後アングルを入れる
+		if (m_playTime >= m_bossTotalAnimTime[i] && m_bossAnimOne[i] == true)
+		{
+			if (i == 8)
+			{
+				m_angle = correctionAngle;
+			}
+		}
 	}
 
 	//敵が死亡したら
@@ -385,36 +430,6 @@ void BossEnemy::Animation(float& time)
 	//敵が死んだときのアニメーション
 	if (m_hp <= 0.0f)
 	{
-		//if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[4] != -1 ||
-		//	m_bossAnimation[5] != -1 || m_bossAnimation[6] != -1 || m_turnRight == true || m_turnLeft == true)
-		//{
-		//	m_bossAttack1 = false;
-		//	m_bossAttack2 = false;
-		//	m_bossAttack3 = false;
-
-		//	//アニメーションデタッチ
-		//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
-		//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
-		//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
-		//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[5]);
-		//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[6]);
-
-		//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 0.0f);
-		//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 0.0f);
-
-		//	//アニメーションアタッチ
-		//	m_bossAnimation[2] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimDeath, TRUE);
-
-		//	time = 0.0f;
-
-		//	m_bossAnimation[0] = -1;
-		//	m_bossAnimation[3] = -1;
-		//	m_bossAnimation[4] = -1;
-		//	m_bossAnimation[5] = -1;
-		//	m_bossAnimation[6] = -1;
-
-		//}
-
 		pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[0], m_bossAnimBlend, m_bossAnimOne[0], m_bossAnimOne[2], m_bossAnimBlendOne);
 		pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[3], m_bossAnimBlend, m_bossAnimOne[3], m_bossAnimOne[2], m_bossAnimBlendOne);
 		pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[4], m_bossAnimBlend, m_bossAnimOne[4], m_bossAnimOne[2], m_bossAnimBlendOne);
@@ -422,49 +437,12 @@ void BossEnemy::Animation(float& time)
 		pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[2], m_bossAnimBlendOne);
 		pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[2], m_bossAnimBlendOne);
 		pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[2], m_bossAnimBlendOne);
-
-		//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[0], m_bossAnimBlend, m_bossAnimOne[0], m_bossAnimOne[2], m_bossAnimBlendOne);
-		//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[3], m_bossAnimBlend, m_bossAnimOne[3], m_bossAnimOne[2], m_bossAnimBlendOne);
-		//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[4], m_bossAnimBlend, m_bossAnimOne[4], m_bossAnimOne[2], m_bossAnimBlendOne);
-		//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[5], m_bossAnimBlend, m_bossAnimOne[5], m_bossAnimOne[2], m_bossAnimBlendOne);
-		//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[2], m_bossAnimBlendOne);
-		//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[2], m_bossAnimBlendOne);
-		//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[2], m_bossAnimBlendOne);
-
-
 	}
 	if (m_bossBattle == true)
 	{
 		//敵が攻撃してない時
 		if (m_bossMoveAttack == false && m_turnRight == false && m_turnLeft == false)
 		{
-			//if (m_bossAnimation[0] != -1 || m_bossAnimation[4] != -1 || m_bossAnimation[5] != -1 ||
-			//	m_bossAnimation[6] != -1 || m_turnRight == false || m_turnLeft == false)
-			//{
-			//	m_bossAttack1 = false;
-			//	m_bossAttack2 = false;
-			//	m_bossAttack3 = false;
-
-			//	//アニメーションデタッチ
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[5]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[6]);
-
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 0.0f);
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 0.0f);
-
-			//	//アニメーションアタッチ
-			//	m_bossAnimation[3] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimWalk, TRUE);
-
-			//	time = 0.0f;
-
-			//	m_bossAnimation[0] = -1;
-			//	m_bossAnimation[4] = -1;
-			//	m_bossAnimation[5] = -1;
-			//	m_bossAnimation[6] = -1;
-
-			//}
 
 			m_bossAttack1 = false;
 			m_bossAttack2 = false;
@@ -476,41 +454,10 @@ void BossEnemy::Animation(float& time)
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[3], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[3], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[3], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[3], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[3], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[3], m_bossAnimBlendOne);
-
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[3], m_bossAnimation[0], m_bossAnimBlend, m_bossAnimOne[0], m_bossAnimOne[3], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[3], m_bossAnimation[4], m_bossAnimBlend, m_bossAnimOne[4], m_bossAnimOne[3], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[3], m_bossAnimation[5], m_bossAnimBlend, m_bossAnimOne[5], m_bossAnimOne[3], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[3], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[3], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[3], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[3], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[3], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[3], m_bossAnimBlendOne);
 		}
 		//右回る
 		if (m_turnRight == true)
 		{
-			//if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[4] != -1 ||
-			//	m_bossAnimation[5] != -1 || m_bossAnimation[6] != -1)
-			//{
-			//	//アニメーションデタッチ
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[5]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[6]);
-
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 0.0f);
-
-			//	//アニメーションブレンドをする
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 1.0f);
-
-			//	time = 0.0f;
-
-			//	m_bossAnimation[0] = -1;
-			//	m_bossAnimation[3] = -1;
-			//	m_bossAnimation[4] = -1;
-			//	m_bossAnimation[5] = -1;
-			//	m_bossAnimation[6] = -1;
-			//}
-
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[0], m_bossAnimBlend, m_bossAnimOne[0], m_bossAnimOne[7], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[3], m_bossAnimBlend, m_bossAnimOne[3], m_bossAnimOne[7], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[4], m_bossAnimBlend, m_bossAnimOne[4], m_bossAnimOne[7], m_bossAnimBlendOne);
@@ -518,42 +465,10 @@ void BossEnemy::Animation(float& time)
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[7], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[7], m_bossAnimBlendOne);
 
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[0], m_bossAnimBlend, m_bossAnimOne[0], m_bossAnimOne[7], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[3], m_bossAnimBlend, m_bossAnimOne[3], m_bossAnimOne[7], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[4], m_bossAnimBlend, m_bossAnimOne[4], m_bossAnimOne[7], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[5], m_bossAnimBlend, m_bossAnimOne[5], m_bossAnimOne[7], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[7], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[7], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[7], m_bossAnimBlendOne);
-
-
 		}
 		//左回る
 		if (m_turnLeft == true)
 		{
-			//if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[4] != -1 ||
-			//	m_bossAnimation[5] != -1 || m_bossAnimation[6] != -1)
-			//{
-			//	//アニメーションデタッチ
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[5]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[6]);
-
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 0.0f);
-
-			//	//アニメーションブレンドをする
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 1.0f);
-
-			//	time = 0.0f;
-
-			//	m_bossAnimation[0] = -1;
-			//	m_bossAnimation[3] = -1;
-			//	m_bossAnimation[4] = -1;
-			//	m_bossAnimation[5] = -1;
-			//	m_bossAnimation[6] = -1;
-			//}
-
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[0], m_bossAnimBlend, m_bossAnimOne[0], m_bossAnimOne[8], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[3], m_bossAnimBlend, m_bossAnimOne[3], m_bossAnimOne[8], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[4], m_bossAnimBlend, m_bossAnimOne[4], m_bossAnimOne[8], m_bossAnimBlendOne);
@@ -561,56 +476,21 @@ void BossEnemy::Animation(float& time)
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[8], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[8], m_bossAnimBlendOne);
 
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[0], m_bossAnimBlend, m_bossAnimOne[0], m_bossAnimOne[8], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[3], m_bossAnimBlend, m_bossAnimOne[3], m_bossAnimOne[8], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[4], m_bossAnimBlend, m_bossAnimOne[4], m_bossAnimOne[8], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[5], m_bossAnimBlend, m_bossAnimOne[5], m_bossAnimOne[8], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[8], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[8], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[8], m_bossAnimBlendOne);
-
-
 		}
 		//攻撃パターン1
 		if (m_bossAttack == 0 && m_bossMoveAttack == true && m_turnRight == false && m_turnLeft == false)
 		{
-			//if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[5] != -1 ||
-			//	m_bossAnimation[6] != -1 || m_turnRight == false || m_turnLeft == false)
-			//{
-			//	m_bossAttack1 = true;
-			//	m_bossAttack2 = false;
-			//	m_bossAttack3 = false;
-
-			//	m_bossMoveAttackPattern = true;
-
-			//	//アニメーションデタッチ
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[5]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[6]);
-
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 0.0f);
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 0.0f);
-
-			//	//アニメーションアタッチ
-			//	m_bossAnimation[4] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimAttack1, TRUE);
-
-			//	//攻撃力
-			//	m_attack = 50.0f;
-
-			//	time = 0.0f;
-
-			//	m_bossAnimation[0] = -1;
-			//	m_bossAnimation[3] = -1;
-			//	m_bossAnimation[5] = -1;
-			//	m_bossAnimation[6] = -1;
-
-			//}
 
 			m_bossAttack1 = true;
 			m_bossAttack2 = false;
 			m_bossAttack3 = false;
 
-			m_bossMoveAttackPattern = true;
+			if (patternOne == false)
+			{
+				m_bossMoveAttackPattern = true;
+
+				patternOne = true;
+			}
 
 			//攻撃力
 			m_attack = 50.0f;
@@ -622,54 +502,20 @@ void BossEnemy::Animation(float& time)
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[4], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[4], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[4], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[4], m_bossAnimBlendOne);
 
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[4], m_bossAnimation[0], m_bossAnimBlend, m_bossAnimOne[0], m_bossAnimOne[4], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[4], m_bossAnimation[3], m_bossAnimBlend, m_bossAnimOne[3], m_bossAnimOne[4], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[4], m_bossAnimation[5], m_bossAnimBlend, m_bossAnimOne[5], m_bossAnimOne[4], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[4], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[4], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[4], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[4], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[4], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[4], m_bossAnimBlendOne);
-
 		}
 		//攻撃パターン2
 		if (m_bossAttack == 1 && m_bossMoveAttack == true && m_turnRight == false && m_turnLeft == false)
 		{
-			//if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[4] != -1 ||
-			//	m_bossAnimation[6] != -1 || m_turnRight == false || m_turnLeft == false)
-			//{
-			//	m_bossAttack1 = false;
-			//	m_bossAttack2 = true;
-			//	m_bossAttack3 = false;
-
-			//	m_bossMoveAttackPattern = true;
-
-			//	//アニメーションデタッチ
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[6]);
-
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 0.0f);
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 0.0f);
-
-			//	//アニメーションアタッチ
-			//	m_bossAnimation[5] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimAttack2, TRUE);
-
-			//	//攻撃力
-			//	m_attack = 30.0f;
-
-			//	time = 0.0f;
-
-			//	m_bossAnimation[0] = -1;
-			//	m_bossAnimation[3] = -1;
-			//	m_bossAnimation[4] = -1;
-			//	m_bossAnimation[6] = -1;
-			//}
-
 			m_bossAttack1 = false;
 			m_bossAttack2 = true;
 			m_bossAttack3 = false;
 
-			m_bossMoveAttackPattern = true;
+			if (patternOne == false)
+			{
+				m_bossMoveAttackPattern = true;
+
+				patternOne = true;
+			}
 
 			//攻撃力
 			m_attack = 30.0f;
@@ -681,48 +527,10 @@ void BossEnemy::Animation(float& time)
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[5], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[5], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[5], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[5], m_bossAnimBlendOne);
 
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[5], m_bossAnimation[0], m_bossAnimBlend, m_bossAnimOne[0], m_bossAnimOne[5], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[5], m_bossAnimation[3], m_bossAnimBlend, m_bossAnimOne[3], m_bossAnimOne[5], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[5], m_bossAnimation[4], m_bossAnimBlend, m_bossAnimOne[4], m_bossAnimOne[5], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[5], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[5], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[5], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[5], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[5], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[5], m_bossAnimBlendOne);
-
-
 		}
 		//攻撃パターン3
 		if (m_bossAttack == 2 && m_bossMoveAttack == true && m_turnRight == false && m_turnLeft == false)
 		{
-			//if (m_bossAnimation[0] != -1 || m_bossAnimation[3] != -1 || m_bossAnimation[4] != -1 ||
-			//	m_bossAnimation[5] != -1 || m_turnRight == false || m_turnLeft == false)
-			//{
-			//	m_bossAttack1 = false;
-			//	m_bossAttack2 = false;
-			//	m_bossAttack3 = true;
-
-			//	//アニメーションデタッチ
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[0]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
-			//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[5]);
-
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 0.0f);
-			//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 0.0f);
-
-			//	//アニメーションアタッチ
-			//	m_bossAnimation[6] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimAttack3, TRUE);
-
-			//	//攻撃力
-			//	m_attack = 80.0f;
-
-			//	time = 0.0f;
-
-			//	m_bossAnimation[0] = -1;
-			//	m_bossAnimation[3] = -1;
-			//	m_bossAnimation[4] = -1;
-			//	m_bossAnimation[5] = -1;
-			//}
-
 			m_bossAttack1 = false;
 			m_bossAttack2 = false;
 			m_bossAttack3 = true;
@@ -737,43 +545,12 @@ void BossEnemy::Animation(float& time)
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[6], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[6], m_bossAnimBlendOne);
 			pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[6], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[6], m_bossAnimBlendOne);
 
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[6], m_bossAnimation[0], m_bossAnimBlend, m_bossAnimOne[0], m_bossAnimOne[6], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[6], m_bossAnimation[3], m_bossAnimBlend, m_bossAnimOne[3], m_bossAnimOne[6], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[6], m_bossAnimation[4], m_bossAnimBlend, m_bossAnimOne[4], m_bossAnimOne[6], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[6], m_bossAnimation[5], m_bossAnimBlend, m_bossAnimOne[5], m_bossAnimOne[6], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[6], m_bossAnimation[7], m_bossAnimBlend, m_bossAnimOne[7], m_bossAnimOne[6], m_bossAnimBlendOne);
-			//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[6], m_bossAnimation[8], m_bossAnimBlend, m_bossAnimOne[8], m_bossAnimOne[6], m_bossAnimBlendOne);
-
 		}
 		
 	}
 	//バグ修正用
 	if (m_bossMoveAttack == true && m_bossAttack1 == false && m_bossAttack2 == false && m_bossAttack3 == false)
 	{
-		//if (m_bossAnimation[4] != -1 || m_bossAnimation[5] != -1 || m_bossAnimation[6] != -1)
-		//{
-		//	//アニメーションデタッチ
-		//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
-		//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[5]);
-		//	MV1DetachAnim(m_bossModelHandle, m_bossAnimation[6]);
-
-		//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 0.0f);
-		//	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 0.0f);
-
-		//	m_bossAttack = -1;
-
-		//	PlaySoundMem(se->GetBossVoiceSE(), DX_PLAYTYPE_BACK, true);
-
-		//	//アニメーションアタッチ
-		//	m_bossAnimation[0] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimStand, TRUE);
-
-		//	m_playTime = 0.0f;
-
-		//	m_bossAnimation[4] = -1;
-		//	m_bossAnimation[5] = -1;
-		//	m_bossAnimation[6] = -1;
-		//}
-
 		m_bossAttack = -1;
 
 		PlaySoundMem(se->GetBossVoiceSE(), DX_PLAYTYPE_BACK, true);
@@ -782,73 +559,10 @@ void BossEnemy::Animation(float& time)
 		pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[0], m_bossAnimation[5], m_bossAnimBlend, m_bossAnimOne[5], m_bossAnimOne[0], m_bossAnimBlendOne);
 		pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[0], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[0], m_bossAnimBlendOne);
 
-		//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[0], m_bossAnimation[4], m_bossAnimBlend, m_bossAnimOne[4], m_bossAnimOne[0], m_bossAnimBlendOne);
-		//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[0], m_bossAnimation[5], m_bossAnimBlend, m_bossAnimOne[5], m_bossAnimOne[0], m_bossAnimBlendOne);
-		//pAnim.AnimationBlend(time, m_bossModelHandle, m_bossAnimation[0], m_bossAnimation[6], m_bossAnimBlend, m_bossAnimOne[6], m_bossAnimOne[0], m_bossAnimBlendOne);
-
 	}
 
 
 	//再生時間がアニメーションの総再生時間に達したら再生時間を0に戻す
-	//if (time >= m_bossTotalAnimTime[0] && m_bossAnimation[0] != -1)
-	//{
-	//	m_bossMoveAttack = false;
-
-	//	time = 0.0f;
-	//}
-	//if (time >= m_bossTotalAnimTime[2] && m_bossAnimation[2] != -1)
-	//{
-	//	//ボスを倒したらゲームクリア
-	//	m_gameClear = true;
-
-	//	time = 120.0f;
-	//}
-	//if (time >= m_bossTotalAnimTime[3] && m_bossAnimation[3] != -1)
-	//{
-	//	time = 0.0f;
-	//}
-	//if (time >= m_bossTotalAnimTime[4] && m_bossAnimation[4] != -1)
-	//{
-	//	m_bossMoveAttack = false;
-
-	//	m_bossAttack1 = false;
-
-	//	attack = false;
-
-	//	time = 0.0f;
-	//}
-	//if (time >= m_bossTotalAnimTime[5] && m_bossAnimation[5] != -1)
-	//{
-	//	m_bossMoveAttack = false;
-
-	//	m_bossAttack2 = false;
-
-	//	attack = false;
-
-	//	time = 0.0f;
-	//}
-	//if (time >= m_bossTotalAnimTime[6] && m_bossAnimation[6] != -1)
-	//{
-	//	m_bossMoveAttack = false;
-
-	//	m_bossAttack3 = false;
-
-	//	m_effectActivation = false;
-
-	//	attack = false;
-
-	//	time = 0.0f;
-	//}
-	//if (time >= m_bossTotalAnimTime[7] && m_turnRight == true)
-	//{
-	//	m_turnRight = false;
-	//	m_turnLeft = false;
-	//}
-	//if (time >= m_bossTotalAnimTime[8] && m_turnLeft == true)
-	//{
-	//	m_turnRight = false;
-	//	m_turnLeft = false;
-	//}
 
 	for (int i = 0; i < 9; i++)
 	{
@@ -903,35 +617,56 @@ void BossEnemy::Animation(float& time)
 
 				time = 0.0f;
 			}
-			if (i == 7 || i == 8)
+			if (i == 7)
 			{
 				m_turnRight = false;
-				m_turnLeft = false;
 			}
+			if (i == 8)
+			{
+				if (correctionAngle < motionAngle - 0.8f)
+				{
+					m_turnLeft = true;
+
+					time = 0.0f;
+				}
+				//アングルが負の数から正の数になった時用
+				else if (0.0f <= correctionAngle && correctionAngle <= 4.0f && motionAngle <= 0.0f)
+				{
+					m_turnLeft = true;
+
+					time = 0.0f;
+				}
+				else   //左回転しなくなる
+				{
+					m_turnLeft = false;
+				}
+			}
+
+			patternOne = false;
 		}
 	}
 	//再生時間をセットする
 	for (int i = 0; i < 9; i++)
 	{
-		//if (m_bossAnimation[i] != -1)
-		//{
-		//	MV1SetAttachAnimTime(m_bossModelHandle, m_bossAnimation[i], time);
-		//}
-
 		if (m_bossAnimOne[i] == true)
 		{
 			MV1SetAttachAnimTime(m_bossModelHandle, m_bossAnimation[i], time);
+
+			//右回り
+			if (i == 7)
+			{
+
+			}
+			//左回り
+			if (i == 8)
+			{
+				if (m_angle > correctionAngle + 0.8f)
+				{
+					m_angle -= 0.05f;
+				}
+			}
 		}
 	}
-
-	//if (m_turnRight == true)
-	//{
-	//	MV1SetAttachAnimTime(m_bossModelHandle, m_bossAnimation[7], time);
-	//}
-	//if (m_turnLeft == true)
-	//{
-	//	MV1SetAttachAnimTime(m_bossModelHandle, m_bossAnimation[8], time);
-	//}
 }
 
 void BossEnemy::MapHit(Map& map)
@@ -1074,7 +809,7 @@ void BossEnemy::Draw()
 	Pos3 pos1 = m_colPos + vec;
 	Pos3 pos2 = m_colPos - vec;
 
-#if true
+#if false
 
 	//敵が生きている時は描画
 	if (m_hp > 0.0f)
@@ -1088,6 +823,9 @@ void BossEnemy::Draw()
 		DrawSphere3D(m_colBossAttackPos1.GetVector(), m_bossAttackRadius1, 16, 0xffffff, 0xffffff, false);
 		DrawSphere3D(m_colBossAttackPos2.GetVector(), m_bossAttackRadius2, 16, 0xffffff, 0xffffff, false);
 		DrawSphere3D(m_colBossAttackPos3.GetVector(), m_bossAttackRadius3, 16, 0xffffff, 0xffffff, false);
+
+		//モーションの方向描画
+		DrawSphere3D(headPos, 20.0f, 16, 0xffffff, 0xffffff, false);
 	}
 
 #endif
@@ -1102,6 +840,8 @@ void BossEnemy::Draw()
 
 	
 #endif
+
+#if false
 	//プレイヤーがボスより左にいると-がかかるし、差がー１くらいで１アニメーション
 	//プレイヤーがボスより右にいると+がかかるし、差が+1くらいで1アニメーション
 	DrawFormatString(0, 320, 0xffffff, "m_angle : %f", m_angle);
@@ -1109,14 +849,21 @@ void BossEnemy::Draw()
 	DrawFormatString(0, 440, 0xffffff, "right : %d", m_turnRight);
 	DrawFormatString(0, 500, 0xffffff, "left : %d", m_turnLeft);
 	DrawFormatString(100, 560, 0xffffff, "blend : %f", m_bossAnimBlend);
-	DrawFormatString(100, 620, 0xffffff, "anim1 : %d", m_bossAnimation[1]);
-	DrawFormatString(100, 680, 0xffffff, "anim2 : %d", m_bossAnimation[2]);
-	DrawFormatString(100, 740, 0xffffff, "anim3 : %d", m_bossAnimation[3]);
-	DrawFormatString(100, 800, 0xffffff, "anim4 : %d", m_bossAnimation[4]);
-	DrawFormatString(100, 860, 0xffffff, "anim5 : %d", m_bossAnimation[5]);
-	DrawFormatString(100, 920, 0xffffff, "anim6 : %d", m_bossAnimation[6]);
+	DrawFormatString(100, 620, 0xffffff, "pattern : %d", m_bossMoveAttackPattern);
+#endif
 
+#if false
+	DrawFormatString(100, 500, 0xffffff, "anim0 : %d", m_bossAnimOne[0]);
+	DrawFormatString(100, 560, 0xffffff, "anim1 : %d", m_bossAnimOne[1]);
+	DrawFormatString(100, 620, 0xffffff, "anim2 : %d", m_bossAnimOne[2]);
+	DrawFormatString(100, 680, 0xffffff, "anim3 : %d", m_bossAnimOne[3]);
+	DrawFormatString(100, 740, 0xffffff, "anim4 : %d", m_bossAnimOne[4]);
+	DrawFormatString(100, 800, 0xffffff, "anim5 : %d", m_bossAnimOne[5]);
+	DrawFormatString(100, 860, 0xffffff, "anim6 : %d", m_bossAnimOne[6]);
+	DrawFormatString(100, 920, 0xffffff, "anim7 : %d", m_bossAnimOne[7]);
+	DrawFormatString(100, 980, 0xffffff, "anim8 : %d", m_bossAnimOne[8]);
 
+#endif
 
 	//3Dモデルポジション設定
 	MV1SetPosition(m_bossModelHandle, m_pos);

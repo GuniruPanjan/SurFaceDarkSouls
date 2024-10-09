@@ -8,6 +8,7 @@ namespace
 
 EnemyBase::EnemyBase():
 	m_bossModelHandle(-1),
+	m_bossModelHeadIndex(0),
 	m_core(0),
 	m_baseCore(0),
 	m_bossSize(0.0f),
@@ -85,29 +86,6 @@ EnemyBase::EnemyBase():
 	{
 		m_bossTotalAnimTime[i] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[i]);
 	}
-	//m_bossTotalAnimTime[0] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[0]);
-	//m_bossTotalAnimTime[1] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[1]);
-	//m_bossTotalAnimTime[2] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[2]);
-	//m_bossTotalAnimTime[3] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[3]);
-	//m_bossTotalAnimTime[4] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[4]);
-	//m_bossTotalAnimTime[5] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[5]);
-	//m_bossTotalAnimTime[6] = MV1GetAttachAnimTotalTime(m_bossModelHandle, m_bossAnimation[6]);
-
-
-
-	//一旦待機以外のアニメーションをデタッチする
-	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[1]);
-	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[2]);
-	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[3]);
-	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[4]);
-	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[5]);
-	//MV1DetachAnim(m_bossModelHandle, m_bossAnimation[6]);
-	//m_bossAnimation[1] = -1;
-	//m_bossAnimation[2] = -1;
-	//m_bossAnimation[3] = -1;
-	//m_bossAnimation[4] = -1;
-	//m_bossAnimation[5] = -1;
-	//m_bossAnimation[6] = -1;
 
 
 	//アニメーションブレンドを0にする
