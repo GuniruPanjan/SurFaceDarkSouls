@@ -45,7 +45,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	player->WeaponUpdate(*equipment);
 	player->PlaySE(setting->GetVolume());
 	camera->Update(*player);
-	map->Update(*player);
+	map->Update(*effect);
 	player->HitObj(*map);
 	enemy->MapHitBoss(*map);
 	enemy->BossUpdate(*player, *map, setting->GetVolume());

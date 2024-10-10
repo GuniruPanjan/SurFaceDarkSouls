@@ -1,5 +1,10 @@
 #include "Map.h"
 
+namespace
+{
+	int effectPlayBack;    //エフェクトを再生させる時間
+}
+
 Map::Map() :
 	m_handle(-1),
 	m_collisionHandle(-1),
@@ -19,6 +24,11 @@ Map::Map() :
 	m_MapPosition = VGet(0.0f, 0.0, 0.0f);
 	m_collisionMapPosition = VGet(0.0f, 0.0f, 0.0f);
 	m_restPos = VGet(0.0f, 0.0f, 0.0f);
+
+	for (int i = 0; i < ITEM_NUMBER; i++)
+	{
+		m_itemModel[i] = -1;
+	}
 }
 
 Map::~Map()
@@ -32,6 +42,8 @@ Map::~Map()
 void Map::Init()
 {
 	m_bossRoomEntered = false;
+
+	effectPlayBack = 50;
 
 	if (m_oneInit == false)
 	{
@@ -77,11 +89,34 @@ void Map::Init()
 	}
 
 	
+	for (int i = 0; i < ITEM_NUMBER; i++)
+	{
+		m_itemModel[i] = -1;
+	}
+	
 }
 
-void Map::Update(Player& player)
+void Map::Update(Effect& ef)
 {
-	
+	//effectPlayBackが一定数達すると初期化する
+	if (effectPlayBack <= 50)
+	{
+		effectPlayBack++;
+	}
+	else
+	{
+		
+		for (int i = 0; i < ITEM_NUMBER; i++)
+		{
+			//アイテムのエフェクト再生
+			m_itemModel[i] = PlayEffekseer3DEffect(ef.GetItemEffect());
+		}
+
+		effectPlayBack = 0;
+	}
+
+	//アイテムのエフェクト再生場所
+	//SetPosPlayingEffekseer3DEffect
 }
 
 void Map::Draw()

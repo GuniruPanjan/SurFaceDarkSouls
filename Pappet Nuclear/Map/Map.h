@@ -2,6 +2,8 @@
 #include "DxLib.h"
 #include "Col/RectCol.h"
 #include "Col/SphereCol.h"
+#include "Character/Effect/Effect.h"
+#define ITEM_NUMBER 30
 
 class Player;
 
@@ -12,7 +14,7 @@ public:
 	virtual ~Map();
 
 	void Init();
-	void Update(Player& player);
+	void Update(Effect& ef);
 	void Draw();
 	void End();
 
@@ -29,6 +31,7 @@ private:
 	int m_handle;   //マップのデータを入れる変数
 	int m_collisionHandle;   //マップのコリジョンのデータを入れる変数
 	int m_light;    //ライトを作る変数
+	int m_itemModel[ITEM_NUMBER];         //マップに置くアイテムのモデル変数
 	float m_size;   //モデルのサイズ変数
 	float m_Xposition;    //Xポジション
 	float m_Yposition;    //Yポジション

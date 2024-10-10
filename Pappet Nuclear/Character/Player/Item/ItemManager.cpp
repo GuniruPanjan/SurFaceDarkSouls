@@ -1,11 +1,5 @@
 #include "ItemManager.h"
-#include "Singleton/HandleManager.h"
 
-namespace
-{
-	//ƒVƒ“ƒOƒ‹ƒgƒ“
-	auto& handle = HandleManager::GetInstance();
-}
 
 ItemManager::ItemManager()
 {

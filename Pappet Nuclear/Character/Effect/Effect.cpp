@@ -16,6 +16,7 @@ Effect::~Effect()
 	DeleteEffekseerEffect(m_effectRest);
 	DeleteEffekseerEffect(m_effectHeel);
 	DeleteEffekseerEffect(m_effectHit);
+	DeleteEffekseerEffect(m_effectItem);
 }
 
 void Effect::PlayerInit()
@@ -32,6 +33,7 @@ void Effect::BossInit()
 void Effect::AllInit()
 {
 	m_effectHit = LoadEffekseerEffect("Data/Effect/HitEffect.efkefc", 7.0f);
+	m_effectItem = LoadEffekseerEffect("Data/Effect/Item.efkefc", 5.0f);
 }
 
 void Effect::Update()
@@ -56,4 +58,5 @@ void Effect::End()
 	DeleteEffekseerEffect(m_effectRest);
 	DeleteEffekseerEffect(m_effectHeel);
 	DeleteEffekseerEffect(m_effectHit);
+	DeleteEffekseerEffect(m_effectItem);
 }

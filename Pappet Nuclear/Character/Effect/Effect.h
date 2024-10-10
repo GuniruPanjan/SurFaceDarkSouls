@@ -18,6 +18,7 @@ public:
 	int GetRestEffect() { return m_effectRest; }    //休息
 	int GetHeelEffect() { return m_effectHeel; }    //回復
 	int GetHitEffect() { return m_effectHit; }      //ヒット時
+	int GetItemEffect() { return m_effectItem; }    //アイテム
 
 private:
 	int m_effectJump;            //ジャンプ攻撃のエフェクト
