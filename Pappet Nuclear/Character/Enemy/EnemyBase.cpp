@@ -88,15 +88,17 @@ EnemyBase::EnemyBase():
 
 
 	//アニメーションブレンドを0にする
-	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[0], 1.0f);
-	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[1], 0.0f);
-	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[2], 0.0f);
-	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[3], 0.0f);
-	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[4], 0.0f);
-	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[5], 0.0f);
-	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[6], 0.0f);
-	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[7], 0.0f);
-	MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[8], 0.0f);
+	for (int i = 0; i < 9; i++)
+	{
+		if (i == 0)
+		{
+			MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[i], 1.0f);
+		}
+		else
+		{
+			MV1SetAttachAnimBlendRate(m_bossModelHandle, m_bossAnimation[i], 0.0f);
+		}
+	}
 
 	//敵のサイズ変更
 	m_modelSize = 0.4f;

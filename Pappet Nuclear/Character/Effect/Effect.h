@@ -24,5 +24,6 @@ private:
 	int m_effectRest;            //休息するときのエフェクト
 	int m_effectHeel;            //回復するときのエフェクト
 	int m_effectHit;             //ヒット時のエフェクト
+	int m_effectItem;            //アイテムのエフェクト
 };
 

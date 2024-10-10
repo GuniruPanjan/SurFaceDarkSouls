@@ -94,6 +94,15 @@
     <Filter Include="ヘッダー ファイル\Singleton">
       <UniqueIdentifier>{70be76e7-1cdf-4c92-bb0f-6db878e5a3a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="リソース ファイル\Shader">
+      <UniqueIdentifier>{bf0ce2bc-9f0b-4176-b521-df9d7ace78fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Character\Player\Item">
+      <UniqueIdentifier>{d5bd156c-fb44-4f58-bc8c-0c4c696c1be3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Character\Player\Item">
+      <UniqueIdentifier>{650b44ba-4248-4196-8073-36173daf9f46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Template3D.cpp">
@@ -182,6 +191,9 @@
     </ClCompile>
     <ClCompile Include="Character\Animation\BlendAnimation.cpp">
       <Filter>ソース ファイル\Character\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\Item\ItemManager.cpp">
+      <Filter>ソース ファイル\Character\Player\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -272,6 +284,9 @@
     <ClInclude Include="Character\Animation\BlendAnimation.h">
       <Filter>ヘッダー ファイル\Character\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="Character\Player\Item\ItemManager.h">
+      <Filter>ヘッダー ファイル\Character\Player\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Icon\PuppetNuclear.ico">
@@ -282,5 +297,10 @@
     <ResourceCompile Include="Icon\Icon.rc">
       <Filter>リソース ファイル\Icon</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\PointLight_Shadow.hlsli">
+      <Filter>リソース ファイル\Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

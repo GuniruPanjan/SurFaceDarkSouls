@@ -4,7 +4,8 @@ Effect::Effect():
 	m_effectJump(0),
 	m_effectHeel(0),
 	m_effectRest(0),
-	m_effectHit(0)
+	m_effectHit(0),
+	m_effectItem(0)
 {
 }
 
