@@ -615,8 +615,7 @@ void BossEnemy::Animation(float& time)
 
 					time = 0.0f;
 				}
-				//‰ñ“]‚µ‚È‚­‚È‚é
-				else
+				else   //‰E‰ñ“]‚µ‚È‚­‚È‚é
 				{
 					m_turnRight = false;
 				}
