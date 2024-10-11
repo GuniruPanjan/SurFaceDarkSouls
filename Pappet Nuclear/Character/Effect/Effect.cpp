@@ -38,6 +38,9 @@ void Effect::AllInit()
 
 void Effect::Update()
 {
+	//Positionを初期化する
+	SetPosPlayingEffekseer3DEffect(m_effectItem, -10000.0f, -10000.0f, -10000.0f);
+
 	//3D表示の設定をDXライブラリとEffekseer3D表示の設定に同期させる
 	Effekseer_Sync3DSetting();
 

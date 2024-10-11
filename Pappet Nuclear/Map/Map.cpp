@@ -19,7 +19,8 @@ Map::Map() :
 	m_bossRoomEntered(false),
 	m_saveSpot(false),
 	m_oneInit(false),
-	m_sphereRadius(0.0f)
+	m_sphereRadius(0.0f),
+	m_itemRadius(0.0f)
 {
 	m_MapPosition = VGet(0.0f, 0.0, 0.0f);
 	m_collisionMapPosition = VGet(0.0f, 0.0f, 0.0f);
@@ -28,6 +29,8 @@ Map::Map() :
 	for (int i = 0; i < ITEM_NUMBER; i++)
 	{
 		m_itemModel[i] = -1;
+
+		m_itemColor[i] = 0xffffff;
 	}
 }
 
@@ -78,8 +81,15 @@ void Map::Init()
 		m_spherePos = Pos3(m_restPos.x, m_restPos.y, m_restPos.z);
 		m_rectSize = Size(5.0f, 50.0f, 70.0f);
 		m_sphereRadius = 50.0f;
+		m_itemRadius = 30.0f;
 		m_rectCol.Init(m_rectPos, m_rectSize);
 		m_sphereCol.Init(m_spherePos, m_sphereRadius);
+
+		for (int i = 0; i < ITEM_NUMBER; i++)
+		{
+			m_itemPos[i] = Pos3(-10000.0f, -10000.0f, -10000.0f);
+			m_itemCol[i].Init(m_itemPos[i], m_itemRadius);
+		}
 
 		//ライト関係
 		ChangeLightTypeDir(VGet(-1.0f, 0.0f, 0.0f));
@@ -92,12 +102,23 @@ void Map::Init()
 	for (int i = 0; i < ITEM_NUMBER; i++)
 	{
 		m_itemModel[i] = -1;
+
+		m_itemColor[i] = 0xffffff;
 	}
 	
 }
 
 void Map::Update(Effect& ef)
 {
+	//アイテムのエフェクト再生場所
+	SetPosPlayingEffekseer3DEffect(m_itemModel[0], 300.0f, 5.0f, -360.0f);
+	m_itemPos[0] = Pos3(300.0f, 5.0f, -360.0f);
+	SetPosPlayingEffekseer3DEffect(m_itemModel[1], 700.0f, 5.0f, 200.0f);
+	m_itemPos[1] = Pos3(700.0f, 5.0f, 200.0f);
+	SetPosPlayingEffekseer3DEffect(m_itemModel[2], 700.0f, 5.0f, -230.0f);
+	m_itemPos[2] = Pos3(700.0f, 5.0f, -230.0f);
+
+
 	//effectPlayBackが一定数達すると初期化する
 	if (effectPlayBack <= 50)
 	{
@@ -106,21 +127,22 @@ void Map::Update(Effect& ef)
 	else
 	{
 		
-		for (int i = 0; i < ITEM_NUMBER; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			//アイテムのエフェクト再生
 			m_itemModel[i] = PlayEffekseer3DEffect(ef.GetItemEffect());
+
+			m_itemCol[i].Update(m_itemPos[i]);
 		}
 
 		effectPlayBack = 0;
 	}
-
-	//アイテムのエフェクト再生場所
-	//SetPosPlayingEffekseer3DEffect
 }
 
 void Map::Draw()
 {
+
+#if false
 	float halfW = m_rectSize.width * 0.5f;
 	float halfH = m_rectSize.height * 0.5f;
 	float halfD = m_rectSize.depth * 0.5f;
@@ -133,23 +155,32 @@ void Map::Draw()
 	float back = m_rectPos.z + halfD;
 
 	// 横の線
-	//DrawLine3D(VGet(left, bottom, front), VGet(right, bottom, front), m_color);
-	//DrawLine3D(VGet(left, top, front), VGet(right, top, front), m_color);
-	//DrawLine3D(VGet(left, bottom, back), VGet(right, bottom, back), m_color);
-	//DrawLine3D(VGet(left, top, back), VGet(right, top, back), m_color);
-	//// 縦の線
-	//DrawLine3D(VGet(left, top, front), VGet(left, bottom, front), m_color);
-	//DrawLine3D(VGet(right, top, front), VGet(right, bottom, front), m_color);
-	//DrawLine3D(VGet(left, top, back), VGet(left, bottom, back), m_color);
-	//DrawLine3D(VGet(right, top, back), VGet(right, bottom, back), m_color);
-	//// 前後の線
-	//DrawLine3D(VGet(left, top, front), VGet(left, top, back), m_color);
-	//DrawLine3D(VGet(left, bottom, front), VGet(left, bottom, back), m_color);
-	//DrawLine3D(VGet(right, top, front), VGet(right, top, back), m_color);
-	//DrawLine3D(VGet(right, bottom, front), VGet(right, bottom, back), m_color);
+	DrawLine3D(VGet(left, bottom, front), VGet(right, bottom, front), m_color);
+	DrawLine3D(VGet(left, top, front), VGet(right, top, front), m_color);
+	DrawLine3D(VGet(left, bottom, back), VGet(right, bottom, back), m_color);
+	DrawLine3D(VGet(left, top, back), VGet(right, top, back), m_color);
+	// 縦の線
+	DrawLine3D(VGet(left, top, front), VGet(left, bottom, front), m_color);
+	DrawLine3D(VGet(right, top, front), VGet(right, bottom, front), m_color);
+	DrawLine3D(VGet(left, top, back), VGet(left, bottom, back), m_color);
+	DrawLine3D(VGet(right, top, back), VGet(right, bottom, back), m_color);
+	// 前後の線
+	DrawLine3D(VGet(left, top, front), VGet(left, top, back), m_color);
+	DrawLine3D(VGet(left, bottom, front), VGet(left, bottom, back), m_color);
+	DrawLine3D(VGet(right, top, front), VGet(right, top, back), m_color);
+	DrawLine3D(VGet(right, bottom, front), VGet(right, bottom, back), m_color);
 
-	//DrawSphere3D(m_spherePos.GetVector(), m_sphereRadius, 16, m_sphereColor, m_sphereColor, false);
+#endif
 
+#if true
+	DrawSphere3D(m_spherePos.GetVector(), m_sphereRadius, 16, m_sphereColor, m_sphereColor, false);
+
+	for (int i = 0; i < 3; i++)
+	{
+		DrawSphere3D(m_itemPos[i].GetVector(), m_itemRadius, 16, m_itemColor[i], m_itemColor[i], false);
+	}
+
+#endif
 	//3Dモデルのポジション設定
 	MV1SetPosition(m_handle, m_MapPosition);
 	MV1SetPosition(m_collisionHandle, m_collisionMapPosition);
@@ -200,6 +231,22 @@ bool Map::CapsuleSaveHit(const CapsuleCol& col)
 		m_sphereColor = 0xffffff;
 
 		m_saveSpot = false;
+	}
+
+	return isHit;
+}
+
+bool Map::CapsuleItemHit(const CapsuleCol& col, int max)
+{
+	bool isHit = m_itemCol[max].IsHitCapsule(col);
+
+	if (isHit)
+	{
+		m_itemColor[max] = 0xff00ff;
+	}
+	else
+	{
+		m_itemColor[max] = 0xffffff;
 	}
 
 	return isHit;

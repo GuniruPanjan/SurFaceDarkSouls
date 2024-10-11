@@ -4,6 +4,7 @@
 class Player;
 class Enemy;
 class Equipment;
+class Map;
 
 class UI : public UIManager
 {
@@ -12,7 +13,7 @@ public:
 	virtual ~UI();
 
 	void Init(Player& player, Enemy& enemy);
-	void Draw(Player& player, Enemy& enemy, Equipment& eq);
+	void Draw(Player& player, Enemy& enemy, Equipment& eq, Map& map);
 	void DiedDraw();
 	void End();
 

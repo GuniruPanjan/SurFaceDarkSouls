@@ -57,6 +57,11 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	map->CapsuleIsHit(player->GetCapsuleCol());
 	map->CapsuleSaveHit(player->GetCapsuleCol());
 
+	for (int i = 0; i < ITEM_NUMBER; i++)
+	{
+		map->CapsuleItemHit(player->GetCapsuleCol(), i);
+	}
+
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
 		player->OtherInfluence(enemy->GetOutPush(), enemy->GetWeakOutPush(i));
@@ -214,7 +219,7 @@ void SceneGame::Draw()
 
 	player->Draw();
 	player->WeaponDraw(*equipment);
-	ui->Draw(*player, *enemy, *equipment);
+	ui->Draw(*player, *enemy, *equipment, *map);
 
 	//ƒvƒŒƒCƒ„[‚ªŽ€‚ñ‚¾ê‡
 	if (player->GetDeath() == true)

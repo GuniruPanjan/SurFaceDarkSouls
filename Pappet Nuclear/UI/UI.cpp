@@ -3,6 +3,7 @@
 #include "Character/Player/Player.h"
 #include "Character/Enemy/Enemy.h"
 #include "Character/Player/Equipment/Equipment.h"
+#include "Map/Map.h"
 
 UI::UI():
 	m_hpCover(0.0f),
@@ -106,7 +107,7 @@ void UI::Init(Player& player, Enemy& enemy)
 
 }
 
-void UI::Draw(Player& player, Enemy& enemy, Equipment& eq)
+void UI::Draw(Player& player, Enemy& enemy, Equipment& eq, Map& map)
 {
 	//DrawBox(m_hpPosX1, m_hpPosY1, m_hpPosX1 + m_hpCover, m_hpPosY3, 0xffffff, TRUE);
 	//DrawBox(m_hpPosX2, m_hpPosY2, m_hpPosX2 + (player.GetHp() * m_hpExpressionDivide2), m_hpPosY4, m_hpColor, TRUE);
@@ -175,6 +176,12 @@ void UI::Draw(Player& player, Enemy& enemy, Equipment& eq)
 
 		//フォントのサイズを戻す
 		SetFontSize(40);
+	}
+
+	//アイテムや休息ができると
+	if (map.GetSavePossible() == true)
+	{
+		DrawFormatString(650, 800, 0x000000, "Yボタンで休息する");
 	}
 
 

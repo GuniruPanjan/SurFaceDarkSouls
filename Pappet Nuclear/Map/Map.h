@@ -20,6 +20,7 @@ public:
 
 	bool CapsuleIsHit(const CapsuleCol& col);
 	bool CapsuleSaveHit(const CapsuleCol& col);
+	bool CapsuleItemHit(const CapsuleCol& col, int max);
 
 	int GetCollisionMap() { return m_collisionHandle; }
 	bool GetRoomEntered() { return m_bossRoomEntered; }
@@ -48,12 +49,16 @@ private:
 
 	//Col‚Ì“–‚½‚è”»’è
 	float m_sphereRadius;
+	float m_itemRadius;
 	Pos3 m_rectPos;
 	Pos3 m_spherePos;
+	Pos3 m_itemPos[ITEM_NUMBER];
 	Size m_rectSize;
 	RectCol m_rectCol;
 	SphereCol m_sphereCol;
+	SphereCol m_itemCol[ITEM_NUMBER];
 	unsigned int m_color = 0xffffff;
 	unsigned int m_sphereColor = 0xffffff;
+	unsigned int m_itemColor[ITEM_NUMBER];
 };
 
