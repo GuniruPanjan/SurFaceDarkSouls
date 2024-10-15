@@ -17,6 +17,7 @@ namespace
 	MATRIX AvoidancePos;    //回避したときのポジション
 
 	int ItemNumber;
+	int Button;
 
 	//シングルトン
 	auto& result = HandleManager::GetInstance();
@@ -324,7 +325,14 @@ void Player::Init()
 
 	m_oneShield = false;
 
+	Button = 0;
+
 	m_animOne[0] = true;
+
+	for (int i = 1; i < 20; i++)
+	{
+		m_animOne[i] = false;
+	}
 
 	//モデル全体のコリジョン情報のセットアップ
 	//MV1SetupCollInfo(map->GetCollisionMap(), -1);
@@ -670,6 +678,7 @@ void Player::Update()
 		m_avoidance = false;
 
 	}
+
 	//if (m_playTime >= m_totalAnimTime[4] && m_animation[4] != -1)
 	//{
 	//	m_drawPos = m_pos;
@@ -799,23 +808,23 @@ void Player::Update()
 	//	m_moveAttack = false;
 	//}
 	
-	if (m_moveAttack == true && m_animation[0] != -1)
-	{
-		m_bugTime++;
+	//if (m_moveAttack == true && m_animation[0] != -1)
+	//{
+	//	m_bugTime++;
 
-		//バグと判断する
-		if (m_bugTime >= 10)
-		{
-			m_moveAttack = false;
-			m_moveflag = false;
-			m_bug = true;
-		}
-	}
-	else
-	{
-		m_bugTime = 0;
-		m_bug = false;
-	}
+	//	//バグと判断する
+	//	if (m_bugTime >= 10)
+	//	{
+	//		m_moveAttack = false;
+	//		m_moveflag = false;
+	//		m_bug = true;
+	//	}
+	//}
+	//else
+	//{
+	//	m_bugTime = 0;
+	//	m_bug = false;
+	//}
 }
 
 void Player::WeaponUpdate(Equipment& eq)
@@ -913,50 +922,66 @@ void Player::Action()
 	//PAD_INPUT_9はLスティック
 	//PAD_INPUT_10はRスティック
 
-	//Rボタンで攻撃
+	
 	//一段階目の攻撃
 	if (m_hp > 0.0f)
 	{
-		if (m_xpad.Buttons[9] == 1 && m_staminaBroke == false && m_recoberyAction == false && m_avoidance == false &&
-			m_hit == false && m_hitImpact == false)
+		//Rボタンで攻撃
+		//一回だけ反応するようにする
+		if (m_xpad.Buttons[9] == 1)
 		{
-			if (m_attackNumber == 0 && m_stamina >= 10.0f)
+			Button++;
+
+			if (Button == 1)
 			{
-				//攻撃力初期化
-				m_attack = 10.0f;
+				if (m_staminaBroke == false && m_recoberyAction == false && m_avoidance == false &&
+					m_hit == false && m_hitImpact == false)
+				{
+					if (m_attackNumber == 0 && m_stamina >= 10.0f)
+					{
+						//攻撃力初期化
+						m_attack = 10.0f;
 
-				//スタミナ消費
-				m_stamina = m_stamina - 10.0f;
+						//スタミナ消費
+						m_stamina = m_stamina - 10.0f;
 
-				m_attackNumber = 1;
+						m_attackNumber = 1;
 
-				m_moveAttack = true;
+						m_moveAttack = true;
+					}
+					else if (m_nextAttack1 == true && m_stamina >= 10.0f)
+					{
+						//攻撃力初期化
+						m_attack = 10.0f;
+
+						//スタミナ消費
+						m_stamina = m_stamina - 10.0f;
+
+						m_attackNumber = 2;
+
+						m_moveAttack = true;
+					}
+					else if (m_nextAttack2 == true && m_stamina >= 10.0f)
+					{
+						//攻撃力初期化
+						m_attack = 10.0f;
+
+						//スタミナ消費
+						m_stamina = m_stamina - 10.0f;
+
+						m_attackNumber = 3;
+
+						m_moveAttack = true;
+					}
+				}
 			}
-			else if (m_nextAttack1 == true && m_stamina >= 10.0f)
-			{
-				//攻撃力初期化
-				m_attack = 10.0f;
-
-				//スタミナ消費
-				m_stamina = m_stamina - 10.0f;
-
-				m_attackNumber = 2;
-
-				m_moveAttack = true;
-			}
-			else if (m_nextAttack2 == true && m_stamina >= 10.0f)
-			{
-				//攻撃力初期化
-				m_attack = 10.0f;
-
-				//スタミナ消費
-				m_stamina = m_stamina - 10.0f;
-
-				m_attackNumber = 3;
-
-				m_moveAttack = true;
-			}
+			
 		}
+		else
+		{
+			Button = 0;
+		}
+		
 	}
 	
 
@@ -1000,99 +1025,123 @@ void Player::Action()
 	//攻撃時のアニメーションを速くする
 	if (m_moveAttack == true)
 	{
-		
-		if (m_animation[4] != -1 && m_playTime >= 15.0f)
+		//攻撃１段階目
+		if (m_animOne[4] == true)
 		{
-
-			m_playTime += 0.9f;
-
-			//攻撃の当たり判定発生
-			if (m_playTime >= 25.0f && m_playTime <= 30.0f)
+			if (m_playTime >= 15 && m_playTime < 30.0f)
 			{
-				if (attack == false)
+				m_playTime += 0.9f;
+
+				//攻撃の当たり判定発生
+				if (m_playTime >= 25.0f && m_playTime <= 30.0f)
 				{
-					PlaySoundMem(se->GetAttackSE(), DX_PLAYTYPE_BACK, true);
+					if (attack == false)
+					{
+						PlaySoundMem(se->GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
-					attack = true;
+						attack = true;
+					}
+
+					m_sphereCol.Update(m_colAttackPos);
 				}
-
-				m_sphereCol.Update(m_colAttackPos);
+				
 			}
-			//攻撃の当たり判定を初期化する
-			else
+			else if (m_playTime >= 30.0f)
 			{
-				attack = false;
+				m_playTime += 0.3f;
 
-				m_sphereCol.Update(m_initializationPos);
-			}
-
-
-			if (m_playTime >= 30.0f)
-			{
 				//2段階目の攻撃準備
 				m_nextAttack1 = true;
-			}
 
-		}
-		else if (m_animation[5] != -1 && m_playTime >= 5.0f)
-		{
-			m_playTime += 0.9f;
-
-			//攻撃の当たり判定発生
-			if (m_playTime >= 10.0f && m_playTime <= 15.0f)
-			{
-				if (attack == false)
-				{
-					PlaySoundMem(se->GetAttackSE(), DX_PLAYTYPE_BACK, true);
-
-					attack = true;
-				}
-
-				m_sphereCol.Update(m_colAttackPos);
-			}
-			//攻撃の当たり判定を初期化する
-			else
-			{
+				//攻撃の当たり判定を初期化する
 				attack = false;
 
 				m_sphereCol.Update(m_initializationPos);
 			}
-
-			if (m_playTime >= 15.0f)
+			else
 			{
+				m_playTime += 0.5f;
+
+				//攻撃の当たり判定を初期化する
+				attack = false;
+
+				m_sphereCol.Update(m_initializationPos);
+			}
+		}
+		//攻撃２段階目
+		else if (m_animOne[5] == true)
+		{
+
+			if (m_playTime >= 5.0f && m_playTime < 15.0f)
+			{
+				m_playTime += 0.9f;
+
+				//攻撃の当たり判定発生
+				if (m_playTime >= 10.0f && m_playTime <= 15.0f)
+				{
+					if (attack == false)
+					{
+						PlaySoundMem(se->GetAttackSE(), DX_PLAYTYPE_BACK, true);
+
+						attack = true;
+					}
+
+					m_sphereCol.Update(m_colAttackPos);
+				}
+			}
+			else if (m_playTime >= 15.0f)
+			{
+				m_playTime += 0.3f;
+
 				//3段階目の攻撃準備
 				m_nextAttack2 = true;
+
+				attack = false;
+
+				m_sphereCol.Update(m_initializationPos);
+			}
+			else
+			{
+				m_playTime += 0.5f;
+
+				//攻撃の当たり判定を初期化する
+				attack = false;
+
+				m_sphereCol.Update(m_initializationPos);
 			}
 			
 		}
-		else if (m_animation[6] != -1 && m_playTime >= 15.0f)
+		//攻撃３段階目
+		else if (m_animOne[6] == true)
 		{
-			m_playTime += 0.9f;
 
-			//攻撃の当たり判定発生
-			if (m_playTime >= 20.0f && m_playTime <= 25.0f)
+			if (m_playTime >= 15.0f && m_playTime < 25.0f)
 			{
-				if (attack == false)
+				m_playTime += 0.9f;
+
+				//攻撃の当たり判定発生
+				if (m_playTime >= 20.0f && m_playTime <= 25.0f)
 				{
-					PlaySoundMem(se->GetAttackSE(), DX_PLAYTYPE_BACK, true);
+					if (attack == false)
+					{
+						PlaySoundMem(se->GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
-					attack = true;
+						attack = true;
+					}
+
+					m_sphereCol.Update(m_colAttackPos);
 				}
-
-				m_sphereCol.Update(m_colAttackPos);
 			}
-			//攻撃の当たり判定を初期化する
 			else
 			{
+				m_playTime += 0.5f;
+
+				//攻撃の当たり判定を初期化する
 				attack = false;
 
 				m_sphereCol.Update(m_initializationPos);
 			}
 
-		}
-		else
-		{
-			m_playTime += 0.5f;
 		}
 
 	}
@@ -2250,13 +2299,6 @@ void Player::Animation(float& time, VECTOR& pos)
 				}
 			}
 
-			//if (i == 3)
-			//{
-			//	m_drawPos = pos;
-
-			//	//回避終了
-			//	m_avoidance = false;
-			//}
 			if (i == 4 || i == 5 || i == 6)
 			{
 				m_drawPos = pos;
@@ -2430,7 +2472,17 @@ void Player::Animation(float& time, VECTOR& pos)
 		{
 			MV1SetAttachAnimTime(m_handle, m_animation[i], time);
 
-			if (i == 3 || i == 4)
+			//回避中じゃないとおかしくなる
+			if (m_avoidance == true)
+			{
+				//アニメーションが経過中の座標取得
+				m_nowPos = MV1GetFramePosition(m_handle, m_moveAnimFrameIndex);
+				m_moveVector = VSub(m_nowPos, m_prevPos);
+
+				pos.x += m_moveVector.x;
+				pos.z += m_moveVector.z;
+			}
+			if (i == 4)
 			{
 				//アニメーションが経過中の座標取得
 				m_nowPos = MV1GetFramePosition(m_handle, m_moveAnimFrameIndex);
@@ -3286,7 +3338,7 @@ void Player::Draw()
 
 #endif
 
-#if true
+#if false
 
 	//Yの1000が下-1000が上
 	//Xの1000が右-1000が左
@@ -3302,7 +3354,7 @@ void Player::Draw()
 
 #endif
 
-#if false
+#if true
 
 	DrawFormatString(200, 100, 0xffffff, "0 : %d", m_animOne[0]);
 	DrawFormatString(200, 160, 0xffffff, "1 : %d", m_animOne[1]);
