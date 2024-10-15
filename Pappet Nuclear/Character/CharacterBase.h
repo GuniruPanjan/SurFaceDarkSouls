@@ -69,6 +69,8 @@ public:
 		m_effectHit(0),
 		m_playerDif(VGet(0.0f,0.0f,0.0f)),
 		m_shieldDif(VGet(0.0f,0.0f,0.0f)),
+		m_animBlend(1.0f),
+		m_animBlendOne(false),
 		HitDim(),
 		m_Wall(),
 		m_Floor(),
@@ -110,6 +112,8 @@ protected:
 	bool m_damageReceived;  //キャラがダメージを受けたかどうか判断するフラグ
 	int m_attackNumber;   //キャラの攻撃が何段階目か判断する変数
 	float m_playTime;  //キャラのアニメーションを進める時間
+	float m_animBlend; //キャラのアニメーションブレンド率
+	bool m_animBlendOne;   //キャラのアニメーションブレンド率の初期化を一回だけ行う
 	int m_animStand;  //キャラの立っているアニメーション格納変数
 	int m_animWalk;   //キャラの歩くアニメーション格納変数
 	int m_animRun;    //キャラの走るアニメーション格納変数

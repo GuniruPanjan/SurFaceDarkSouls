@@ -129,6 +129,7 @@ private:
 	unsigned int m_rectColor = 0xffffff;      //デバッグ用の色変更
 
 	//アニメーション関係
+	float m_blend;
 	int m_animLeft;       //左に歩くアニメーション代入
 	int m_animRight;      //右に歩くアニメーション代入
 	int m_animHeel;       //回復アニメーション代入
@@ -160,5 +161,7 @@ private:
 	std::shared_ptr<WeaponSummary> weapon = std::make_shared<WeaponSummary>();
 	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 
+	//アニメーションブレンド
+	BlendAnimation* pAnim;
 };
 

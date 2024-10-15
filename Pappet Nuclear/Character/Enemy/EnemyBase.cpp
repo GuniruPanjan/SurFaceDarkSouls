@@ -14,9 +14,7 @@ EnemyBase::EnemyBase():
 	m_searchRadius(0.0f),
 	m_distanceRadius(0.0f),
 	m_attackRadius(0.0f),
-	m_enemyDeath(false),
-	m_bossAnimBlend(0.0f),
-	m_bossAnimBlendOne(false)
+	m_enemyDeath(false)
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
