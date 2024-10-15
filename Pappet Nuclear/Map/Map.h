@@ -3,7 +3,8 @@
 #include "Col/RectCol.h"
 #include "Col/SphereCol.h"
 #include "Character/Effect/Effect.h"
-#define ITEM_NUMBER 30
+#include "Character/Player/Item/ItemManager.h"
+#include<memory>
 
 class Player;
 
@@ -18,13 +19,32 @@ public:
 	void Draw();
 	void End();
 
+	/// <summary>
+	/// キャラクターとの当たり判定
+	/// </summary>
+	/// <param name="col">プレイヤーのカプセル</param>
+	/// <returns></returns>
 	bool CapsuleIsHit(const CapsuleCol& col);
+
+	/// <summary>
+	/// プレイヤーの休息判定
+	/// </summary>
+	/// <param name="col">プレイヤーのカプセル</param>
+	/// <returns></returns>
 	bool CapsuleSaveHit(const CapsuleCol& col);
+
+	/// <summary>
+	/// アイテムの当たり判定
+	/// </summary>
+	/// <param name="col">プレイヤーとの当たり判定</param>
+	/// <param name="max">アイテムの配列</param>
+	/// <returns></returns>
 	bool CapsuleItemHit(const CapsuleCol& col, int max);
 
 	int GetCollisionMap() { return m_collisionHandle; }
 	bool GetRoomEntered() { return m_bossRoomEntered; }
 	bool GetSavePossible() { return m_saveSpot; }
+	bool GetItem(int max) { return item->GetItem(max); }
 	VECTOR GetVectorMapPos() { return m_MapPosition; }
 	VECTOR GetRestPos() { return m_restPos; }
 
@@ -60,5 +80,8 @@ private:
 	unsigned int m_color = 0xffffff;
 	unsigned int m_sphereColor = 0xffffff;
 	unsigned int m_itemColor[ITEM_NUMBER];
+
+	//スマートポインタ
+	std::shared_ptr<ItemManager> item = std::make_shared<ItemManager>();
 };
 

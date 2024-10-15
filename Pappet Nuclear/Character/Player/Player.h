@@ -19,7 +19,7 @@ public:
 	void Animation(float& time, VECTOR& pos);
 	void WeaponAnimation(float& time);
 	void HitObj(Map& map);
-	void SaveAction(Map& map);
+	void MapAction(Map& map);
 	void Draw();
 	void WeaponDraw(Equipment& eq);
 	void End();
@@ -138,12 +138,14 @@ private:
 	int m_animWeaponLeftWalk;   //武器を持った時左に歩くアニメーション
 	int m_animWeaponRun;       //武器を持った時の走っているアニメーション
 	int m_animShieldStand;     //盾を構えた時の立ってるアニメーション
+	int m_animTaking;          //アイテムの所得アニメーション
 	bool m_hit;           //怯み判定
 	bool m_weaponMoveRight;     //武器を持った時の右歩きアニメーションにするための判定
 	bool m_hitImpact;     //盾受け判定
 	bool m_shield;        //防御のアニメーション判定
 	bool m_weaponAnimOne;      //武器を持った時にブレンド率を一回だけ調整する
 	bool m_notWeaponAnimOne;   //武器を持ってない時にブレンド率を一回だけ調整する
+	bool m_itemTaking;         //アイテム所得アニメーション判定
 
 	//レベル関係
 	int m_coreAllLevel;        //レベルを上げるための変数

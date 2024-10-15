@@ -3,6 +3,10 @@
 
 ItemManager::ItemManager()
 {
+	for (int i = 0; i < ITEM_NUMBER; i++)
+	{
+		m_item[i] = false;
+	}
 }
 
 ItemManager::~ItemManager()

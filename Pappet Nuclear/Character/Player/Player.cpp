@@ -16,6 +16,8 @@ namespace
 
 	MATRIX AvoidancePos;    //回避したときのポジション
 
+	int ItemNumber;
+
 	//シングルトン
 	auto& result = HandleManager::GetInstance();
 }
@@ -81,12 +83,14 @@ Player::Player():
 	m_animWeaponWalk(0),
 	m_animWeaponLeftWalk(0),
 	m_animWeaponRun(0),
+	m_animTaking(0),
 	m_weaponMoveRight(false),
 	m_hitImpact(false),
 	m_weaponAnimOne(false),
 	m_notWeaponAnimOne(false),
 	m_oneAvoidance(false),
-	m_hit(false)
+	m_hit(false),
+	m_itemTaking(false)
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
@@ -153,6 +157,9 @@ void Player::Init()
 	m_weaponAnimOne = false;
 	m_notWeaponAnimOne = false;
 
+	m_itemTaking = false;
+	ItemNumber = 0;
+
 	//一回だけ初期化
 	if (m_oneInit == false)
 	{
@@ -195,6 +202,9 @@ void Player::Init()
 		m_animLeft = MV1LoadModel("Data/PlayerAnimation/PlayerAnimLeftWalk.mv1");
 		m_animRight = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRightWalk.mv1");
 		m_animWeaponLeftWalk = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponLeftWalk.mv1");
+		m_animTaking = MV1LoadModel("Data/PlayerAnimation/PlayerAnimTaking.mv1");
+
+		//55カウント
 
 		//アニメーションアタッチ
 		m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
@@ -216,11 +226,11 @@ void Player::Init()
 		m_animation[16] = MV1AttachAnim(m_handle, 0, m_animLeft, TRUE);
 		m_animation[17] = MV1AttachAnim(m_handle, 0, m_animRight, TRUE);
 		m_animation[18] = MV1AttachAnim(m_handle, 0, m_animWeaponLeftWalk, TRUE);
+		m_animation[19] = MV1AttachAnim(m_handle, 1, m_animTaking, TRUE);
 
 
 		//アタッチしたアニメーションの総再生時間を取得する
-
-		for (int i = 0; i < 19; i++)
+		for (int i = 0; i < 20; i++)
 		{
 			m_totalAnimTime[i] = MV1GetAttachAnimTotalTime(m_handle, m_animation[i]);
 
@@ -278,6 +288,7 @@ void Player::Init()
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
 		MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
+		MV1SetAttachAnimBlendRate(m_handle, m_animation[19], 0.0f);
 
 
 		se->CharaInit();
@@ -1882,6 +1893,12 @@ void Player::Animation(float& time, VECTOR& pos)
 					m_animOne[18] = false;
 				}
 			}
+			//アイテム所得するとき
+			if (m_itemTaking == true)
+			{
+
+			}
+
 		}
 	}
 
@@ -2679,7 +2696,7 @@ void Player::HitObj(Map& map)
 		}
 	}
 
-	SaveAction(map);
+	MapAction(map);
 
 	//エフェクト更新
 	effect->Update();
@@ -2689,7 +2706,7 @@ void Player::HitObj(Map& map)
 
 }
 
-void Player::SaveAction(Map& map)
+void Player::MapAction(Map& map)
 {
 
 	//休息が可能だったら
@@ -2724,6 +2741,26 @@ void Player::SaveAction(Map& map)
 
 	//休息するポイントのエフェクトポジション
 	SetPosPlayingEffekseer3DEffect(m_effect, map.GetRestPos().x, map.GetRestPos().y, map.GetRestPos().z);
+
+
+	for (int i = 0; i < ITEM_NUMBER; i++)
+	{
+		//アイテムが所得可能だったら
+		if (map.GetItem(i) == true)
+		{
+			//Yボタンが押されたら
+			if (m_xpad.Buttons[15] == 1)
+			{
+				ItemNumber = i;
+
+				m_itemTaking = true;
+			}
+			else
+			{
+				m_itemTaking = false;
+			}
+		}
+	}
 }
 
 void Player::Draw()
@@ -2838,6 +2875,13 @@ void Player::Draw()
 	DrawFormatString(0, 200, 0xffffff, "DrawposX : %f DrawposY : %f DrawposZ : %f", m_drawPos.x, m_drawPos.y, m_drawPos.z);
 
 #endif
+
+#if true
+
+	DrawFormatString(0, 200, 0xffffff, "item : %d bool : %d", ItemNumber, m_itemTaking);
+
+#endif
+
 
 	//レベルを上げるための変数描画
 	DrawFormatString(1400, 950, 0x000000, "%d", m_coreAllLevel);

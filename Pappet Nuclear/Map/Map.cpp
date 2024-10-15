@@ -243,10 +243,16 @@ bool Map::CapsuleItemHit(const CapsuleCol& col, int max)
 	if (isHit)
 	{
 		m_itemColor[max] = 0xff00ff;
+
+		//アイテムの取得可能にする
+		item->SetItem(max, true);
 	}
 	else
 	{
 		m_itemColor[max] = 0xffffff;
+
+		//アイテム取得不可にする
+		item->SetItem(max, false);
 	}
 
 	return isHit;
