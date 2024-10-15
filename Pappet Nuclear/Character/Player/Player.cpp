@@ -1134,7 +1134,7 @@ void Player::Action()
 			}
 			else
 			{
-				m_playTime += 0.5f;
+				m_playTime += 0.7f;
 
 				//çUåÇÇÃìñÇΩÇËîªíËÇèâä˙âªÇ∑ÇÈ
 				attack = false;
@@ -3003,10 +3003,10 @@ void Player::WeaponAnimation(float& time)
 			{
 				if (m_oneShield == false)
 				{
-					MV1SetAttachAnimBlendRate(m_handle, m_animation[0], 1.0f);
-					MV1SetAttachAnimBlendRate(m_handle, m_animation[1], 1.0f);
-					MV1SetAttachAnimBlendRate(m_handle, m_animation[2], 1.0f);
-					MV1SetAttachAnimBlendRate(m_handle, m_animation[11], 0.0f);
+					//MV1SetAttachAnimBlendRate(m_handle, m_animation[0], 1.0f);
+					//MV1SetAttachAnimBlendRate(m_handle, m_animation[1], 1.0f);
+					//MV1SetAttachAnimBlendRate(m_handle, m_animation[2], 1.0f);
+					//MV1SetAttachAnimBlendRate(m_handle, m_animation[11], 0.0f);
 
 					m_oneShield = true;
 				}
@@ -3015,20 +3015,22 @@ void Player::WeaponAnimation(float& time)
 			{
 
 				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[11], m_moveAnimShieldFrameIndex, 0.0f);
-				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[0], m_moveAnimShieldFrameIndex, 1.0f);
-				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[1], m_moveAnimShieldFrameIndex, 1.0f);
-				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[2], m_moveAnimShieldFrameIndex, 1.0f);
-				if (m_animOne[14] == true)
+
+				for (int i = 0; i < 20; i++)
 				{
-					MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[14], m_moveAnimShieldFrameIndex, 1.0f);
-				}
-				if (m_animOne[15] == true)
-				{
-					MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[15], m_moveAnimShieldFrameIndex, 1.0f);
-				}
-				if (m_animOne[18] == true || m_weaponMoveRight == true)
-				{
-					MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[18], m_moveAnimShieldFrameIndex, 1.0f);
+					if (m_animOne[i] == true)
+					{
+						if (i != 18 && i != 11)
+						{
+							MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[i], m_moveAnimShieldFrameIndex, 1.0f);
+						}
+						else if (i == 18 && m_weaponMoveRight == true)
+						{
+							MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[i], m_moveAnimShieldFrameIndex, 1.0f);
+						}
+						
+					}
+					
 				}
 			}
 		}
