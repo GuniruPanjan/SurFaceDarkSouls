@@ -5,9 +5,11 @@
 #include "Character/Player/Equipment/Equipment.h"
 #include "Character/Effect/Effect.h"
 #include "Character/Animation/BlendAnimation.h"
+//#include "Character/Player/Item/ItemManager.h"
 #include "Map/Map.h"
 #include "UI/UI.h"
 #include "SceneBase.h"
+
 class SceneGame : public SceneBase
 {
 public:
@@ -30,5 +32,6 @@ private:
 	std::shared_ptr<Equipment> equipment = std::make_shared<Equipment>();
 	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 	std::shared_ptr<BlendAnimation> panim = std::make_shared<BlendAnimation>();
+	//std::shared_ptr<ItemManager> item = std::make_shared<ItemManager>();
 };
 

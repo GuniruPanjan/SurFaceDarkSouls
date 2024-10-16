@@ -1,11 +1,14 @@
 #include "SceneGame.h"
 #include "SceneClear.h"
 #include "SceneTitle.h"
+#include "Character/Player/Item/ItemManager.h"
 
 namespace
 {
 	int seSize;      //se‚Ì‰¹—Ê
 	int a;         //ƒuƒŒƒ“ƒh—¦
+
+	std::shared_ptr<ItemManager> item = std::make_shared<ItemManager>();
 }
 
 SceneGame::SceneGame():
@@ -34,19 +37,21 @@ void SceneGame::Init()
 	bgmse->GameBGM();
 	equipment->Init();
 	effect->AllInit();
+	//item->Init();
 
 	a = 0;
 }
 
 std::shared_ptr<SceneBase> SceneGame::Update()
 {
+	item->Update();
 	player->SetCameraAngle(camera->GetAngleY());
 	player->Update();
 	player->WeaponUpdate(*equipment);
 	player->PlaySE(setting->GetVolume());
 	camera->Update(*player);
 	map->Update(*effect);
-	player->HitObj(*map);
+	player->HitObj(*map, *item);
 	enemy->MapHitBoss(*map);
 	enemy->BossUpdate(*player, *map, setting->GetVolume());
 	camera->HitObj(*map);
@@ -260,6 +265,8 @@ void SceneGame::Draw()
 	}
 
 	setting->SettingDraw(setting->GetVolume());
+
+	item->Draw();
 }
 
 void SceneGame::End()
@@ -271,4 +278,5 @@ void SceneGame::End()
 	equipment->End();
 	setting->End();
 	bgmse->End();
+	//item->End();
 }

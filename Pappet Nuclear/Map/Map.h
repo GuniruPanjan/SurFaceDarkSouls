@@ -16,6 +16,7 @@ public:
 
 	void Init();
 	void Update(Effect& ef);
+	void ItemPos(int number, float x, float y, float z);
 	void Draw();
 	void End();
 
@@ -45,6 +46,8 @@ public:
 	bool GetRoomEntered() { return m_bossRoomEntered; }
 	bool GetSavePossible() { return m_saveSpot; }
 	bool GetItem(int max) { return item->GetItem(max); }
+	bool SetItem(int max, bool set) { return item->SetItem(max, set); }
+	bool SetGetItem(int max, bool get) { return item->SetGetItem(max, get); }
 	VECTOR GetVectorMapPos() { return m_MapPosition; }
 	VECTOR GetRestPos() { return m_restPos; }
 
@@ -66,6 +69,7 @@ private:
 	VECTOR m_MapPosition;   //マップのポジション
 	VECTOR m_collisionMapPosition;   //コリジョンのポジション設定
 	VECTOR m_restPos;        //休息するポジション
+
 
 	//Colの当たり判定
 	float m_sphereRadius;

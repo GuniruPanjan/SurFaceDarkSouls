@@ -110,14 +110,29 @@ void Map::Init()
 
 void Map::Update(Effect& ef)
 {
-	//アイテムのエフェクト再生場所
-	SetPosPlayingEffekseer3DEffect(m_itemModel[0], 300.0f, 5.0f, -360.0f);
-	m_itemPos[0] = Pos3(300.0f, 5.0f, -360.0f);
-	SetPosPlayingEffekseer3DEffect(m_itemModel[1], 700.0f, 5.0f, 200.0f);
-	m_itemPos[1] = Pos3(700.0f, 5.0f, 200.0f);
-	SetPosPlayingEffekseer3DEffect(m_itemModel[2], 700.0f, 5.0f, -230.0f);
-	m_itemPos[2] = Pos3(700.0f, 5.0f, -230.0f);
-
+	for (int i = 0; i < ITEM_NUMBER; i++)
+	{
+		//アイテムが存在していれば
+		if (GetItem(i) == false)
+		{
+			if (i == 0)
+			{
+				ItemPos(i, 300.0f, 5.0f, -360.0f);
+			}
+			if (i == 1)
+			{
+				ItemPos(i, 700.0f, 5.0f, 200.0f);
+			}
+			if (i == 2)
+			{
+				ItemPos(i, 700.0f, 5.0f, -230.0f);
+			}
+		}
+		else
+		{
+			m_itemPos[i] = Pos3(-10000.0f, -10000.0f, -10000.0f);
+		}
+	}
 
 	//effectPlayBackが一定数達すると初期化する
 	if (effectPlayBack <= 50)
@@ -126,7 +141,6 @@ void Map::Update(Effect& ef)
 	}
 	else
 	{
-		
 		for (int i = 0; i < 3; i++)
 		{
 			//アイテムのエフェクト再生
@@ -137,6 +151,19 @@ void Map::Update(Effect& ef)
 
 		effectPlayBack = 0;
 	}
+}
+
+/// <summary>
+/// アイテムのエフェクト再生場所と場所
+/// </summary>
+/// <param name="number">アイテムの番号</param>
+/// <param name="x">X座標</param>
+/// <param name="y">Y座標</param>
+/// <param name="z">Z座標</param>
+void Map::ItemPos(int number, float x, float y, float z)
+{
+	SetPosPlayingEffekseer3DEffect(m_itemModel[number], x, y, z);
+	m_itemPos[number] = Pos3(x, y, z);
 }
 
 void Map::Draw()

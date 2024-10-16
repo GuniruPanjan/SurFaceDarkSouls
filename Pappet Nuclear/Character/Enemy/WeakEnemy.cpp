@@ -774,7 +774,7 @@ bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max, Effect&
 		{
 			m_weakEnemyHp[max] = m_weakEnemyHp[max] - damage;
 
-			//m_effectHit[max] = PlayEffekseer3DEffect(effect->GetHitEffect());
+			//エフェクトを再生する
 			m_effectWeakHit[max] = PlayEffekseer3DEffect(ef.GetHitEffect());
 
 			PlaySoundMem(m_hitSE[max], DX_PLAYTYPE_BACK, true);

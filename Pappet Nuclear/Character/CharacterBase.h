@@ -15,6 +15,7 @@
 #define ENEMY_NOW 5  //敵の配列で出す数
 
 class Map;   //マップクラス
+class ItemManager;    //アイテムマネージャークラス
 
 /// <summary>
 /// キャラクターの基底クラス

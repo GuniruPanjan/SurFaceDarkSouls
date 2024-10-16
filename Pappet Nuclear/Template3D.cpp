@@ -3,6 +3,7 @@
 #include <cmath>
 #include <memory>
 #include "Scene/SceneManager.h"
+#include "Character/Player/Item/ItemManager.h"
 #include "Icon/Icon.h"
 
 namespace
@@ -57,8 +58,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//シーンを管理するポインタ
 	std::shared_ptr<SceneManager> pScene = std::make_shared<SceneManager>();
+	std::shared_ptr<ItemManager> pItem = std::make_shared<ItemManager>();
 
 	pScene->Init();
+	pItem->Init();
 
 	while (ProcessMessage() == 0)
 	{
@@ -90,6 +93,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 	pScene->End();
+	pItem->End();
 
 	Effkseer_End();
 	DxLib_End();				// ＤＸライブラリ使用の終了処理

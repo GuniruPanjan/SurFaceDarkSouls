@@ -18,8 +18,8 @@ public:
 	void NotWeaponAnimation(float& time);
 	void Animation(float& time, VECTOR& pos);
 	void WeaponAnimation(float& time);
-	void HitObj(Map& map);
-	void MapAction(Map& map);
+	void HitObj(Map& map, ItemManager& item);
+	void MapAction(Map& map, ItemManager& item);
 	void Draw();
 	void WeaponDraw(Equipment& eq);
 	void End();
@@ -129,7 +129,6 @@ private:
 	unsigned int m_rectColor = 0xffffff;      //デバッグ用の色変更
 
 	//アニメーション関係
-	float m_blend;
 	int m_animLeft;       //左に歩くアニメーション代入
 	int m_animRight;      //右に歩くアニメーション代入
 	int m_animHeel;       //回復アニメーション代入
@@ -147,6 +146,7 @@ private:
 	bool m_weaponAnimOne;      //武器を持った時にブレンド率を一回だけ調整する
 	bool m_notWeaponAnimOne;   //武器を持ってない時にブレンド率を一回だけ調整する
 	bool m_itemTaking;         //アイテム所得アニメーション判定
+	bool m_itemTakingNow;      //アイテム所得中のアニメーション判定
 
 	//レベル関係
 	int m_coreAllLevel;        //レベルを上げるための変数
@@ -162,6 +162,6 @@ private:
 	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 
 	//アニメーションブレンド
-	BlendAnimation* pAnim;
+	std::shared_ptr<BlendAnimation> pAnim = std::make_shared<BlendAnimation>();
 };
 

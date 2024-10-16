@@ -369,6 +369,7 @@ void BossEnemy::Action(Player& player)
 			if (m_playTime >= 5.0f)
 			{
 
+				//エフェクトを再生する
 				if (m_effectActivation == false)
 				{
 					m_effect = PlayEffekseer3DEffect(effect->GetBossAttackEffect3());
@@ -890,6 +891,7 @@ bool BossEnemy::isSphereHit(const SphereCol& col, float damage, Effect& ef)
 		//ダメージを一回だけ与える
 		if (m_damageReceived == false)
 		{
+			//エフェクトを再生する
 			m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
 
 			m_hp = m_hp - damage;
