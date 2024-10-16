@@ -15,7 +15,7 @@ public:
 	void Draw();
 	void End();
 
-	bool isSphereHit(const SphereCol& col, float damage, Effect& ef);
+	bool isSphereHit(const SphereCol& col, float damage);
 	bool isPlayerHit(const CapsuleCol& col, VECTOR vec,float bounce);
 	bool isCapsuleHit(const CapsuleCol& col);
 
@@ -69,7 +69,7 @@ private:
 	VECTOR m_outPush;        //押し出す方向ベクトル
 
 
-	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+	//std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 	BlendAnimation *pAnim;
 	//std::shared_ptr<BlendAnimation> pAnim = std::make_shared<BlendAnimation>();
 };

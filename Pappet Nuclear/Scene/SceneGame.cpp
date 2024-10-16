@@ -2,6 +2,7 @@
 #include "SceneClear.h"
 #include "SceneTitle.h"
 #include "Character/Player/Item/ItemManager.h"
+#include "Character/Effect/Effect.h"
 
 namespace
 {
@@ -9,6 +10,9 @@ namespace
 	int a;         //ブレンド率
 
 	std::shared_ptr<ItemManager> item = std::make_shared<ItemManager>();
+
+	//シングルトン
+	auto& effect = Effect::GetInstance();
 }
 
 SceneGame::SceneGame():
@@ -36,7 +40,9 @@ void SceneGame::Init()
 	bgmse->GameInit();
 	bgmse->GameBGM();
 	equipment->Init();
-	effect->AllInit();
+	//effect->AllInit();
+	//effect.EffectLoad("Imapct", "Data/Effect/HitEffect.efkefc", 30, 7.0f);
+	//effect.EffectLoad("Item", "Data/Effect/Item.efkefc", 60, 5.0f);
 	//item->Init();
 
 	a = 0;
@@ -50,13 +56,13 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	player->WeaponUpdate(*equipment);
 	player->PlaySE(setting->GetVolume());
 	camera->Update(*player);
-	map->Update(*effect);
+	map->Update();
 	player->HitObj(*map, *item);
 	enemy->MapHitBoss(*map);
 	enemy->BossUpdate(*player, *map, setting->GetVolume());
 	camera->HitObj(*map);
 
-	enemy->isSphereBossHit(player->GetSphereCol(), player->GetDamage(), *effect);
+	enemy->isSphereBossHit(player->GetSphereCol(), player->GetDamage());
 	enemy->isBossPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetBounceDis());
 	enemy->isBossDistanceHit(player->GetCapsuleCol());
 	map->CapsuleIsHit(player->GetCapsuleCol());
@@ -74,7 +80,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		enemy->isSeachHit(player->GetCapsuleCol(), i);
 		enemy->isDistanceHit(player->GetCapsuleCol(), i);
 		camera->LockUpdate(*player, *enemy, i);
-		enemy->isSphereHit(player->GetSphereCol(), player->GetDamage(), i, *effect);
+		enemy->isSphereHit(player->GetSphereCol(), player->GetDamage(), i);
 		enemy->MapHitWenemy(*map, i);
 		player->IsCapsuleHit(enemy->GetCol(i), enemy->GetBossCol());
 		
@@ -86,7 +92,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 			{
 				player->isShieldHit(enemy->GetAttackCol(i), enemy->GetDamage());
 			}
-			player->isSphereHit(enemy->GetAttackCol(i), enemy->GetDamage(), *effect);
+			player->isSphereHit(enemy->GetAttackCol(i), enemy->GetDamage());
 		}
 		
 		enemy->isWeakPlayerHit(player->GetCapsuleCol(), player->GetBounceMove(), player->GetSpeed(), i);
@@ -147,7 +153,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 		{
 			player->isBossShieldHit(enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->BossGetDamage());
 		}
-		player->isBossSphereHit(enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->BossGetDamage(), *effect);
+		player->isBossSphereHit(enemy->GetBossAttackCol1(), enemy->GetBossAttackCol2(), enemy->GetBossAttackCol3(), enemy->BossGetDamage());
 	}
 
 
@@ -193,20 +199,23 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	//コア取得
 	player->SetCore(enemy->GetCore());
 
-	//else
-	//{
-		//setting->SetReturn(true);
-	//}
-
 	bgmse->Update(setting->GetVolume());
+
+	//エフェクトの更新
+	Effect::GetInstance().Update();
 
 	return shared_from_this();  //自身のポインタを返す
 }
 
 void SceneGame::Draw()
 {
+
 	map->Draw();
 	camera->Draw();
+
+	//エフェクト描画
+	Effect::GetInstance().Draw();
+
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
 		enemy->Draw(i);
@@ -224,7 +233,7 @@ void SceneGame::Draw()
 
 	player->Draw();
 	player->WeaponDraw(*equipment);
-	ui->Draw(*player, *enemy, *equipment, *map);
+	ui->Draw(*player, *enemy, *equipment, *map, *item);
 
 	//プレイヤーが死んだ場合
 	if (player->GetDeath() == true)

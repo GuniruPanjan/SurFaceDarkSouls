@@ -2,11 +2,11 @@
 #include "DxLib.h"
 #include "Col/RectCol.h"
 #include "Col/SphereCol.h"
-#include "Character/Effect/Effect.h"
 #include "Character/Player/Item/ItemManager.h"
 #include<memory>
 
 class Player;
+class Effect;
 
 class Map
 {
@@ -15,7 +15,7 @@ public:
 	virtual ~Map();
 
 	void Init();
-	void Update(Effect& ef);
+	void Update();
 	void ItemPos(int number, float x, float y, float z);
 	void Draw();
 	void End();
@@ -46,7 +46,7 @@ public:
 	bool GetRoomEntered() { return m_bossRoomEntered; }
 	bool GetSavePossible() { return m_saveSpot; }
 	bool GetItem(int max) { return item->GetItem(max); }
-	bool SetItem(int max, bool set) { return item->SetItem(max, set); }
+	bool SetItemSpot(int max, bool set) { return m_itemSpot[max] = set; }
 	bool SetGetItem(int max, bool get) { return item->SetGetItem(max, get); }
 	VECTOR GetVectorMapPos() { return m_MapPosition; }
 	VECTOR GetRestPos() { return m_restPos; }
@@ -66,6 +66,7 @@ private:
 	bool m_bossRoomEntered;    //ボス部屋に入った判定
 	bool m_saveSpot;        //回復スポットを使える判定
 	bool m_oneInit;         //一回だけ初期化する
+	bool m_itemSpot[ITEM_NUMBER];        //アイテムを所得できる場所
 	VECTOR m_MapPosition;   //マップのポジション
 	VECTOR m_collisionMapPosition;   //コリジョンのポジション設定
 	VECTOR m_restPos;        //休息するポジション

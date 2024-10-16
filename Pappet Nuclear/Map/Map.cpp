@@ -1,8 +1,12 @@
 #include "Map.h"
+#include "Character/Effect/Effect.h"
 
 namespace
 {
 	int effectPlayBack;    //エフェクトを再生させる時間
+
+	//シングルトン
+	auto& effect = Effect::GetInstance();
 }
 
 Map::Map() :
@@ -31,6 +35,8 @@ Map::Map() :
 		m_itemModel[i] = -1;
 
 		m_itemColor[i] = 0xffffff;
+
+		m_itemSpot[i] = false;
 	}
 }
 
@@ -53,6 +59,8 @@ void Map::Init()
 		//モデル読み込み
 		m_handle = MV1LoadModel("Data/Map/Map.mv1");
 		m_collisionHandle = MV1LoadModel("Data/Map/Collision.mv1");
+
+		effect.EffectLoad("Item", "Data/Effect/Item.efkefc", 60, 5.0f);
 
 		//モデルのサイズ
 		m_size = 0.12f;
@@ -108,12 +116,12 @@ void Map::Init()
 	
 }
 
-void Map::Update(Effect& ef)
+void Map::Update()
 {
 	for (int i = 0; i < ITEM_NUMBER; i++)
 	{
 		//アイテムが存在していれば
-		if (GetItem(i) == false)
+		if (m_itemSpot[i] == false)
 		{
 			if (i == 0)
 			{
@@ -128,7 +136,8 @@ void Map::Update(Effect& ef)
 				ItemPos(i, 700.0f, 5.0f, -230.0f);
 			}
 		}
-		else
+		//アイテムが存在していなければ消す
+		if(m_itemSpot[i] == true)
 		{
 			m_itemPos[i] = Pos3(-10000.0f, -10000.0f, -10000.0f);
 		}
@@ -144,7 +153,9 @@ void Map::Update(Effect& ef)
 		for (int i = 0; i < 3; i++)
 		{
 			//アイテムのエフェクト再生
-			m_itemModel[i] = PlayEffekseer3DEffect(ef.GetItemEffect());
+			//m_itemModel[i] = PlayEffekseer3DEffect(ef.GetItemEffect());
+
+			effect.EffectCreate("Item", VGet(m_itemPos[i].x,m_itemPos[i].y,m_itemPos[i].z));
 
 			m_itemCol[i].Update(m_itemPos[i]);
 		}
@@ -162,7 +173,7 @@ void Map::Update(Effect& ef)
 /// <param name="z">Z座標</param>
 void Map::ItemPos(int number, float x, float y, float z)
 {
-	SetPosPlayingEffekseer3DEffect(m_itemModel[number], x, y, z);
+	//SetPosPlayingEffekseer3DEffect(m_itemModel[number], x, y, z);
 	m_itemPos[number] = Pos3(x, y, z);
 }
 

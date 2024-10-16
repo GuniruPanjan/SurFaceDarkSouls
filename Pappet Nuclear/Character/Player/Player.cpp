@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Map/Map.h"
 #include "Character/Player/Item/ItemManager.h"
+#include "Character/Effect/Effect.h"
 #include "UI/Setting.h"
 #include<math.h>
 
@@ -21,6 +22,7 @@ namespace
 
 	//シングルトン
 	auto& result = HandleManager::GetInstance();
+	auto& effect = Effect::GetInstance();
 }
 
 Player::Player():
@@ -178,7 +180,9 @@ void Player::Init()
 		m_modelSize = 0.4f;
 
 		//エフェクト読み込み
-		effect->PlayerInit();
+		effect.EffectLoad("Rest", "Data/Effect/Benediction.efkefc", 210, 10.0f);
+		effect.EffectLoad("Heal", "Data/Effect/AnotherEffect/Sylph13.efkefc", 160, 20.0f);
+		effect.EffectLoad("Imapct", "Data/Effect/HitEffect.efkefc", 30, 7.0f);
 
 		//プレイヤーもモデル読み込み
 		//m_handle = MV1LoadModel("Data/Player/PuppetPlayerModel.mv1");
@@ -1146,7 +1150,9 @@ void Player::Action()
 			//一回だけ実行
 			if (m_effectOneHeel == false && m_recoveryNumber > 0)
 			{
-				m_effectHeel = PlayEffekseer3DEffect(effect->GetHeelEffect());
+				//m_effectHeel = PlayEffekseer3DEffect(effect->GetHeelEffect());
+
+				effect.EffectCreate("Heal", m_pos);
 
 				PlaySoundMem(se->GetHeelSE(), DX_PLAYTYPE_BACK, true);
 
@@ -1179,7 +1185,7 @@ void Player::Action()
 	}
 
 	//回復エフェクトのポジション
-	SetPosPlayingEffekseer3DEffect(m_effectHeel, m_pos.x, m_pos.y, m_pos.z);
+	//SetPosPlayingEffekseer3DEffect(m_effectHeel, m_pos.x, m_pos.y, m_pos.z);
 }
 
 /// <summary>
@@ -1556,11 +1562,6 @@ void Player::Animation(float& time, VECTOR& pos)
 					MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[i], m_moveAnimShieldFrameIndex, 0.0f);
 				}
 
-				//MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[0], m_moveAnimShieldFrameIndex, 0.0f);
-				//MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[1], m_moveAnimShieldFrameIndex, 0.0f);
-				//MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[2], m_moveAnimShieldFrameIndex, 0.0f);
-				//MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[14], m_moveAnimShieldFrameIndex, 0.0f);
-				//MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[15], m_moveAnimShieldFrameIndex, 0.0f);
 				MV1SetAttachAnimBlendRateToFrame(m_handle, m_animation[11], m_moveAnimShieldFrameIndex, 1.0f);
 
 
@@ -1701,19 +1702,12 @@ void Player::WeaponAnimation(float& time)
 
 					}
 
-					//m_animOne[12] = false;
-					//m_animOne[13] = false;
-					//m_animOne[15] = false;
 				}
 				//防御
 				if (m_shieldNow == true && m_animOne[13] == false)
 				{
 					if (m_oneShield == false)
 					{
-						//MV1SetAttachAnimBlendRate(m_handle, m_animation[0], 1.0f);
-						//MV1SetAttachAnimBlendRate(m_handle, m_animation[1], 1.0f);
-						//MV1SetAttachAnimBlendRate(m_handle, m_animation[2], 1.0f);
-						//MV1SetAttachAnimBlendRate(m_handle, m_animation[11], 0.0f);
 
 						m_oneShield = true;
 					}
@@ -1891,7 +1885,7 @@ void Player::HitObj(Map& map, ItemManager& item)
 	MapAction(map, item);
 
 	//エフェクト更新
-	effect->Update();
+	//effect->Update();
 
 	//検出したプレイヤーの周囲のポリゴン情報を解放する
 	MV1CollResultPolyDimTerminate(HitDim);
@@ -1915,7 +1909,9 @@ void Player::MapAction(Map& map, ItemManager& item)
 			if (m_effectActivation == false)
 			{
 				//エフェクトを再生
-				m_effect = PlayEffekseer3DEffect(effect->GetRestEffect());
+				//m_effect = PlayEffekseer3DEffect(effect->GetRestEffect());
+
+				effect.EffectCreate("Rest", map.GetRestPos());
 
 				PlaySoundMem(se->GetRestSE(), DX_PLAYTYPE_BACK, true);
 
@@ -1932,7 +1928,7 @@ void Player::MapAction(Map& map, ItemManager& item)
 	}
 
 	//休息するポイントのエフェクトポジション
-	SetPosPlayingEffekseer3DEffect(m_effect, map.GetRestPos().x, map.GetRestPos().y, map.GetRestPos().z);
+	//SetPosPlayingEffekseer3DEffect(m_effect, map.GetRestPos().x, map.GetRestPos().y, map.GetRestPos().z);
 
 
 	for (int i = 0; i < ITEM_NUMBER; i++)
@@ -1947,6 +1943,8 @@ void Player::MapAction(Map& map, ItemManager& item)
 
 				//アイテムを所得する(アイテムマネージャーに返す)
 				item.SetGetItem(i, true);
+				//所得したアイテムスポットを消す
+				map.SetItemSpot(i, true);
 			}
 			else
 			{
@@ -2059,7 +2057,6 @@ void Player::Draw()
 #endif
 
 #if false
-
 	DrawFormatString(200, 100, 0xffffff, "0 : %d", m_animOne[0]);
 	DrawFormatString(200, 160, 0xffffff, "1 : %d", m_animOne[1]);
 	DrawFormatString(200, 220, 0xffffff, "2 : %d", m_animOne[2]);
@@ -2099,8 +2096,8 @@ void Player::Draw()
 	MV1DrawModel(m_handle);
 
 	//攻撃された時のエフェクトのポジション
-	SetPosPlayingEffekseer3DEffect(m_effectHit, m_pos.x, m_pos.y + 40.0f, m_pos.z);
-	effect->Draw();
+	//SetPosPlayingEffekseer3DEffect(m_effectHit, m_pos.x, m_pos.y + 40.0f, m_pos.z);
+	//effect->Draw();
 }
 
 void Player::WeaponDraw(Equipment& eq)
@@ -2133,7 +2130,7 @@ void Player::End()
 	MV1DeleteModel(m_animLeft);
 	MV1DeleteModel(m_animRight);
 	weapon->End();
-	effect->End();
+	//effect->End();
 	se->End();
 
 	//メモリ削除
@@ -2212,7 +2209,7 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 	return isHit || isHitBoss;
 }
 
-bool Player::isSphereHit(const SphereCol& col, float damage, Effect& ef)
+bool Player::isSphereHit(const SphereCol& col, float damage)
 {
 	bool isHit = m_capsuleCol.IsHitSphere(col);
 
@@ -2232,7 +2229,9 @@ bool Player::isSphereHit(const SphereCol& col, float damage, Effect& ef)
 			if (m_avoidanceNow == false)
 			{
 				//m_effectHit = PlayEffekseer3DEffect(effect->GetHitEffect());
-				m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
+				//m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
+
+				effect.EffectCreate("Imapct", VGet(m_pos.x, m_pos.y + 40.0f, m_pos.z));
 
 				m_hp = m_hp - damage;
 
@@ -2253,7 +2252,7 @@ bool Player::isSphereHit(const SphereCol& col, float damage, Effect& ef)
 	return isHit;
 }
 
-bool Player::isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage, Effect& ef)
+bool Player::isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage)
 {
 	bool isBossAttackHit1 = m_capsuleCol.IsHitSphere(col1);
 	bool isBossAttackHit2 = m_capsuleCol.IsHitSphere(col2);
@@ -2272,7 +2271,9 @@ bool Player::isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const
 			if (m_avoidanceNow == false)
 			{
 				//m_effectHit = PlayEffekseer3DEffect(effect->GetHitEffect());
-				m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
+				//m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
+				
+				effect.EffectCreate("Imapct", VGet(m_pos.x, m_pos.y + 40.0f, m_pos.z));
 
 				m_hp = m_hp - bossdamage;
 

@@ -4,6 +4,7 @@
 #include <memory>
 #include "Scene/SceneManager.h"
 #include "Character/Player/Item/ItemManager.h"
+#include "Character/Effect/Effect.h"
 #include "Icon/Icon.h"
 
 namespace
@@ -71,6 +72,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		//ゲーム更新
 		pScene->Update();
+		Effekseer_Sync3DSetting();
+
+
+		UpdateEffekseer3D();
 
 		//ゲームの描画
 		pScene->Draw();
@@ -94,6 +99,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	pScene->End();
 	pItem->End();
+
+	Effect::GetInstance().Destroy();
 
 	Effkseer_End();
 	DxLib_End();				// ＤＸライブラリ使用の終了処理

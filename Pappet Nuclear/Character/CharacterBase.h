@@ -1,7 +1,6 @@
 #pragma once
 #include "DxLib.h"
 #include "BGMÅESE/SEManager.h"
-#include "Character/Effect/Effect.h"
 #include "Col/CapsuleCol.h"
 #include "Col/SphereCol.h"
 #include "Col/RectCol.h"

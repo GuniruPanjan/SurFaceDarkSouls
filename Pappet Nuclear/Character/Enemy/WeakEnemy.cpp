@@ -1,4 +1,5 @@
 #include "Character/Player/Player.h"
+#include "Character/Effect/Effect.h"
 #include "Map/Map.h"
 #include "WeakEnemy.h"
 
@@ -14,6 +15,9 @@ namespace
 	VECTOR difShield[ENEMY_NOW];           //盾との距離
 	float difSSize[ENEMY_NOW];            //盾との距離
 	bool a[ENEMY_NOW];  //攻撃を一回だけ与える
+
+	//シングルトン
+	auto& effect = Effect::GetInstance();
 }
 
 WeakEnemy::WeakEnemy()
@@ -96,6 +100,9 @@ void WeakEnemy::Init(int max)
 	//一回だけ実行
 	if (oneInit[max] == false)
 	{
+
+		effect.EffectLoad("Imapct", "Data/Effect/HitEffect.efkefc", 30, 7.0f);
+
 		//モデル複製
 		m_weakEnemyHandle[max] = MV1DuplicateModel(m_handle);
 
@@ -746,7 +753,7 @@ void WeakEnemy::Draw(int max)
 	MV1SetRotationXYZ(m_weakEnemyHandle[max], VGet(0.0f, m_weakEnemyAngle[max], 0.0f));
 
 	//攻撃された時のエフェクトのポジション
-	SetPosPlayingEffekseer3DEffect(m_effectWeakHit[max], m_weakDrawPos[max].x, m_weakDrawPos[max].y + 40.0f, m_weakDrawPos[max].z);
+	//SetPosPlayingEffekseer3DEffect(m_effectWeakHit[max], m_weakDrawPos[max].x, m_weakDrawPos[max].y + 40.0f, m_weakDrawPos[max].z);
 
 	//effect->Draw();
 }
@@ -760,7 +767,7 @@ void WeakEnemy::End(int max)
 	}
 }
 
-bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max, Effect& ef)
+bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max)
 {
 	bool isHit = m_weakCapsuleCol[max].IsHitSphere(col);
 
@@ -775,7 +782,9 @@ bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max, Effect&
 			m_weakEnemyHp[max] = m_weakEnemyHp[max] - damage;
 
 			//エフェクトを再生する
-			m_effectWeakHit[max] = PlayEffekseer3DEffect(ef.GetHitEffect());
+			//m_effectWeakHit[max] = PlayEffekseer3DEffect(ef.GetInstance().EffectCreate);
+
+			effect.EffectCreate("Imapct", VGet(m_weakEnemyPos[max].x, m_weakEnemyPos[max].y + 40.0f, m_weakEnemyPos[max].z));
 
 			PlaySoundMem(m_hitSE[max], DX_PLAYTYPE_BACK, true);
 

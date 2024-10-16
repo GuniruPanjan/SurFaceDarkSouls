@@ -7,11 +7,14 @@ ItemManager::ItemManager()
 	{
 		m_item[i] = false;
 		m_getItem[i] = false;
+		m_one[i] = false;
 	}
 
 	s_item.SmallCore = 0;
 	s_item.MediumCore = 0;
 	s_item.Rubbish = 0;
+	s_item.BlackSword = 0;
+	s_item.SmallShield = 0;
 }
 
 ItemManager::~ItemManager()
@@ -29,9 +32,8 @@ void ItemManager::Update()
 		//アイテム所得
 		if (m_getItem[i] == true)
 		{
-			//できてるが列挙型が悪さしてる
-			ItemGet(i, 0, s_item.SmallCore);
-			ItemGet(i, 1, s_item.MediumCore);
+			ItemGet(i, 0, s_item.BlackSword);
+			ItemGet(i, 1, s_item.SmallShield);
 			ItemGet(i, 2, s_item.Rubbish);
 			
 		}
@@ -48,19 +50,26 @@ void ItemManager::ItemGet(int array, int itemNumber, int& item)
 {
 	if (array == itemNumber)
 	{
-		item += 1;
+		//一回だけ行う
+		if (m_one[array] == false)
+		{
+			item += 1;
 
-		m_item[array] = true;
-		m_getItem[itemNumber] = false;
+			m_one[array] = true;
+		}
+		
 	}
 }
 
 void ItemManager::Draw()
 {
+#if false
 	DrawFormatString(100, 200, 0xffffff, "1 : %d", s_item.SmallCore);
 	DrawFormatString(100, 260, 0xffffff, "2 : %d", s_item.MediumCore);
 	DrawFormatString(100, 320, 0xffffff, "3 : %d", s_item.Rubbish);
-	DrawFormatString(100, 380, 0xffffff, "%d : bool = %d", 0, m_getItem[0]);
+	DrawFormatString(100, 380, 0xffffff, "4 : %d", s_item.BlackSword);
+	DrawFormatString(100, 440, 0xffffff, "5 : %d", s_item.SmallShield);
+#endif
 }
 
 void ItemManager::End()
@@ -68,11 +77,11 @@ void ItemManager::End()
 }
 
 /// <summary>
-/// アイテムの存在
+/// アイテムの所得可能かの判断
 /// </summary>
 /// <param name="max">アイテムの番号</param>
-/// <param name="item">アイテムをとったか判断する</param>
-/// <returns>アイテムの存在を返す</returns>
+/// <param name="item">アイテムが所得できるか判断する</param>
+/// <returns>アイテムが所得できるか返す</returns>
 bool ItemManager::SetItem(int max, bool item)
 {
 	return m_item[max] = item;

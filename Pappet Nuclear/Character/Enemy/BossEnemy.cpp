@@ -1,5 +1,6 @@
 #include "BossEnemy.h"
 #include "Character/Player/Player.h"
+#include "Character/Effect/Effect.h"
 #include "Map/Map.h"
 
 namespace
@@ -10,6 +11,9 @@ namespace
 	float difPSize;   //プレイヤーとの距離
 	float difSSize;   //盾との距離
 	float correctionAngle;    //敵がプレイヤーの位置によって方向を補正するための変数
+
+	//エフェクトのシングルトン
+	auto& effect = Effect::GetInstance();
 }
 
 BossEnemy::BossEnemy() :
@@ -97,7 +101,9 @@ void BossEnemy::Init()
 	//一回だけ初期化する
 	if (m_one == false)
 	{
-		effect->BossInit();
+		//effect->BossInit();
+		effect.EffectLoad("Lance", "Data/Effect/BloodLance.efkefc",350, 10.0f);
+		effect.EffectLoad("Imapct", "Data/Effect/HitEffect.efkefc", 30, 7.0f);
 
 		se->BossInit();
 
@@ -372,7 +378,9 @@ void BossEnemy::Action(Player& player)
 				//エフェクトを再生する
 				if (m_effectActivation == false)
 				{
-					m_effect = PlayEffekseer3DEffect(effect->GetBossAttackEffect3());
+					//m_effect = PlayEffekseer3DEffect(effect->GetBossAttackEffect3());
+
+					effect.EffectCreate("Lance", m_pos);
 
 					m_effectActivation = true;
 				}
@@ -400,7 +408,7 @@ void BossEnemy::Action(Player& player)
 	}
 
 	//エフェクトポジション更新
-	SetPosPlayingEffekseer3DEffect(m_effect, m_pos.x, 0.0f, m_pos.z);
+	//SetPosPlayingEffekseer3DEffect(m_effect, m_pos.x, 0.0f, m_pos.z);
 
 	//エフェクト更新
 	//effect->Update();
@@ -867,7 +875,7 @@ void BossEnemy::Draw()
 	MV1SetRotationXYZ(m_bossModelHandle, VGet(0.0f, m_angle, 0.0f));
 
 	//攻撃された時のエフェクトのポジション
-	SetPosPlayingEffekseer3DEffect(m_effectHit, m_pos.x, m_pos.y + 70.0f, m_pos.z);
+	//SetPosPlayingEffekseer3DEffect(m_effectHit, m_pos.x, m_pos.y + 70.0f, m_pos.z);
 
 	//エフェクトの描画
 	//effect->Draw();
@@ -876,10 +884,10 @@ void BossEnemy::Draw()
 void BossEnemy::End()
 {
 	//メモリ解放
-	effect->End();
+	//effect->End();
 }
 
-bool BossEnemy::isSphereHit(const SphereCol& col, float damage, Effect& ef)
+bool BossEnemy::isSphereHit(const SphereCol& col, float damage)
 {
 	bool isHit = m_capsuleCol.IsHitSphere(col);
 
@@ -892,7 +900,9 @@ bool BossEnemy::isSphereHit(const SphereCol& col, float damage, Effect& ef)
 		if (m_damageReceived == false)
 		{
 			//エフェクトを再生する
-			m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
+			//m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
+
+			effect.EffectCreate("Imapct", VGet(m_pos.x, m_pos.y + 70.0f, m_pos.z));
 
 			m_hp = m_hp - damage;
 

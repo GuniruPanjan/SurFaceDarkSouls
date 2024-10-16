@@ -4,19 +4,8 @@
 
 HandleManager* HandleManager::m_instance = nullptr;
 
-namespace
-{
-	//ƒ‚ƒfƒ‹‚Ìƒnƒ“ƒhƒ‹
-	int m_weakEnemyHandle;
-	int m_bossEnemyHandle;
-	int m_playerHandle;
-}
-
 HandleManager::HandleManager()
 {
-	//m_weakEnemyHandle = MV1LoadModel("Data/Enemy/EnemyModel.mv1");
-	//m_bossEnemyHandle = MV1LoadModel("Data/Enemy/BossEnemy.mv1");
-	//m_playerHandle = MV1LoadModel("Data/Player/PuppetPlayerModel.mv1");
 }
 
 HandleManager::~HandleManager()

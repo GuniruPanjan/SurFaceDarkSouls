@@ -26,8 +26,8 @@ public:
 
 	//カプセル同士の当たり判定
 	bool IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1);
-	bool isSphereHit(const SphereCol& col, float damage, Effect& ef);
-	bool isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage, Effect& ef);
+	bool isSphereHit(const SphereCol& col, float damage);
+	bool isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage);
 	bool isShieldHit(const SphereCol& col, float damage);
 	bool isBossShieldHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage);
 	bool isTargetHit(const CapsuleCol& col, int max);
@@ -159,7 +159,7 @@ private:
 
 	//スマートポインタ
 	std::shared_ptr<WeaponSummary> weapon = std::make_shared<WeaponSummary>();
-	std::shared_ptr<Effect> effect = std::make_shared<Effect>();
+	//std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 
 	//アニメーションブレンド
 	std::shared_ptr<BlendAnimation> pAnim = std::make_shared<BlendAnimation>();

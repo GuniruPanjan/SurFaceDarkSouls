@@ -3,6 +3,7 @@
 #include "Character/Player/Player.h"
 #include "Character/Enemy/Enemy.h"
 #include "Character/Player/Equipment/Equipment.h"
+#include "Character/Player/Item/ItemManager.h"
 #include "Map/Map.h"
 
 UI::UI():
@@ -107,7 +108,7 @@ void UI::Init(Player& player, Enemy& enemy)
 
 }
 
-void UI::Draw(Player& player, Enemy& enemy, Equipment& eq, Map& map)
+void UI::Draw(Player& player, Enemy& enemy, Equipment& eq, Map& map, ItemManager& item)
 {
 	//DrawBox(m_hpPosX1, m_hpPosY1, m_hpPosX1 + m_hpCover, m_hpPosY3, 0xffffff, TRUE);
 	//DrawBox(m_hpPosX2, m_hpPosY2, m_hpPosX2 + (player.GetHp() * m_hpExpressionDivide2), m_hpPosY4, m_hpColor, TRUE);
@@ -183,6 +184,14 @@ void UI::Draw(Player& player, Enemy& enemy, Equipment& eq, Map& map)
 	{
 		DrawFormatString(650, 800, 0x000000, "Yボタンで休息する");
 	}
+	for (int i = 0; i < ITEM_NUMBER; i++)
+	{
+		if (map.GetItem(i) == true)
+		{
+			DrawFormatString(650, 800, 0x000000, "Yボタンでアイテムをとる");
+		}
+	}
+	
 
 
 	//BossHP

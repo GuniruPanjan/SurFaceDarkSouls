@@ -18,7 +18,7 @@ public:
 	void Draw(int max);
 	void End(int max);
 
-	bool isSphereHit(const SphereCol& col, float damage,int max, Effect& ef);
+	bool isSphereHit(const SphereCol& col, float damage,int max);
 	bool isSeachHit(const CapsuleCol& col,int max);
 	bool isPlayerHit(const CapsuleCol& col,VECTOR& vec, float speed, int max);
 	bool isDistanceHit(const CapsuleCol& col,int max);
