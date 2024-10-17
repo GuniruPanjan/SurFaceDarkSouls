@@ -21,7 +21,7 @@ namespace
 	int Button;        //一回だけ入力するための変数
 
 	//シングルトン
-	auto& result = HandleManager::GetInstance();
+	auto& handle = HandleManager::GetInstance();
 	auto& effect = Effect::GetInstance();
 }
 
@@ -103,8 +103,6 @@ Player::Player():
 	{
 		m_targetNumber[i] = false;
 	}
-
-	m_handle = result.GetModelHandle("Data/Player/PuppetPlayerModel.mv1");
 }
 
 Player::~Player()
@@ -120,12 +118,13 @@ Player::~Player()
 	MV1DeleteModel(m_animAttack3);
 	MV1DeleteModel(m_animDeath);
 	MV1DeleteModel(m_animHeel);
-	MV1DeleteModel(m_animShield);
 	MV1DeleteModel(m_animLeft);
 	MV1DeleteModel(m_animRight);
+	weapon->End();
+	se->End();
 
 	//メモリ削除
-	result.Clear();
+	handle.Clear();
 }
 
 void Player::Init()
@@ -186,31 +185,32 @@ void Player::Init()
 
 		//プレイヤーもモデル読み込み
 		//m_handle = MV1LoadModel("Data/Player/PuppetPlayerModel.mv1");
+		m_handle = handle.GetModelHandle("Data/Player/PuppetPlayerModel.mv1");
 
 		//プレイヤーの大きさを変える
 		MV1SetScale(m_handle, VGet(m_modelSize, m_modelSize, m_modelSize));
 
 		//プレイヤーのアニメーション読み込み
-		m_animStand = MV1LoadModel("Data/PlayerAnimation/PlayerAnimStand.mv1");
-		m_animWalk = MV1LoadModel("Data/PlayerAnimation/PlayerAnimWalk.mv1");
-		m_animRun = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRun.mv1");
-		m_animRoll = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRoll.mv1");
-		m_animAttack1 = MV1LoadModel("Data/PlayerAnimation/PlayerAnimAttack1.mv1");
-		m_animAttack2 = MV1LoadModel("Data/PlayerAnimation/PlayerAnimAttack2.mv1");
-		m_animAttack3 = MV1LoadModel("Data/PlayerAnimation/PlayerAnimAttack3.mv1");
-		m_animRollAttack = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRollAttack.mv1");
-		m_animDeath = MV1LoadModel("Data/PlayerAnimation/PlayerAnimDeath.mv1");
-		m_animHeel = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRecovery.mv1");
-		m_animHit = MV1LoadModel("Data/PlayerAnimation/PlayerAnimHit.mv1");
-		m_animShield = MV1LoadModel("Data/PlayerAnimation/PlayerAnimShield.mv1");
-		m_animShieldImpact = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimShieldImpact.mv1");
-		m_animShieldStand = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimShieldStand.mv1");
-		m_animWeaponWalk = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponWalk.mv1");
-		m_animWeaponRun = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponRun.mv1");
-		m_animLeft = MV1LoadModel("Data/PlayerAnimation/PlayerAnimLeftWalk.mv1");
-		m_animRight = MV1LoadModel("Data/PlayerAnimation/PlayerAnimRightWalk.mv1");
-		m_animWeaponLeftWalk = MV1LoadModel("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponLeftWalk.mv1");
-		m_animTaking = MV1LoadModel("Data/PlayerAnimation/PlayerAnimTaking.mv1");
+		m_animStand = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimStand.mv1");
+		m_animWalk = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimWalk.mv1");
+		m_animRun = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimRun.mv1");
+		m_animRoll = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimRoll.mv1");
+		m_animAttack1 = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimAttack1.mv1");
+		m_animAttack2 = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimAttack2.mv1");
+		m_animAttack3 = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimAttack3.mv1");
+		m_animRollAttack = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimRollAttack.mv1");
+		m_animDeath = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimDeath.mv1");
+		m_animHeel = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimRecovery.mv1");
+		m_animHit = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimHit.mv1");
+		m_animShield = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimShield.mv1");
+		m_animShieldImpact = handle.GetModelHandle("Data/PlayerAnimation/WeaponAnim/PlayerAnimShieldImpact.mv1");
+		m_animShieldStand = handle.GetModelHandle("Data/PlayerAnimation/WeaponAnim/PlayerAnimShieldStand.mv1");
+		m_animWeaponWalk = handle.GetModelHandle("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponWalk.mv1");
+		m_animWeaponRun = handle.GetModelHandle("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponRun.mv1");
+		m_animLeft = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimLeftWalk.mv1");
+		m_animRight = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimRightWalk.mv1");
+		m_animWeaponLeftWalk = handle.GetModelHandle("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponLeftWalk.mv1");
+		m_animTaking = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimTaking.mv1");
 
 		//55カウント
 
@@ -2130,11 +2130,10 @@ void Player::End()
 	MV1DeleteModel(m_animLeft);
 	MV1DeleteModel(m_animRight);
 	weapon->End();
-	//effect->End();
 	se->End();
 
 	//メモリ削除
-	result.Clear();
+	handle.Clear();
 }
 
 bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)

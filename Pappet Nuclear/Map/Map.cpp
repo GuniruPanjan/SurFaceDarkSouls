@@ -1,11 +1,13 @@
 #include "Map.h"
 #include "Character/Effect/Effect.h"
+#include "Singleton/HandleManager.h"
 
 namespace
 {
 	int effectPlayBack;    //エフェクトを再生させる時間
 
 	//シングルトン
+	auto& handle = HandleManager::GetInstance();
 	auto& effect = Effect::GetInstance();
 }
 
@@ -46,6 +48,9 @@ Map::~Map()
 	MV1DeleteModel(m_handle);
 	MV1DeleteModel(m_collisionHandle);
 	DeleteLightHandle(m_light);
+
+	//メモリ解放
+	handle.Clear();
 }
 
 void Map::Init()
@@ -57,8 +62,8 @@ void Map::Init()
 	if (m_oneInit == false)
 	{
 		//モデル読み込み
-		m_handle = MV1LoadModel("Data/Map/Map.mv1");
-		m_collisionHandle = MV1LoadModel("Data/Map/Collision.mv1");
+		m_handle = handle.GetModelHandle("Data/Map/Map.mv1");
+		m_collisionHandle = handle.GetModelHandle("Data/Map/Collision.mv1");
 
 		effect.EffectLoad("Item", "Data/Effect/Item.efkefc", 60, 5.0f);
 
@@ -210,7 +215,7 @@ void Map::Draw()
 
 #endif
 
-#if true
+#if false
 	DrawSphere3D(m_spherePos.GetVector(), m_sphereRadius, 16, m_sphereColor, m_sphereColor, false);
 
 	for (int i = 0; i < 3; i++)
@@ -234,6 +239,9 @@ void Map::End()
 	MV1DeleteModel(m_handle);
 	MV1DeleteModel(m_collisionHandle);
 	DeleteLightHandle(m_light);
+
+	//メモリ解放
+	handle.Clear();
 }
 
 bool Map::CapsuleIsHit(const CapsuleCol& col)

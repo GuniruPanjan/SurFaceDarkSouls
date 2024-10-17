@@ -3,6 +3,8 @@
 #include "Map/Map.h"
 #include<memory>
 
+class SelectManager;
+
 class SceneTitle : public SceneBase
 {
 public:
@@ -11,6 +13,7 @@ public:
 
 	virtual void Init();
 	virtual std::shared_ptr<SceneBase> Update();
+	void SelectBlend(int select, int now, int other1, int other2);
 	virtual void Draw();
 	virtual void End();
 
@@ -41,6 +44,9 @@ private:
 	float m_playTime;
 	VECTOR m_pos;
 
+	
+	//スマートポインタ
 	std::shared_ptr<Map> map = std::make_shared<Map>();
 	std::shared_ptr<SEManager> se = std::make_shared<SEManager>();
+	std::shared_ptr<SelectManager> pselect = std::make_shared<SelectManager>();
 };

@@ -1,10 +1,14 @@
 #include "WeaponSummary.h"
+#include "Singleton/HandleManager.h"
 
 namespace
 {
 	int a;
 	MATRIX temp;
 	MATRIX mat;
+
+	//ƒVƒ“ƒOƒ‹ƒgƒ“
+	auto& handle = HandleManager::GetInstance();
 }
 
 WeaponSummary::WeaponSummary():
@@ -25,13 +29,16 @@ WeaponSummary::~WeaponSummary()
 	//ƒƒ‚ƒŠ‰ğ•ú
 	MV1DeleteModel(m_weaponHandle);
 	MV1DeleteModel(pshield->m_shieldHandle);
+
+	//ƒƒ‚ƒŠ‰ğ•ú
+	handle.Clear();
 }
 
 void WeaponSummary::Init()
 {
 	m_weaponSize = 0.5f;
 
-	m_weaponHandle = MV1LoadModel("Data/Weapon/Sword.mv1");
+	m_weaponHandle = handle.GetModelHandle("Data/Weapon/Sword.mv1");
 
 	m_weaponPosition = VGet(0.0f, 1.947f, -1.947f);
 
@@ -41,7 +48,7 @@ void WeaponSummary::Init()
 
 	//‚‚Ì‰Šú‰»
 	pshield->m_shieldSize = 1.0f;
-	pshield->m_shieldHandle = MV1LoadModel("Data/Weapon/Shield.mv1");
+	pshield->m_shieldHandle = handle.GetModelHandle("Data/Weapon/Shield.mv1");
 	pshield->m_mixMatrix = MV1GetFrameLocalMatrix(0, 0);
 	pshield->m_shieldFrameIndex = 0;
 	pshield->m_shieldFramePosition = VGet(0.0f, 0.0f, 0.0f);
@@ -112,4 +119,7 @@ void WeaponSummary::End()
 	//ƒƒ‚ƒŠ‰ğ•ú
 	MV1DeleteModel(m_weaponHandle);
 	MV1DeleteModel(pshield->m_shieldHandle);
+
+	//ƒƒ‚ƒŠ‰ğ•ú
+	handle.Clear();
 }

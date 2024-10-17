@@ -1,5 +1,15 @@
 #include "SceneTitle.h"
 #include "SceneGame.h"
+#include "Singleton/HandleManager.h"
+#include "UI/SelectManager.h"
+
+namespace
+{
+	int selectDecision = 0;  //選択し、決定したもの
+
+	//シングルトン
+	auto& handle = HandleManager::GetInstance();
+}
 
 SceneTitle::SceneTitle():
 	m_pad(0),
@@ -19,7 +29,9 @@ SceneTitle::SceneTitle():
 	m_animation(0),
 	m_totalAnimationTime(0.0f),
 	m_playTime(0.0f),
-	m_pos(VGet(0.0f,0.0f,0.0f))
+	m_pos(VGet(0.0f,0.0f,0.0f)),
+	m_cameraTarget(VGet(0.0f,0.0f,0.0f)),
+	m_xpad()
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -30,27 +42,31 @@ SceneTitle::SceneTitle():
 
 SceneTitle::~SceneTitle()
 {
+	//メモリ解放
 	DeleteGraph(m_backScene);
 	DeleteGraph(m_start);
 	DeleteGraph(m_setting);
 	DeleteGraph(m_end);
 	MV1DeleteModel(m_playerHandle);
 	MV1DeleteModel(m_anim);
+	setting->End();
+	bgmse->End();
+	se->End();
+
+	handle.Clear();
 }
 
 void SceneTitle::Init()
 {
-	//m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitle.png", 30, 30);
-	//m_start = MyLoadGraph("Data/UI/STARTButton.png", 30, 30);
-	//m_setting = MyLoadGraph("Data/UI/SettingButton.png", 30, 30);
-	//m_end = MyLoadGraph("Data/UI/EndButton.png", 30, 30);
-	m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitleMini.png", 1, 1);
-	m_start = MyLoadGraph("Data/UI/STARTButtonMini.png", 1, 1);
-	m_setting = MyLoadGraph("Data/UI/SettingButtonMini.png", 1, 1);
-	m_end = MyLoadGraph("Data/UI/EndButtonMini.png", 1, 1);
+	m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitleMini.png", 1, 1);     //144 KB (147,793 バイト)
+	m_start = MyLoadGraph("Data/UI/STARTButtonMini.png", 1, 1);                       //27.1 KB (27,851 バイト)
+	m_setting = MyLoadGraph("Data/UI/SettingButtonMini.png", 1, 1);                   //29.4 KB (30,170 バイト)
+	m_end = MyLoadGraph("Data/UI/EndButtonMini.png", 1, 1);                           //22.5 KB (23,109 バイト)
 
-	m_playerHandle = MV1LoadModel("Data/Player/PuppetPlayerModel.mv1");
-	m_anim = MV1LoadModel("Data/PlayerAnimation/JumpingDown.mv1");
+	m_playerHandle = handle.GetModelHandle("Data/Player/PuppetPlayerModel.mv1");
+	m_anim = handle.GetModelHandle("Data/PlayerAnimation/JumpingDown.mv1");
+
+	selectDecision = 0;
 
 	//アニメーションアタッチ
 	m_animation = MV1AttachAnim(m_playerHandle, 1, m_anim, TRUE);
@@ -113,205 +129,51 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 
 		m_playTime += 0.5f;
 
-		//DrawFormatString(0, 0, 0xffffff, "m_select0 : %d", m_select[0]);
-		//DrawFormatString(0, 20, 0xffffff, "m_select1 : %d", m_select[1]);
-		//DrawFormatString(0, 40, 0xffffff, "m_select2 : %d", m_select[2]);
-
-		//上選択時
-		if (m_select[0] == 1 && m_button > 0 && m_one == false)
+		//選択する
+		if (setting->GetSettingScene() == false)
 		{
-			m_select[2] = 1;
-			m_select[0] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_blend = false;
-
-			m_one = true;
-		}
-		if (m_select[1] == 1 && m_button > 0 && m_one == false)
-		{
-			m_select[0] = 1;
-			m_select[1] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_blend = false;
-
-			m_one = true;
-		}
-		if (m_select[2] == 1 && m_button > 0 && m_one == false)
-		{
-			m_select[1] = 1;
-			m_select[2] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_blend = false;
-
-			m_one = true;
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
 		}
 
-		//下選択時
-		if (m_select[0] == 1 && m_button < 0 && m_one == false)
+		if (m_waitTime > 50)
 		{
-			m_select[1] = 1;
-			m_select[0] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_blend = false;
-
-			m_one = true;
-		}
-		if (m_select[1] == 1 && m_button < 0 && m_one == false)
-		{
-			m_select[2] = 1;
-			m_select[1] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_blend = false;
-
-			m_one = true;
-		}
-		if (m_select[2] == 1 && m_button < 0 && m_one == false)
-		{
-			m_select[0] = 1;
-			m_select[2] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_blend = false;
-
-			m_one = true;
-		}
-
-		if (m_waitTime > 10)
-		{
-			//Aボタン押したら
-			if (m_xpad.Buttons[12] == 1 && m_select[0] == 1)
+			//Aボタンを押したら
+			if (m_xpad.Buttons[12] == 1)
 			{
 				PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
-				return std::make_shared<SceneGame>();
+				//ゲームスタート
+				if (selectDecision == 8)
+				{
+					return std::make_shared<SceneGame>();
 
-				map->End();
-			}
-			//設定シーン
-			if (m_xpad.Buttons[12] == 1 && m_select[1] == 1)
-			{
-				PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+					map->End();
+				}
+				//設定
+				if (selectDecision == 9)
+				{
+					m_setButton = true;
 
-				m_setButton = true;
+					m_waitTime = 0;
 
-				m_waitTime = 0;
-
-				setting->SetSettingScene(m_setButton);
-			}
-			//終了
-			if (m_xpad.Buttons[12] == 1 && m_select[2] == 1)
-			{
-				PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
-
-				SetEnd(true);
-
-				//DxLib_End();
+					setting->SetSettingScene(m_setButton);
+				}
+				//終了
+				if (selectDecision == 10)
+				{
+					SetEnd(true);
+				}
 			}
 		}
-		else
+		else if(setting->GetSettingScene() == false)
 		{
 			m_waitTime++;
 		}
 
-		if (m_select[0] == 1)
-		{
-			if (m_blend == false)
-			{
-				if (m_pal[0] < 256)
-				{
-					m_pal[0] += 2;
-				}
-				else
-				{
-					m_blend = true;
-				}
 
-			}
-			if (m_blend == true)
-			{
-				if (m_pal[0] > 125)
-				{
-					m_pal[0] -= 2;
-				}
-				else
-				{
-					m_blend = false;
-				}
-			}
-
-
-			m_pal[1] = 255;
-			m_pal[2] = 255;
-		}
-		if (m_select[1] == 1)
-		{
-			if (m_blend == false)
-			{
-				if (m_pal[1] < 256)
-				{
-					m_pal[1] += 2;
-				}
-				else
-				{
-					m_blend = true;
-				}
-			}
-			if (m_blend == true)
-			{
-				if (m_pal[1] > 125)
-				{
-					m_pal[1] -= 2;
-				}
-				else
-				{
-					m_blend = false;
-				}
-			}
-
-			m_pal[0] = 255;
-			m_pal[2] = 255;
-		}
-		if (m_select[2] == 1)
-		{
-			if (m_blend == false)
-			{
-				if (m_pal[2] < 256)
-				{
-					m_pal[2] += 2;
-				}
-				else
-				{
-					m_blend = true;
-				}
-			}
-			if (m_blend == true)
-			{
-				if (m_pal[2] > 125)
-				{
-					m_pal[2] -= 2;
-				}
-				else
-				{
-					m_blend = false;
-				}
-			}
-
-
-			m_pal[1] = 255;
-			m_pal[0] = 255;
-		}
-
+		SelectBlend(7, 0, 1, 2);
+		SelectBlend(8, 1, 0, 2);
+		SelectBlend(9, 2, 1, 0);
 
 	}
 	//設定を開く
@@ -337,9 +199,49 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 	return shared_from_this();  //自身のポインタを返す
 }
 
+/// <summary>
+/// 選択中の場合
+/// </summary>
+/// <param name="select">列挙型</param>
+/// <param name="now">選択してるもの</param>
+/// <param name="other1">それ以外１</param>
+/// <param name="other2">それ以外２</param>
+void SceneTitle::SelectBlend(int select, int now, int other1, int other2)
+{
+	if (pselect->NowSelect == select)
+	{
+		if (m_blend == false)
+		{
+			if (m_pal[now] < 256)
+			{
+				m_pal[now] += 2;
+			}
+			else
+			{
+				m_blend = true;
+			}
+
+		}
+		if (m_blend == true)
+		{
+			if (m_pal[now] > 125)
+			{
+				m_pal[now] -= 2;
+			}
+			else
+			{
+				m_blend = false;
+			}
+		}
+
+
+		m_pal[other1] = 255;
+		m_pal[other2] = 255;
+	}
+}
+
 void SceneTitle::Draw()
 {
-	//DrawCube3D(VGet(0.0f, 0.0f, 0.0f), VGet(700.0f, 300.0f, 300.0f), 0xffffff, 0xffffff, TRUE);
 
 	map->Draw();
 
@@ -349,17 +251,6 @@ void SceneTitle::Draw()
 
 	//3Dモデルの回転地をセットする
 	MV1SetRotationXYZ(m_playerHandle, VGet(0.0f, 160.0f, 0.0f));
-
-	//DrawGraph(-50, 0, m_backScene, TRUE);
-	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[0]);
-	//DrawGraph(200, 220, m_start, TRUE);
-	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[1]);
-	//DrawGraph(200, 280, m_setting, TRUE);
-	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[2]);
-	//DrawGraph(200, 340, m_end, TRUE);
-	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	DrawGraph(120, 0, m_backScene, TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[0]);
@@ -380,12 +271,15 @@ void SceneTitle::Draw()
 
 	setting->SettingDraw(setting->GetVolume());
 
-	//DrawString(240, 300, "Title", 0xffffff);
-	
+	if (setting->GetSettingScene() == false)
+	{
+		pselect->Draw();
+	}
 }
 
 void SceneTitle::End()
 {
+	//メモリ解放
 	DeleteGraph(m_backScene);
 	DeleteGraph(m_start);
 	DeleteGraph(m_setting);
@@ -395,4 +289,6 @@ void SceneTitle::End()
 	setting->End();
 	bgmse->End();
 	se->End();
+
+	handle.Clear();
 }

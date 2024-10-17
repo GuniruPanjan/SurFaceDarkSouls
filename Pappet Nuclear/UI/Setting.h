@@ -3,6 +3,8 @@
 #include "DxLib.h"
 #include<memory>
 
+class SelectManager;
+
 class Setting
 {
 public:
@@ -13,6 +15,8 @@ public:
 	void Update();
 	void MenuUpdate();
 	void Draw();
+	void BrightColorDraw(int select, int now, int other1, int other2, int other3, int other4, int black, int white);
+	void VolumeColorDraw(int select, int now, int other1, int other2, int other3, int other4, int volume);
 	void SettingDraw(int volume);
 	void MenuDraw();
 	void End();
@@ -36,7 +40,6 @@ private:
 	XINPUT_STATE m_xpad;  //パッド入力
 	int m_select[3];    //選択用の変数
 	int m_menuSelect[3];    //メニュー選択
-	int m_brightSelect[5];   //明るさの選択変数
 	int m_volumeSelect[5];   //音量の選択変数 
 	int m_blackPal;
 	int m_whitePal;
@@ -58,6 +61,8 @@ private:
 	bool m_returnMenu;        //戻るメニュー
 	bool m_titleMenu;         //タイトルメニュー
 
+	//スマートポインタ
 	std::shared_ptr<SEManager> se = std::make_shared<SEManager>();
+	std::shared_ptr<SelectManager> pselect = std::make_shared<SelectManager>();
 };
 

@@ -1,9 +1,13 @@
 #include "Setting.h"
+#include "UI/SelectManager.h"
 
 namespace
 {
-	int updateBriht[5];
 	int updateVolume[5];
+
+	int selectDecision = 0;     //選択したものを決定する変数
+	int brightDecision = 0;     //明るさを決定する変数
+	int volumeDecision = 0;     //音量を決定する変数
 }
 
 Setting::Setting():
@@ -25,7 +29,8 @@ Setting::Setting():
 	m_volumeSize(0),
 	m_equipmentMenu(false),
 	m_returnMenu(true),
-	m_titleMenu(false)
+	m_titleMenu(false),
+	m_xpad()
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -36,7 +41,6 @@ Setting::Setting():
 
 	for (int i = 0; i < 5; i++)
 	{
-		m_brightSelect[i] = 0;
 		m_volumeSelect[i] = 0;
 		m_brightColor[i] = 0;
 		m_volumeColor[i] = 0;
@@ -52,23 +56,15 @@ Setting::~Setting()
 
 void Setting::Init()
 {
-	//m_black = LoadGraph("Data/SceneBack/Black.png");
-	//m_back = MyLoadGraph("Data/SceneBack/Black.png", 15, 15);
-	//m_white = LoadGraph("Data/SceneBack/White.png");
-
-	m_black = LoadGraph("Data/SceneBack/BlackMini.png");
+	m_black = LoadGraph("Data/SceneBack/BlackMini.png");         //14.1 KB (14,532 バイト)
 	m_back = MyLoadGraph("Data/SceneBack/BlackMini.png", 1, 1);
-	m_white = LoadGraph("Data/SceneBack/WhiteMini.png");
+	m_white = LoadGraph("Data/SceneBack/WhiteMini.png");         //14.1 KB (14,529 バイト)
+
+	selectDecision = 0;
 
 	m_select[0] = 1;
 	m_select[1] = 0;
 	m_select[2] = 0;
-
-	m_brightSelect[0] = updateBriht[0];
-	m_brightSelect[1] = updateBriht[1];
-	m_brightSelect[2] = updateBriht[2];
-	m_brightSelect[3] = updateBriht[3];
-	m_brightSelect[4] = updateBriht[4];
 
 	m_brightColor[0] = 0xffffff;
 	m_brightColor[1] = 0xffffff;
@@ -134,12 +130,12 @@ void Setting::Update()
 		//右
 		else if (m_xpad.ThumbLX > 2000)
 		{
-			m_thumb++;
+			m_thumb--;
 		}
 		//左
 		else if (m_xpad.ThumbLX < 0)
 		{
-			m_thumb--;
+			m_thumb++;
 		}
 		else
 		{
@@ -150,308 +146,44 @@ void Setting::Update()
 			m_one = false;
 		}
 
-		//上選択時
-		if (m_select[0] == 1 && m_button > 0 && m_one == false &&
-			m_brightness == false && m_volume == false)
+		//選択中
+		if (m_brightness == false && m_volume == false)
 		{
-			m_select[2] = 1;
-			m_select[0] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
 		}
-		if (m_select[1] == 1 && m_button > 0 && m_one == false &&
-			m_brightness == false && m_volume == false)
+		//明るさの選択中
+		if (m_brightness == true && m_volume == false)
 		{
-			m_select[0] = 1;
-			m_select[1] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
+			pselect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], brightDecision, pselect->Six);
 		}
-		if (m_select[2] == 1 && m_button > 0 && m_one == false &&
-			m_brightness == false && m_volume == false)
+		//音量の選択中
+		if (m_brightness == false && m_volume == true)
 		{
-			m_select[1] = 1;
-			m_select[2] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
+			pselect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], volumeDecision, pselect->Six);
 		}
-
-		//下選択時
-		if (m_select[0] == 1 && m_button < 0 && m_one == false &&
-			m_brightness == false && m_volume == false)
+		
+		//Aボタンを押したら
+		if (m_xpad.Buttons[12] == 1)
 		{
-			m_select[1] = 1;
-			m_select[0] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_select[1] == 1 && m_button < 0 && m_one == false &&
-			m_brightness == false && m_volume == false)
-		{
-			m_select[2] = 1;
-			m_select[1] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_select[2] == 1 && m_button < 0 && m_one == false &&
-			m_brightness == false && m_volume == false)
-		{
-			m_select[0] = 1;
-			m_select[2] = 0;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-
-		//右選択(明るさ)
-		if (m_brightSelect[0] == 1 && m_thumb > 0 && m_one == false &&
-			m_brightness == true && m_volume == false)
-		{
-			m_brightSelect[0] = 0;
-			m_brightSelect[1] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_brightSelect[1] == 1 && m_thumb > 0 && m_one == false &&
-			m_brightness == true && m_volume == false)
-		{
-			m_brightSelect[1] = 0;
-			m_brightSelect[2] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_brightSelect[2] == 1 && m_thumb > 0 && m_one == false &&
-			m_brightness == true && m_volume == false)
-		{
-			m_brightSelect[2] = 0;
-			m_brightSelect[3] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_brightSelect[3] == 1 && m_thumb > 0 && m_one == false &&
-			m_brightness == true && m_volume == false)
-		{
-			m_brightSelect[3] = 0;
-			m_brightSelect[4] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_brightSelect[4] == 1 && m_thumb > 0 && m_one == false &&
-			m_brightness == true && m_volume == false)
-		{
-			m_brightSelect[4] = 0;
-			m_brightSelect[0] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		//左選択(明るさ)
-		if (m_brightSelect[0] == 1 && m_thumb < 0 && m_one == false &&
-			m_brightness == true && m_volume == false)
-		{
-			m_brightSelect[0] = 0;
-			m_brightSelect[4] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_brightSelect[1] == 1 && m_thumb < 0 && m_one == false &&
-			m_brightness == true && m_volume == false)
-		{
-			m_brightSelect[1] = 0;
-			m_brightSelect[0] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_brightSelect[2] == 1 && m_thumb < 0 && m_one == false &&
-			m_brightness == true && m_volume == false)
-		{
-			m_brightSelect[2] = 0;
-			m_brightSelect[1] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_brightSelect[3] == 1 && m_thumb < 0 && m_one == false &&
-			m_brightness == true && m_volume == false)
-		{
-			m_brightSelect[3] = 0;
-			m_brightSelect[2] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_brightSelect[4] == 1 && m_thumb < 0 && m_one == false &&
-			m_brightness == true && m_volume == false)
-		{
-			m_brightSelect[4] = 0;
-			m_brightSelect[3] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		//右選択(音量)
-		if (m_volumeSelect[0] == 1 && m_thumb > 0 && m_one == false &&
-			m_volume == true && m_brightness == false)
-		{
-			m_volumeSelect[0] = 0;
-			m_volumeSelect[1] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_volumeSelect[1] == 1 && m_thumb > 0 && m_one == false &&
-			m_volume == true && m_brightness == false)
-		{
-			m_volumeSelect[1] = 0;
-			m_volumeSelect[2] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_volumeSelect[2] == 1 && m_thumb > 0 && m_one == false &&
-			m_volume == true && m_brightness == false)
-		{
-			m_volumeSelect[2] = 0;
-			m_volumeSelect[3] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_volumeSelect[3] == 1 && m_thumb > 0 && m_one == false &&
-			m_volume == true && m_brightness == false)
-		{
-			m_volumeSelect[3] = 0;
-			m_volumeSelect[4] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_volumeSelect[4] == 1 && m_thumb > 0 && m_one == false &&
-			m_volume == true && m_brightness == false)
-		{
-			m_volumeSelect[4] = 0;
-			m_volumeSelect[0] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		//左選択(音量)
-		if (m_volumeSelect[0] == 1 && m_thumb < 0 && m_one == false &&
-			m_volume == true && m_brightness == false)
-		{
-			m_volumeSelect[0] = 0;
-			m_volumeSelect[4] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_volumeSelect[1] == 1 && m_thumb < 0 && m_one == false &&
-			m_volume == true && m_brightness == false)
-		{
-			m_volumeSelect[1] = 0;
-			m_volumeSelect[0] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_volumeSelect[2] == 1 && m_thumb < 0 && m_one == false &&
-			m_volume == true && m_brightness == false)
-		{
-			m_volumeSelect[2] = 0;
-			m_volumeSelect[1] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_volumeSelect[3] == 1 && m_thumb < 0 && m_one == false &&
-			m_volume == true && m_brightness == false)
-		{
-			m_volumeSelect[3] = 0;
-			m_volumeSelect[2] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-		if (m_volumeSelect[4] == 1 && m_thumb < 0 && m_one == false &&
-			m_volume == true && m_brightness == false)
-		{
-			m_volumeSelect[4] = 0;
-			m_volumeSelect[3] = 1;
-
-			PlaySoundMem(se->GetSelectSE(), DX_PLAYTYPE_BACK, true);
-
-			m_one = true;
-		}
-
-		//Aボタン押したら
-		//明るさ設定
-		if (m_xpad.Buttons[12] == 1 && m_select[0] == 1 && 
-			m_brightness == false && m_volume == false)
-		{
-			updateBriht[2] = 1;
-			m_brightSelect[2] = 1;
-
 			PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
-			m_brightness = true;
+			//明るさ設定
+			if (selectDecision == 8)
+			{
+				m_brightness = true;
+			}
+			//音量設定
+			if (selectDecision == 9)
+			{
+				m_volume = true;
+			}
+			//元の画面に戻る
+			if (selectDecision == 10)
+			{
+				m_settingScene = false;
+			}
 		}
-		//音量設定
-		if (m_xpad.Buttons[12] == 1 && m_select[1] == 1 &&
-			m_brightness == false && m_volume == false)
-		{
-			updateVolume[2] = 1;
-			m_volumeSelect[2] = 1;
 
-			PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
-
-			m_volume = true;
-		}
-		//元の画面に戻る
-		if (m_xpad.Buttons[12] == 1 && m_select[2] == 1 &&
-			m_brightness == false && m_volume == false)
-		{
-			m_waitTime = 0;
-
-			PlaySoundMem(se->GetButtonSE(), DX_PLAYTYPE_BACK, true);
-
-			m_settingScene = false;
-		}
 		//明るさ設定を押したら
 		if (m_brightness == true)
 		{
@@ -590,145 +322,52 @@ void Setting::MenuUpdate()
 
 void Setting::Draw()
 {
-	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	//DrawGraph(30, 30, m_back, false);
-	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 	DrawGraph(0, 0, m_back, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	//選択中の色を変える
-	if (m_select[0] == 1)
+	if (m_brightness == false && m_volume == false)
 	{
-		m_brightnessColor = 0xffff00;
-		m_bgmColor = 0xffffff;
-		m_returnColor = 0xffffff;
-
+		if (pselect->NowSelect == pselect->Eight)
+		{
+			m_brightnessColor = 0xffff00;
+			m_bgmColor = 0xffffff;
+			m_returnColor = 0xffffff;
+		}
+		if (pselect->NowSelect == pselect->Nine)
+		{
+			m_brightnessColor = 0xffffff;
+			m_bgmColor = 0xffff00;
+			m_returnColor = 0xffffff;
+		}
+		if (pselect->NowSelect == pselect->Ten)
+		{
+			m_brightnessColor = 0xffffff;
+			m_bgmColor = 0xffffff;
+			m_returnColor = 0xffff00;
+		}
 	}
-	if (m_select[1] == 1)
+	//明るさを選択
+	if (m_brightness == true)
 	{
-		m_brightnessColor = 0xffffff;
-		m_bgmColor = 0xffff00;
-		m_returnColor = 0xffffff;
-	}
-	if (m_select[2] == 1)
-	{
-		m_brightnessColor = 0xffffff;
-		m_bgmColor = 0xffffff;
-		m_returnColor = 0xffff00;
-	}
-	if (m_brightSelect[0] == 1)
-	{
-		m_brightColor[0] = 0xffff00;
-		m_brightColor[1] = 0xffffff;
-		m_brightColor[2] = 0xffffff;
-		m_brightColor[3] = 0xffffff;
-		m_brightColor[4] = 0xffffff;
-	}
-	if (m_brightSelect[1] == 1)
-	{
-		m_brightColor[0] = 0xffffff;
-		m_brightColor[1] = 0xffff00;
-		m_brightColor[2] = 0xffffff;
-		m_brightColor[3] = 0xffffff;
-		m_brightColor[4] = 0xffffff;
-	}
-	if (m_brightSelect[2] == 1)
-	{
-		m_brightColor[0] = 0xffffff;
-		m_brightColor[1] = 0xffffff;
-		m_brightColor[2] = 0xffff00;
-		m_brightColor[3] = 0xffffff;
-		m_brightColor[4] = 0xffffff;
-	}
-	if (m_brightSelect[3] == 1)
-	{
-		m_brightColor[0] = 0xffffff;
-		m_brightColor[1] = 0xffffff;
-		m_brightColor[2] = 0xffffff;
-		m_brightColor[3] = 0xffff00;
-		m_brightColor[4] = 0xffffff;
-	}
-	if (m_brightSelect[4] == 1)
-	{
-		m_brightColor[0] = 0xffffff;
-		m_brightColor[1] = 0xffffff;
-		m_brightColor[2] = 0xffffff;
-		m_brightColor[3] = 0xffffff;
-		m_brightColor[4] = 0xffff00;
-	}
-	if (m_volumeSelect[0] == 1)
-	{
-		m_volumeColor[0] = 0xffff00;
-		m_volumeColor[1] = 0xffffff;
-		m_volumeColor[2] = 0xffffff;
-		m_volumeColor[3] = 0xffffff;
-		m_volumeColor[4] = 0xffffff;
-
-	}
-	if (m_volumeSelect[1] == 1)
-	{
-		m_volumeColor[0] = 0xffffff;
-		m_volumeColor[1] = 0xffff00;
-		m_volumeColor[2] = 0xffffff;
-		m_volumeColor[3] = 0xffffff;
-		m_volumeColor[4] = 0xffffff;
-
-	}
-	if (m_volumeSelect[2] == 1)
-	{
-		m_volumeColor[0] = 0xffffff;
-		m_volumeColor[1] = 0xffffff;
-		m_volumeColor[2] = 0xffff00;
-		m_volumeColor[3] = 0xffffff;
-		m_volumeColor[4] = 0xffffff;
-
-	}
-	if (m_volumeSelect[3] == 1)
-	{
-		m_volumeColor[0] = 0xffffff;
-		m_volumeColor[1] = 0xffffff;
-		m_volumeColor[2] = 0xffffff;
-		m_volumeColor[3] = 0xffff00;
-		m_volumeColor[4] = 0xffffff;
-
-	}
-	if (m_volumeSelect[4] == 1)
-	{
-		m_volumeColor[0] = 0xffffff;
-		m_volumeColor[1] = 0xffffff;
-		m_volumeColor[2] = 0xffffff;
-		m_volumeColor[3] = 0xffffff;
-		m_volumeColor[4] = 0xffff00;
-
+		BrightColorDraw(5, 0, 1, 2, 3, 4, 125, 0);
+		BrightColorDraw(6, 1, 0, 2, 3, 4, 125 / 2, 0);
+		BrightColorDraw(7, 2, 1, 0, 3, 4, 0, 0);
+		BrightColorDraw(8, 3, 1, 2, 0, 4, 0, 125 / 2);
+		BrightColorDraw(9, 4, 1, 2, 3, 0, 0, 125);
 	}
 
-	////フォントのサイズ変更
-	//SetFontSize(50);
-
-	//DrawString(50, 70, "設定", 0xffffff);
-
-	//SetFontSize(35);
-
-	//DrawString(50, 180, "明るさ", m_brightnessColor);
-	//DrawString(50, 240, "音量", m_bgmColor);
-	//DrawString(50, 300, "戻る", m_returnColor);
-
-	//DrawBox(200, 180, 240, 220, m_brightColor[0], true);
-	//DrawBox(280, 180, 320, 220, m_brightColor[1], true);
-	//DrawBox(360, 180, 400, 220, m_brightColor[2], true);
-	//DrawBox(440, 180, 480, 220, m_brightColor[3], true);
-	//DrawBox(520, 180, 560, 220, m_brightColor[4], true);
-
-	//DrawBox(200, 240, 240, 280, m_volumeColor[0], true);
-	//DrawBox(280, 240, 320, 280, m_volumeColor[1], true);
-	//DrawBox(360, 240, 400, 280, m_volumeColor[2], true);
-	//DrawBox(440, 240, 480, 280, m_volumeColor[3], true);
-	//DrawBox(520, 240, 560, 280, m_volumeColor[4], true);
-
-	////フォントのサイズを戻す
-	//SetFontSize(20);
+	//音量を選択
+	if (m_volume == true)
+	{
+		VolumeColorDraw(5, 0, 1, 2, 3, 4, 0);
+		VolumeColorDraw(6, 1, 0, 2, 3, 4, 60);
+		VolumeColorDraw(7, 2, 1, 0, 3, 4, 130);
+		VolumeColorDraw(8, 3, 1, 2, 0, 4, 190);
+		VolumeColorDraw(9, 4, 1, 2, 3, 0, 255);
+	}
 
 	//フォントのサイズ変更
 	SetFontSize(150);
@@ -753,10 +392,60 @@ void Setting::Draw()
 	DrawBox(1100, 500, 1220, 620, m_volumeColor[3], true);
 	DrawBox(1300, 500, 1420, 620, m_volumeColor[4], true);
 
+	pselect->Draw();
+
 	//フォントのサイズを戻す
 	SetFontSize(40);
+}
 
-	//DrawFormatString(0, 0, 0xffffff, "m_thumb : %d", m_thumb);
+/// <summary>
+/// 選択中の色を変える
+/// </summary>
+/// <param name="select">列挙型</param>
+/// <param name="now">選択してるもの</param>
+/// <param name="other1">それ以外１</param>
+/// <param name="other2">それ以外２</param>
+/// <param name="other3">それ以外３</param>
+/// <param name="other4">それ以外４</param>
+/// <param name="black">黒い画像のブレンド率</param>
+/// <param name="white">白い画像のブレンド率</param>
+void Setting::BrightColorDraw(int select, int now, int other1, int other2, int other3, int other4, int black, int white)
+{
+	if (pselect->NowSelect == select)
+	{
+		m_brightColor[now] = 0xffff00;
+		m_brightColor[other1] = 0xffffff;
+		m_brightColor[other2] = 0xffffff;
+		m_brightColor[other3] = 0xffffff;
+		m_brightColor[other4] = 0xffffff;
+
+		m_blackPal = black;
+		m_whitePal = white;
+	}
+}
+
+/// <summary>
+/// 選択中の色を変える
+/// </summary>
+/// <param name="select">列挙型</param>
+/// <param name="now">選択してるもの</param>
+/// <param name="other1">それ以外１</param>
+/// <param name="other2">それ以外２</param>
+/// <param name="other3">それ以外３</param>
+/// <param name="other4">それ以外４</param>
+/// <param name="volume">音量</param>
+void Setting::VolumeColorDraw(int select, int now, int other1, int other2, int other3, int other4, int volume)
+{
+	if (pselect->NowSelect == select)
+	{
+		m_volumeColor[now] = 0xffff00;
+		m_volumeColor[other1] = 0xffffff;
+		m_volumeColor[other2] = 0xffffff;
+		m_volumeColor[other3] = 0xffffff;
+		m_volumeColor[other4] = 0xffffff;
+
+		m_volumeSize = volume;
+	}
 }
 
 void Setting::SettingDraw(int volume)
@@ -764,110 +453,51 @@ void Setting::SettingDraw(int volume)
 	se->Update(volume);
 
 	//明るさ
-	if (m_brightSelect[0] == 1)
+	if (brightDecision == 6)
 	{
-		updateBriht[0] = 1;
-		updateBriht[1] = 0;
-		updateBriht[2] = 0;
-		updateBriht[3] = 0;
-		updateBriht[4] = 0;
-
 		m_blackPal = 125;
 		m_whitePal = 0;
 	}
-	if (m_brightSelect[1] == 1)
+	if (brightDecision == 7)
 	{
-		updateBriht[0] = 0;
-		updateBriht[1] = 1;
-		updateBriht[2] = 0;
-		updateBriht[3] = 0;
-		updateBriht[4] = 0;
-
 		m_blackPal = 125 / 2;
 		m_whitePal = 0;
 	}
-	if (m_brightSelect[2] == 1)
+	if (brightDecision == 8)
 	{
-		updateBriht[0] = 0;
-		updateBriht[1] = 0;
-		updateBriht[2] = 1;
-		updateBriht[3] = 0;
-		updateBriht[4] = 0;
-
 		m_blackPal = 0;
 		m_whitePal = 0;
 	}
-	if (m_brightSelect[3] == 1)
+	if (brightDecision == 9)
 	{
-		updateBriht[0] = 0;
-		updateBriht[1] = 0;
-		updateBriht[2] = 0;
-		updateBriht[3] = 1;
-		updateBriht[4] = 0;
-
 		m_blackPal = 0;
-		m_whitePal = 75 / 2;
+		m_whitePal = 125 / 2;
 	}
-	if (m_brightSelect[4] == 1)
+	if (brightDecision == 10)
 	{
-		updateBriht[0] = 0;
-		updateBriht[1] = 0;
-		updateBriht[2] = 0;
-		updateBriht[3] = 0;
-		updateBriht[4] = 1;
-
 		m_blackPal = 0;
-		m_whitePal = 75;
+		m_whitePal = 125;
 	}
+
 	//音量
-	if (m_volumeSelect[0] == 1)
+	if (volumeDecision == 6)
 	{
-		updateVolume[0] = 1;
-		updateVolume[1] = 0;
-		updateVolume[2] = 0;
-		updateVolume[3] = 0;
-		updateVolume[4] = 0;
-
 		m_volumeSize = 0;
 	}
-	if (m_volumeSelect[1] == 1)
+	if (volumeDecision == 7)
 	{
-		updateVolume[0] = 0;
-		updateVolume[1] = 1;
-		updateVolume[2] = 0;
-		updateVolume[3] = 0;
-		updateVolume[4] = 0;
-
 		m_volumeSize = 60;
 	}
-	if (m_volumeSelect[2] == 1)
+	if (volumeDecision == 8)
 	{
-		updateVolume[0] = 0;
-		updateVolume[1] = 0;
-		updateVolume[2] = 1;
-		updateVolume[3] = 0;
-		updateVolume[4] = 0;
-
 		m_volumeSize = 130;
 	}
-	if (m_volumeSelect[3] == 1)
+	if (volumeDecision == 9)
 	{
-		updateVolume[0] = 0;
-		updateVolume[1] = 0;
-		updateVolume[2] = 0;
-		updateVolume[3] = 1;
-		updateVolume[4] = 0;
-
 		m_volumeSize = 190;
 	}
-	if (m_volumeSelect[4] == 1)
+	if (volumeDecision == 10)
 	{
-		updateVolume[0] = 0;
-		updateVolume[1] = 0;
-		updateVolume[2] = 0;
-		updateVolume[3] = 0;
-		updateVolume[4] = 1;
-
 		m_volumeSize = 255;
 	}
 

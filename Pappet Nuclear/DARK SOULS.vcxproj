@@ -166,6 +166,7 @@
     <ClCompile Include="Scene\SceneTitle.cpp" />
     <ClCompile Include="Singleton\HandleManager.cpp" />
     <ClCompile Include="Template3D.cpp" />
+    <ClCompile Include="UI\SelectManager.cpp" />
     <ClCompile Include="UI\Setting.cpp" />
     <ClCompile Include="UI\UI.cpp" />
     <ClCompile Include="UI\UIManager.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneTitle.h" />
     <ClInclude Include="Singleton\HandleManager.h" />
+    <ClInclude Include="UI\SelectManager.h" />
     <ClInclude Include="UI\Setting.h" />
     <ClInclude Include="UI\UI.h" />
     <ClInclude Include="UI\UIManager.h" />

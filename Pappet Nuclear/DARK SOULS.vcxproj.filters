@@ -195,6 +195,9 @@
     <ClCompile Include="Character\Player\Item\ItemManager.cpp">
       <Filter>ソース ファイル\Character\Player\Item</Filter>
     </ClCompile>
+    <ClCompile Include="UI\SelectManager.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneBase.h">
@@ -286,6 +289,9 @@
     </ClInclude>
     <ClInclude Include="Character\Player\Item\ItemManager.h">
       <Filter>ヘッダー ファイル\Character\Player\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\SelectManager.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

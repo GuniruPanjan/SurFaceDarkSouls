@@ -51,21 +51,21 @@ EnemyBase::EnemyBase():
 	m_bossModelHandle = handle.GetModelHandle("Data/Enemy/BossEnemy.mv1");
 
 	//敵のアニメーション読み込み
-	m_animStand = MV1LoadModel("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyStand1.mv1");
-	m_animWalk = MV1LoadModel("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyAnimWalking.mv1");
-	m_animHit = MV1LoadModel("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyAnimHit.mv1");
-	m_animDeath = MV1LoadModel("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyAnimDeath.mv1");
-	m_animLeftWalking = MV1LoadModel("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyWalkingLeft.mv1");
-	m_animRightWalking = MV1LoadModel("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyWalkingRight.mv1");
-	m_animAttack1 = MV1LoadModel("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyAnimAttack1.mv1");
-	m_bossAnimStand = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimStand.mv1");
-	m_bossAnimDeath = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimDeath.mv1");
-	m_bossAnimWalk = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimWalk.mv1");
-	m_bossAnimTurnRight = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimRightTurn.mv1");
-	m_bossAnimTurnLeft = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimLeftTurn.mv1");
-	m_bossAnimAttack1 = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack1.mv1");
-	m_bossAnimAttack2 = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack2.mv1");
-	m_bossAnimAttack3 = MV1LoadModel("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack3.mv1");
+	m_animStand = handle.GetModelHandle("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyStand1.mv1");
+	m_animWalk = handle.GetModelHandle("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyAnimWalking.mv1");
+	m_animHit = handle.GetModelHandle("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyAnimHit.mv1");
+	m_animDeath = handle.GetModelHandle("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyAnimDeath.mv1");
+	m_animLeftWalking = handle.GetModelHandle("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyWalkingLeft.mv1");
+	m_animRightWalking = handle.GetModelHandle("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyWalkingRight.mv1");
+	m_animAttack1 = handle.GetModelHandle("Data/EnemyAnimation/WeakEnemyAnimation/WeakEnemyAnimAttack1.mv1");
+	m_bossAnimStand = handle.GetModelHandle("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimStand.mv1");
+	m_bossAnimDeath = handle.GetModelHandle("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimDeath.mv1");
+	m_bossAnimWalk = handle.GetModelHandle("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimWalk.mv1");
+	m_bossAnimTurnRight = handle.GetModelHandle("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimRightTurn.mv1");
+	m_bossAnimTurnLeft = handle.GetModelHandle("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimLeftTurn.mv1");
+	m_bossAnimAttack1 = handle.GetModelHandle("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack1.mv1");
+	m_bossAnimAttack2 = handle.GetModelHandle("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack2.mv1");
+	m_bossAnimAttack3 = handle.GetModelHandle("Data/EnemyAnimation/BossEnemyAnimation/BossEnemyAnimAttack3.mv1");
 
 	//アニメーションアタッチ
 	m_bossAnimation[0] = MV1AttachAnim(m_bossModelHandle, 0, m_bossAnimStand, TRUE);
