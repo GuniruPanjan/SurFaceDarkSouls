@@ -16,6 +16,9 @@ namespace
 	auto& effect = Effect::GetInstance();
 }
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 BossEnemy::BossEnemy() :
 	m_gameClear(false),
 	m_bossDistance(false),
@@ -38,10 +41,16 @@ BossEnemy::BossEnemy() :
 {
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 BossEnemy::~BossEnemy()
 {
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void BossEnemy::Init()
 {
 	//敵のHP初期化
@@ -112,10 +121,14 @@ void BossEnemy::Init()
 	}
 	
 	attack = false;
-
-	//se->Init();
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <param name="player">プレイヤー呼び出し</param>
+/// <param name="map">マップ呼び出し</param>
+/// <param name="volume">音量</param>
 void BossEnemy::Update(Player& player, Map& map, int volume)
 {
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
@@ -293,6 +306,10 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 	se->Update(volume);
 }
 
+/// <summary>
+/// 行動処理
+/// </summary>
+/// <param name="player">プレイヤー呼び出し</param>
 void BossEnemy::Action(Player& player)
 {
 	//プレイヤーと敵の相対距離を算出
@@ -406,14 +423,12 @@ void BossEnemy::Action(Player& player)
 			}
 		}
 	}
-
-	//エフェクトポジション更新
-	//SetPosPlayingEffekseer3DEffect(m_effect, m_pos.x, 0.0f, m_pos.z);
-
-	//エフェクト更新
-	//effect->Update();
 }
 
+/// <summary>
+/// アニメーション処理
+/// </summary>
+/// <param name="time">再生時間</param>
 void BossEnemy::Animation(float& time)
 {
 	if (m_animBlend < 1.0f)
@@ -672,6 +687,10 @@ void BossEnemy::Animation(float& time)
 	}
 }
 
+/// <summary>
+/// マップ判定
+/// </summary>
+/// <param name="map">マップ呼び出し</param>
 void BossEnemy::MapHit(Map& map)
 {
 	int j;
@@ -804,6 +823,9 @@ void BossEnemy::MapHit(Map& map)
 	MV1CollResultPolyDimTerminate(HitDim);
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
 void BossEnemy::Draw()
 {
 	//方向ベクトル
@@ -873,20 +895,21 @@ void BossEnemy::Draw()
 
 	//3Dモデルの回転地をセットする
 	MV1SetRotationXYZ(m_bossModelHandle, VGet(0.0f, m_angle, 0.0f));
-
-	//攻撃された時のエフェクトのポジション
-	//SetPosPlayingEffekseer3DEffect(m_effectHit, m_pos.x, m_pos.y + 70.0f, m_pos.z);
-
-	//エフェクトの描画
-	//effect->Draw();
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void BossEnemy::End()
 {
-	//メモリ解放
-	//effect->End();
 }
 
+/// <summary>
+/// 攻撃が当たった時の判定
+/// </summary>
+/// <param name="col">プレイヤ-の攻撃判定</param>
+/// <param name="damage">ダメージ</param>
+/// <returns></returns>
 bool BossEnemy::isSphereHit(const SphereCol& col, float damage)
 {
 	bool isHit = m_capsuleCol.IsHitSphere(col);
@@ -899,8 +922,6 @@ bool BossEnemy::isSphereHit(const SphereCol& col, float damage)
 		//ダメージを一回だけ与える
 		if (m_damageReceived == false)
 		{
-			//エフェクトを再生する
-			//m_effectHit = PlayEffekseer3DEffect(ef.GetHitEffect());
 
 			effect.EffectCreate("Imapct", VGet(m_pos.x, m_pos.y + 70.0f, m_pos.z));
 
@@ -920,6 +941,13 @@ bool BossEnemy::isSphereHit(const SphereCol& col, float damage)
 	return isHit;
 }
 
+/// <summary>
+/// カプセル同士の当たり判定
+/// </summary>
+/// <param name="col">プレイヤーのカプセル</param>
+/// <param name="vec">ベクター</param>
+/// <param name="bounce">押し出す距離</param>
+/// <returns></returns>
 bool BossEnemy::isPlayerHit(const CapsuleCol& col, VECTOR vec, float bounce)
 {
 	bool isHit = m_capsuleCol.IsHitCapsule(col);
@@ -945,6 +973,11 @@ bool BossEnemy::isPlayerHit(const CapsuleCol& col, VECTOR vec, float bounce)
 	return isHit;
 }
 
+/// <summary>
+/// 間合い判定
+/// </summary>
+/// <param name="col">プレイヤーのカプセル</param>
+/// <returns></returns>
 bool BossEnemy::isCapsuleHit(const CapsuleCol& col)
 {
 	bool isHit = m_bossColDistance.IsHitCapsule(col);

@@ -28,8 +28,8 @@ void SceneClear::Init()
 
 	//設定関係
 	setting->Init();
-	bgmse->ClearInit();
-	bgmse->ClearBGM();
+	pbgm->ClearInit();
+	pbgm->ClearBGM();
 }
 
 /// <summary>
@@ -47,7 +47,7 @@ std::shared_ptr<SceneBase> SceneClear::Update()
 		return std::make_shared<SceneTitle>();
 	}
 
-	bgmse->Update(setting->GetVolume());
+	pbgm->Update(setting->GetVolume());
 
 	return shared_from_this();  //自身のポインタを返す
 }
@@ -70,5 +70,5 @@ void SceneClear::End()
 	//メモリ解放
 	DeleteGraph(m_backScene);
 	setting->End();
-	bgmse->End();
+	pbgm->End();
 }

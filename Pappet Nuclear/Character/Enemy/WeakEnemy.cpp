@@ -20,6 +20,9 @@ namespace
 	auto& effect = Effect::GetInstance();
 }
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 WeakEnemy::WeakEnemy()
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
@@ -49,6 +52,9 @@ WeakEnemy::WeakEnemy()
 	}
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 WeakEnemy::~WeakEnemy()
 {
 	//メモリ解放
@@ -58,6 +64,10 @@ WeakEnemy::~WeakEnemy()
 	}
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
+/// <param name="max">最大数</param>
 void WeakEnemy::Init(int max)
 {
 	//敵のHP初期化
@@ -205,6 +215,12 @@ void WeakEnemy::Init(int max)
 
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <param name="player">プレイヤー呼び出し</param>
+/// <param name="max">最大数</param>
+/// <param name="volume">音量</param>
 void WeakEnemy::Update(Player& player, int max, int volume)
 {
 	m_oneInit = true;
@@ -421,6 +437,11 @@ void WeakEnemy::Action(Player& player, int max)
 
 }
 
+/// <summary>
+/// 敵のアニメーション関数
+/// </summary>
+/// <param name="time">再生時間</param>
+/// <param name="max">最大数</param>
 void WeakEnemy::Animation(float& time, int max)
 {
 	if (m_weakAnimBlend[max] < 1.0f)
@@ -525,6 +546,13 @@ void WeakEnemy::Animation(float& time, int max)
 	}
 }
 
+/// <summary>
+/// アニメーションブレンド
+/// </summary>
+/// <param name="time"></param>
+/// <param name="max"></param>
+/// <param name="blendNumber"></param>
+/// <param name="DNumber"></param>
 void WeakEnemy::BlendAnimation(float& time, int max, int blendNumber, int DNumber)
 {
 	if (m_weakAnimOne[DNumber][max] == true && m_weakAnimOne[blendNumber][max] == false)
@@ -557,6 +585,11 @@ void WeakEnemy::BlendAnimation(float& time, int max, int blendNumber, int DNumbe
 	}
 }
 
+/// <summary>
+/// マップの当たり判定
+/// </summary>
+/// <param name="map">マップの呼び出し</param>
+/// <param name="max">最大数</param>
 void WeakEnemy::HitMap(Map& map, int max)
 {
 	int j;
@@ -692,6 +725,10 @@ void WeakEnemy::HitMap(Map& map, int max)
 	}
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
+/// <param name="max">最大数</param>
 void WeakEnemy::Draw(int max)
 {
 	//方向ベクトル
@@ -758,6 +795,10 @@ void WeakEnemy::Draw(int max)
 	//effect->Draw();
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
+/// <param name="max">最大数</param>
 void WeakEnemy::End(int max)
 {
 	//メモリ解放
@@ -767,6 +808,13 @@ void WeakEnemy::End(int max)
 	}
 }
 
+/// <summary>
+/// 攻撃を受けた判定
+/// </summary>
+/// <param name="col">プレイヤー攻撃</param>
+/// <param name="damage">ダメージ</param>
+/// <param name="max">最大数</param>
+/// <returns></returns>
 bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max)
 {
 	bool isHit = m_weakCapsuleCol[max].IsHitSphere(col);
@@ -802,6 +850,12 @@ bool WeakEnemy::isSphereHit(const SphereCol& col, float damage, int max)
 	return isHit;
 }
 
+/// <summary>
+/// 索敵の当たり判定
+/// </summary>
+/// <param name="col">プレイヤーのカプセル</param>
+/// <param name="max">最大数</param>
+/// <returns></returns>
 bool WeakEnemy::isSeachHit(const CapsuleCol& col, int max)
 {
 	bool isHit = m_colSearch[max].IsHitCapsule(col);
@@ -823,6 +877,14 @@ bool WeakEnemy::isSeachHit(const CapsuleCol& col, int max)
 	return isHit;
 }
 
+/// <summary>
+/// カプセル同士の当たり判定
+/// </summary>
+/// <param name="col">プレイヤーのカプセル</param>
+/// <param name="vec">ベクトル</param>
+/// <param name="speed">プレイヤーのスピード</param>
+/// <param name="max">最大数</param>
+/// <returns></returns>
 bool WeakEnemy::isPlayerHit(const CapsuleCol& col,VECTOR& vec, float speed, int max)
 {
 	bool isHit = m_weakCapsuleCol[max].IsHitCapsule(col);
@@ -844,6 +906,12 @@ bool WeakEnemy::isPlayerHit(const CapsuleCol& col,VECTOR& vec, float speed, int 
 	return isHit;
 }
 
+/// <summary>
+/// 間合いをとる判定
+/// </summary>
+/// <param name="col">プレイヤーのカプセル</param>
+/// <param name="max">最大数</param>
+/// <returns></returns>
 bool WeakEnemy::isDistanceHit(const CapsuleCol& col, int max)
 {
 	bool isHit = m_colDistance[max].IsHitCapsule(col);

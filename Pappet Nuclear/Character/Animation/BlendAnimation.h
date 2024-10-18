@@ -6,7 +6,9 @@
 class BlendAnimation
 {
 public:
+	//コンストラクタ
 	BlendAnimation();
+	//デストラクタ
 	virtual ~BlendAnimation();
 
 	/// <summary>

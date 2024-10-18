@@ -1,10 +1,16 @@
 #include "BlendAnimation.h"
 #include "DxLib.h"
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 BlendAnimation::BlendAnimation()
 {
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 BlendAnimation::~BlendAnimation()
 {
 }

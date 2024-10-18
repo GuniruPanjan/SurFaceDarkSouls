@@ -53,7 +53,7 @@ SceneTitle::~SceneTitle()
 	MV1DeleteModel(m_playerHandle);
 	MV1DeleteModel(m_anim);
 	setting->End();
-	bgmse->End();
+	pbgm->End();
 	se->End();
 
 	handle.Clear();
@@ -101,8 +101,8 @@ void SceneTitle::Init()
 
 	//Ý’èŠÖŒW
 	setting->Init();
-	bgmse->TitleInit();
-	bgmse->TitleBGM();
+	pbgm->TitleInit();
+	pbgm->TitleBGM();
 	se->SceneInit();
 
 	m_one = false;
@@ -202,7 +202,7 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 		MV1SetAttachAnimTime(m_playerHandle, m_animation, m_playTime);
 	}
 
-	bgmse->Update(setting->GetVolume());
+	pbgm->Update(setting->GetVolume());
 	se->Update(setting->GetVolume());
 
 	SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
@@ -304,7 +304,7 @@ void SceneTitle::End()
 	MV1DeleteModel(m_playerHandle);
 	MV1DeleteModel(m_anim);
 	setting->End();
-	bgmse->End();
+	pbgm->End();
 	se->End();
 
 	handle.Clear();

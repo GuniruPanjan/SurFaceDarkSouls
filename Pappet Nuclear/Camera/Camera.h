@@ -5,24 +5,36 @@
 
 class Map;
 
+/// <summary>
+/// カメラを管理するクラス
+/// </summary>
 class Camera
 {
 public:
+	//コンストラクタ
 	Camera();
+	//デストラクタ
 	virtual ~Camera();
 
+	//初期化処理
 	void Init();
+	//更新処理
 	void Update(Player& player);
+	//ロックオン処理
 	void LockUpdate(Player& player, Enemy& enemy, int max);
+	//雑魚敵のロックオン処理
 	void WeakLockUpdate(Player& player, Enemy& enemy, int weak);
+	//カメラのマップ当たり判定
 	void HitObj(Map& map);
+	//描画処理
 	void Draw();
+	//終了処理
 	void End();
 
-	float GetAngleX() { return m_cameraAngle.x; }
-	float GetAngleY() { return m_cameraAngle.y; }
-	float GetAngleZ() { return m_cameraAngle.z; }
-	VECTOR GetAngle() { return m_cameraAngle; }
+	float GetAngleX() { return m_cameraAngle.x; }       //カメラのアングル取得X座標
+	float GetAngleY() { return m_cameraAngle.y; }       //カメラのアングル取得Y座標
+	float GetAngleZ() { return m_cameraAngle.z; }       //カメラのアングル取得Z座標
+	VECTOR GetAngle() { return m_cameraAngle; }         //カメラのアングル所得
 
 private:
 	DINPUT_JOYSTATE input;

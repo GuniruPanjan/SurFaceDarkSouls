@@ -1,5 +1,8 @@
 #include "Equipment.h"
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 Equipment::Equipment():
 	m_equipmentLeave(true),
 	m_rightEquipmentOpen(false),
@@ -24,10 +27,16 @@ Equipment::Equipment():
 	}
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 Equipment::~Equipment()
 {
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void Equipment::Init()
 {
 	m_equipmentSelect[0] = 1;
@@ -41,6 +50,9 @@ void Equipment::Init()
 	m_leftEquipmentBoxColor = 0x000000;
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
 void Equipment::Update()
 {
 	//パッド入力所得
@@ -164,6 +176,9 @@ void Equipment::Update()
 	
 }
 
+/// <summary>
+/// 右手装備の更新処理
+/// </summary>
 void Equipment::RightUpdate()
 {
 	//パッド入力所得
@@ -279,6 +294,9 @@ void Equipment::RightUpdate()
 	
 }
 
+/// <summary>
+/// 左手装備の更新処理
+/// </summary>
 void Equipment::LeftUpdate()
 {
 	//パッド入力所得
@@ -393,6 +411,9 @@ void Equipment::LeftUpdate()
 	}
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
 void Equipment::Draw()
 {
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
@@ -449,6 +470,9 @@ void Equipment::Draw()
 
 }
 
+/// <summary>
+/// 右手の装備描画処理
+/// </summary>
 void Equipment::RightDraw()
 {
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
@@ -473,6 +497,9 @@ void Equipment::RightDraw()
 	}
 }
 
+/// <summary>
+/// 左手の装備描画処理
+/// </summary>
 void Equipment::LeftDraw()
 {
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
@@ -497,6 +524,9 @@ void Equipment::LeftDraw()
 	}
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void Equipment::End()
 {
 }

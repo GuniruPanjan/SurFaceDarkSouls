@@ -1,22 +1,74 @@
 #pragma once
 #include "EnemyBase.h"
 
+/// <summary>
+/// ボスを管理するクラス
+/// </summary>
 class BossEnemy : public EnemyBase
 {
 public:
+	//コンストラクタ
 	BossEnemy();
+	//デストラクタ
 	virtual ~BossEnemy();
 
+	//初期化処理
 	void Init();
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	/// <param name="player">プレイヤー呼び出し</param>
+	/// <param name="map">マップ呼び出し</param>
+	/// <param name="volume">音量</param>
 	void Update(Player& player, Map& map, int volume);
+
+	/// <summary>
+	/// ボスの行動処理
+	/// </summary>
+	/// <param name="player">プレイヤー呼び出し</param>
 	void Action(Player& player);
+
+	/// <summary>
+	/// アニメーション処理
+	/// </summary>
+	/// <param name="time">再生時間</param>
 	void Animation(float& time);
+
+	/// <summary>
+	/// マップの判定
+	/// </summary>
+	/// <param name="map">マップ呼び出し</param>
 	void MapHit(Map& map);
+
+	//描画処理
 	void Draw();
+
+	//終了処理
 	void End();
 
+	/// <summary>
+	/// 攻撃が当たった判定
+	/// </summary>
+	/// <param name="col">プレイヤーのカプセル</param>
+	/// <param name="damage">ダメージ</param>
+	/// <returns></returns>
 	bool isSphereHit(const SphereCol& col, float damage);
+
+	/// <summary>
+	/// カプセル同士の当たり判定
+	/// </summary>
+	/// <param name="col">カプセル</param>
+	/// <param name="vec">ベクター</param>
+	/// <param name="bounce">押し出す距離</param>
+	/// <returns></returns>
 	bool isPlayerHit(const CapsuleCol& col, VECTOR vec,float bounce);
+
+	/// <summary>
+	/// 間合い判定
+	/// </summary>
+	/// <param name="col">カプセル</param>
+	/// <returns></returns>
 	bool isCapsuleHit(const CapsuleCol& col);
 
 	float GetDamage() { return m_attack; }
@@ -69,8 +121,6 @@ private:
 	VECTOR m_outPush;        //押し出す方向ベクトル
 
 
-	//std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 	BlendAnimation *pAnim;
-	//std::shared_ptr<BlendAnimation> pAnim = std::make_shared<BlendAnimation>();
 };
 

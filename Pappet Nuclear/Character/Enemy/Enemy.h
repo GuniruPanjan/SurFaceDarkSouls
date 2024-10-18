@@ -4,22 +4,33 @@
 #include "BossEnemy.h"
 
 /// <summary>
-/// 敵の挙動や仕様
+/// 敵の挙動や仕様をまとめる関数
 /// </summary>
 class Enemy : public EnemyBase
 {
 public:
+	//コンストラクタ
 	Enemy();
+	//デストラクタ
 	virtual ~Enemy();
 
+	//初期化処理
 	void Init(int max);
+	//ボスの初期化処理
 	void BossInit();
+	//更新処理
 	void Update(Player& player, Map& map, int max, int volume);
+	//ボスの更新処理
 	void BossUpdate(Player& player, Map& map, int volume);
+	//マップとの判定更新
 	void MapHitWenemy(Map& map, int max);
+	//ボスのマップとの判定更新
 	void MapHitBoss(Map& map);
+	//描画処理
 	void Draw(int max);
+	//ボスの描画処理
 	void BossDraw();
+	//終了処理
 	void End(int max);
 
 	//ボスの取得変数
@@ -60,19 +71,8 @@ public:
 	//コアの所得変数
 	int GetCore() { return m_baseCore + enemy->GetCore() + boss->GetCore(); }
 
-	//VECTOR GetPos() { return weakenemy[4]->GetPos(); }
-	//float GetPosX() { return weakenemy[4]->GetPosX(); }
-	//float GetPosY() { return weakenemy[4]->GetPosY(); }
-	//float GetPosZ() { return weakenemy[4]->GetPosZ(); }
-	//float GetDamage() { return weakenemy[4]->GetDamage(); }
-	//CapsuleCol GetCol() const { return weakenemy[4]->GetCol(); }
-	//SphereCol GetAttackCol() const { return weakenemy[4]->GetAttackCol(); }
-	//bool isSphereHit(SphereCol col, float damage) { return weakenemy[4]->isSphereHit(col, damage); }
-	//bool isSeachHit(CapsuleCol col) { return weakenemy[4]->isSeachHit(col); }
-	//bool isDistanceHit(CapsuleCol col) { return weakenemy[4]->isDistanceHit(col); }
-
 private:
-	//敵の構造体を配列で読み込み
+	//スマートポインタ
 	std::shared_ptr<WeakEnemy> enemy = std::make_shared<WeakEnemy>();
 	std::shared_ptr<BossEnemy> boss = std::make_shared<BossEnemy>();
 };

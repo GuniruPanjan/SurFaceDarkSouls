@@ -37,10 +37,16 @@ public:
 	//終了処理
 	void End();
 
-
+	//武器画面への切り替え判断をとる
 	bool GetEquipment() { return m_equipmentLeave; }
+
+	//右手の武器選択画面へ切り替わる判定をとる
 	bool GetRightEquipment() { return m_rightEquipmentOpen; }
+
+	//左手の武器選択画面へ切り替わる判定をとる
 	bool GetLeftEquipment() { return m_leftEquipmentOpen; }
+
+	//右手の武器選択画面から切り替わる判定を返す
 	bool SetRightEquipment(bool right) { return m_rightEquipmentOpen = right; }
 
 	bool GetRightFist() { return m_equipmentRightFist; }         //素手装備

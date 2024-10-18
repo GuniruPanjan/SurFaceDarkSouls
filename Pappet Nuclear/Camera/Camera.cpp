@@ -10,7 +10,9 @@ namespace
 	float difSize[ENEMY_NOW];
 }
 
-
+/// <summary>
+/// コンストラクタ
+/// </summary>
 Camera::Camera():
 	m_cameraAngle(VGet(0.0f,0.0f,0.0f)),
 	m_cameraPos(VGet(0.0f,0.0f,0.0f)),
@@ -24,10 +26,16 @@ Camera::Camera():
 {
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 Camera::~Camera()
 {
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void Camera::Init()
 {
 	SetUseZBuffer3D(true);
@@ -48,6 +56,10 @@ void Camera::Init()
 	SetCameraNearFar(0.001f, 1000.0f);
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <param name="player">プレイヤーを呼び出す</param>
 void Camera::Update(Player& player)
 {
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
@@ -111,6 +123,12 @@ void Camera::Update(Player& player)
 	SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
 }
 
+/// <summary>
+/// カメラのロックオン処理
+/// </summary>
+/// <param name="player">プレイヤーを呼び出す</param>
+/// <param name="enemy">エネミーを呼び出す</param>
+/// <param name="max">雑魚敵の最大数</param>
 void Camera::LockUpdate(Player& player, Enemy& enemy, int max)
 {
 	//敵の距離がプレイヤーに近いやつをロックするようにする
@@ -207,6 +225,12 @@ void Camera::LockUpdate(Player& player, Enemy& enemy, int max)
 	}
 }
 
+/// <summary>
+/// 雑魚敵のロックオン処理
+/// </summary>
+/// <param name="player">プレイヤーを呼び出す</param>
+/// <param name="enemy">エネミーを呼び出す</param>
+/// <param name="weak">雑魚的の最大数</param>
 void Camera::WeakLockUpdate(Player& player, Enemy& enemy, int weak)
 {
 	//注視点は敵の座標にする
@@ -247,6 +271,10 @@ void Camera::WeakLockUpdate(Player& player, Enemy& enemy, int weak)
 	m_cameraPos = VAdd(player.GetPos(), posTarget);
 }
 
+/// <summary>
+/// カメラのマップとの当たり判定
+/// </summary>
+/// <param name="map">マップを呼び出す</param>
 void Camera::HitObj(Map& map)
 {
 	int j;
@@ -387,6 +415,9 @@ void Camera::HitObj(Map& map)
 	}
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
 void Camera::Draw()
 {
 	//DrawFormatString(0, 240, 0xffffff, "dif1.x : %f,dif1.z : %f", difX[0], difZ[0]);
@@ -397,6 +428,9 @@ void Camera::Draw()
 
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void Camera::End()
 {
 }

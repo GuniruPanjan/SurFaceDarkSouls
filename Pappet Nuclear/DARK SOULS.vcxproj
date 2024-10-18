@@ -139,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BGM・SE\BgmAndSeManager.cpp" />
+    <ClCompile Include="BGM・SE\BgmManager.cpp" />
     <ClCompile Include="BGM・SE\SEManager.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Character\Animation\BlendAnimation.cpp" />
@@ -172,7 +172,7 @@
     <ClCompile Include="UI\UIBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BGM・SE\BgmAndSeManager.h" />
+    <ClInclude Include="BGM・SE\BgmManager.h" />
     <ClInclude Include="BGM・SE\SEManager.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Character\Animation\BlendAnimation.h" />
@@ -192,6 +192,8 @@
     <ClInclude Include="Col\SphereCol.h" />
     <ClInclude Include="Col\Vec3.h" />
     <ClInclude Include="Icon\Icon.h" />
+    <ClInclude Include="Library\MyLibrary.h" />
+    <ClInclude Include="Library\ObjectTag.h" />
     <ClInclude Include="Map\Map.h" />
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneClear.h" />

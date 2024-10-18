@@ -2,37 +2,92 @@
 #include "EnemyBase.h"
 
 
-
+/// <summary>
+/// 雑魚敵を管理するクラス
+/// </summary>
 class WeakEnemy : public EnemyBase
 {
 public:
+	//コンストラクタ
 	WeakEnemy();
+	//デストラクタ
 	virtual ~WeakEnemy();
 
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	/// <param name="max">敵の最大数</param>
 	void Init(int max);
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	/// <param name="player">プレイヤー呼び出し</param>
+	/// <param name="max">敵の最大数</param>
+	/// <param name="volume">音量</param>
 	void Update(Player& player, int max, int volume);
+
+	/// <summary>
+	/// 敵の行動処理をまとめる
+	/// </summary>
+	/// <param name="player">プレイヤー呼び出し</param>
+	/// <param name="max">敵の最大数</param>
 	void Action(Player& player, int max);
+
+	/// <summary>
+	/// 敵のアニメーション関連をまとめる
+	/// </summary>
+	/// <param name="time">アニメーション再生時間</param>
+	/// <param name="max">敵の最大数</param>
 	void Animation(float& time, int max);
+
+	/// <summary>
+	/// 敵のアニメーションをブレンドする関数
+	/// </summary>
+	/// <param name="time">アニメーション再生時間</param>
+	/// <param name="max">敵の最大数</param>
+	/// <param name="blendNumber">ブレンドしたいアニメーション格納番号</param>
+	/// <param name="DNumber">ブレンドで外したいアニメーション格納番号</param>
 	void BlendAnimation(float& time, int max, int blendNumber, int DNumber);
+
+	/// <summary>
+	/// マップとの当たり判定
+	/// </summary>
+	/// <param name="map">マップの呼び出し</param>
+	/// <param name="max">敵の最大数</param>
 	void HitMap(Map& map, int max);
+
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	/// <param name="max">敵の最大数</param>
 	void Draw(int max);
+
+	/// <summary>
+	/// 終了処理
+	/// </summary>
+	/// <param name="max">敵の最大数</param>
 	void End(int max);
 
+	//攻撃の当たり判定
 	bool isSphereHit(const SphereCol& col, float damage,int max);
+	//索敵範囲の当たり判定
 	bool isSeachHit(const CapsuleCol& col,int max);
+	//プレイヤーとの当たり判定
 	bool isPlayerHit(const CapsuleCol& col,VECTOR& vec, float speed, int max);
+	//距離を保つ当たり判定
 	bool isDistanceHit(const CapsuleCol& col,int max);
 
-	VECTOR GetPos(int max) { return m_weakEnemyPos[max]; }
-	float GetPosX(int max) { return m_weakEnemyPos[max].x; }
-	float GetPosY(int max) { return m_weakEnemyPos[max].y; }
-	float GetPosZ(int max) { return m_weakEnemyPos[max].z; }
-	float GetDamage() { return m_attack; }
-	float GetWeakHp(int max) { return m_weakEnemyHp[max]; }
-	VECTOR GetOutPush(int max) { return m_outPush[max]; }
-	const CapsuleCol GetCol(int max) { return m_weakCapsuleCol[max]; }
-	const SphereCol GetAttackCol(int max) { return m_colAttack[max]; }
-	bool GetPlayerHit(int max) { return m_playerHit[max]; }
+	VECTOR GetPos(int max) { return m_weakEnemyPos[max]; }              //エネミーのポジション所得
+	float GetPosX(int max) { return m_weakEnemyPos[max].x; }            //エネミーのポジション所得X座標
+	float GetPosY(int max) { return m_weakEnemyPos[max].y; }            //エネミーのポジション所得Y座標
+	float GetPosZ(int max) { return m_weakEnemyPos[max].z; }            //エネミーのポジション所得Z座標
+	float GetDamage() { return m_attack; }                              //エネミーの攻撃力所得
+	float GetWeakHp(int max) { return m_weakEnemyHp[max]; }             //エネミーのHP所得
+	VECTOR GetOutPush(int max) { return m_outPush[max]; }               //プレイヤーを押し出すベクター
+	const CapsuleCol GetCol(int max) { return m_weakCapsuleCol[max]; }  //エネミーのカプセル所得
+	const SphereCol GetAttackCol(int max) { return m_colAttack[max]; }  //エネミーの球体所得
+	bool GetPlayerHit(int max) { return m_playerHit[max]; }             //プレイヤーに攻撃が当たった判定
 
 	//コア所得
 	int GetCore() { return m_baseCore; }
@@ -72,8 +127,5 @@ private:
 
 	//エフェクト変数
 	int m_effectWeakHit[ENEMY_NOW];                          //攻撃が当たった時のエフェクト
-
-	//スマートポインタ
-	//std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 };
 

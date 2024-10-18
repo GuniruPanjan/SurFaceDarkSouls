@@ -1,5 +1,8 @@
 #include "SEManager.h"
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 SEManager::SEManager():
 	m_buttonSE(0),
 	m_selectSE(0),
@@ -20,6 +23,9 @@ SEManager::SEManager():
 	}
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 SEManager::~SEManager()
 {
 	//メモリ解放
@@ -40,6 +46,9 @@ SEManager::~SEManager()
 	DeleteSoundMem(m_diedSE);
 }
 
+/// <summary>
+/// シーンSEの初期化処理
+/// </summary>
 void SEManager::SceneInit()
 {
 	//SE読み込み
@@ -47,6 +56,9 @@ void SEManager::SceneInit()
 	m_selectSE = LoadSoundMem("Data/SE/SelectSE.mp3");
 }
 
+/// <summary>
+/// キャラSEの初期化処理
+/// </summary>
 void SEManager::CharaInit()
 {
 	//SE読み込み
@@ -60,6 +72,9 @@ void SEManager::CharaInit()
 	
 }
 
+/// <summary>
+/// ボスSEの初期化処理
+/// </summary>
 void SEManager::BossInit()
 {
 	//SE読み込み
@@ -71,6 +86,10 @@ void SEManager::BossInit()
 	m_diedSE = LoadSoundMem("Data/SE/DiedSE.mp3");
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <param name="volume">音量</param>
 void SEManager::Update(int volume)
 {
 	m_volumePal = volume;
@@ -92,6 +111,9 @@ void SEManager::Update(int volume)
 	ChangeVolumeSoundMem(m_volumePal, m_diedSE);
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void SEManager::End()
 {
 	//SE

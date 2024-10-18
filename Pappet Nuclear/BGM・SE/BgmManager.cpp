@@ -1,6 +1,9 @@
-#include "BgmAndSeManager.h"
+#include "BgmManager.h"
 
-BgmAndSeManager::BgmAndSeManager():
+/// <summary>
+/// コンストラクタ
+/// </summary>
+BgmManager::BgmManager():
 	m_titleBGM(0),
 	m_gameBGM(0),
 	m_bossBGM(0),
@@ -10,7 +13,10 @@ BgmAndSeManager::BgmAndSeManager():
 	
 }
 
-BgmAndSeManager::~BgmAndSeManager()
+/// <summary>
+/// デストラクタ
+/// </summary>
+BgmManager::~BgmManager()
 {
 	//メモリ解放
 	//BGM
@@ -22,26 +28,39 @@ BgmAndSeManager::~BgmAndSeManager()
 	
 }
 
-void BgmAndSeManager::TitleInit()
+/// <summary>
+/// タイトルBGMの初期化処理
+/// </summary>
+void BgmManager::TitleInit()
 {
 	//BGM読み込み
 	m_titleBGM = LoadSoundMem("Data/BGM/TitleBGM.mp3");
 }
 
-void BgmAndSeManager::GameInit()
+/// <summary>
+/// ゲームBGMの初期化処理
+/// </summary>
+void BgmManager::GameInit()
 {
 	//BGM読み込み
 	m_gameBGM = LoadSoundMem("Data/BGM/GameBGM.mp3");
 	m_bossBGM = LoadSoundMem("Data/BGM/BossBGM.mp3");
 }
 
-void BgmAndSeManager::ClearInit()
+/// <summary>
+/// クリアBGMの初期化処理
+/// </summary>
+void BgmManager::ClearInit()
 {
 	//BGM読み込み
 	m_clearBGM = LoadSoundMem("Data/BGM/ClearBGM.mp3");
 }
 
-void BgmAndSeManager::Update(int volume)
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <param name="volume">音量</param>
+void BgmManager::Update(int volume)
 {
 	m_volumePal = volume;
 
@@ -54,29 +73,44 @@ void BgmAndSeManager::Update(int volume)
 
 }
 
-void BgmAndSeManager::TitleBGM()
+/// <summary>
+/// タイトルBGM更新処理
+/// </summary>
+void BgmManager::TitleBGM()
 {
 	PlaySoundMem(m_titleBGM, DX_PLAYTYPE_LOOP, true);
 }
 
-void BgmAndSeManager::GameBGM()
+/// <summary>
+/// ゲームBGM更新処理
+/// </summary>
+void BgmManager::GameBGM()
 {
 	PlaySoundMem(m_gameBGM, DX_PLAYTYPE_LOOP, true);
 }
 
-void BgmAndSeManager::BossBGM()
+/// <summary>
+/// ボスBGM更新処理
+/// </summary>
+void BgmManager::BossBGM()
 {
 	StopSoundMem(m_gameBGM);   //サウンドを止める
 
 	PlaySoundMem(m_bossBGM, DX_PLAYTYPE_LOOP, true);
 }
 
-void BgmAndSeManager::ClearBGM()
+/// <summary>
+/// クリアBGM更新処理
+/// </summary>
+void BgmManager::ClearBGM()
 {
 	PlaySoundMem(m_clearBGM, DX_PLAYTYPE_LOOP, true);
 }
 
-void BgmAndSeManager::End()
+/// <summary>
+/// 終了処理
+/// </summary>
+void BgmManager::End()
 {
 	//メモリ解放
 	//BGM

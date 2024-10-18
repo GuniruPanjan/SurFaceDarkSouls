@@ -46,8 +46,8 @@ void SceneGame::Init()
 	player->Init();
 	ui->Init(*player, *enemy);
 	setting->Init();
-	bgmse->GameInit();
-	bgmse->GameBGM();
+	pbgm->GameInit();
+	pbgm->GameBGM();
 	equipment->Init();
 
 	a = 0;
@@ -133,11 +133,11 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 				enemy->Init(i);
 			}
 
-			StopSoundMem(bgmse->GetBossBGM());  //サウンドを止める
+			StopSoundMem(pbgm->GetBossBGM());  //サウンドを止める
 
 			enemy->BossInit();
 			map->Init();
-			bgmse->GameBGM();
+			pbgm->GameBGM();
 			player->Init();
 
 			m_one = false;
@@ -150,7 +150,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	//ボス部屋に入ったら
 	if (map->GetRoomEntered() == true && m_one == false)
 	{
-		bgmse->BossBGM();
+		pbgm->BossBGM();
 
 		m_one = true;
 	}
@@ -208,7 +208,7 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	//コア取得
 	player->SetCore(enemy->GetCore());
 
-	bgmse->Update(setting->GetVolume());
+	pbgm->Update(setting->GetVolume());
 
 	//エフェクトの更新
 	Effect::GetInstance().Update();
@@ -301,5 +301,5 @@ void SceneGame::End()
 	map->End();
 	equipment->End();
 	setting->End();
-	bgmse->End();
+	pbgm->End();
 }

@@ -3,6 +3,9 @@
 
 Effect* Effect::m_instance = nullptr;
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 Effect::~Effect()
 {
 	//同じパスのエフェクトがロードされていないか確認する

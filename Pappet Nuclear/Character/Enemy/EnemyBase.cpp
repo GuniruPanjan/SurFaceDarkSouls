@@ -6,6 +6,9 @@ namespace
 	auto& handle = HandleManager::GetInstance();
 }
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 EnemyBase::EnemyBase():
 	m_bossModelHandle(-1),
 	m_core(0),
@@ -104,6 +107,9 @@ EnemyBase::EnemyBase():
 	MV1SetScale(m_bossModelHandle, VGet(m_bossSize, m_bossSize, m_bossSize));
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 EnemyBase::~EnemyBase()
 {
 	//メモリ解放
@@ -130,6 +136,9 @@ EnemyBase::~EnemyBase()
 
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void EnemyBase::End()
 {
 	//メモリ解放

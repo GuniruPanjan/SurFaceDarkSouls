@@ -1,6 +1,6 @@
 #pragma once
 #include "DxLib.h"
-#include "BGM・SE/BgmAndSeManager.h"
+#include "BGM・SE/BgmManager.h"
 #include "UI/Setting.h"
 #include "UI/UI.h"
 #include<memory>
@@ -53,7 +53,7 @@ protected:
 
 	//スマートポインタ
 	std::shared_ptr<Setting> setting = std::make_shared<Setting>();
-	std::shared_ptr<BgmAndSeManager> bgmse = std::make_shared<BgmAndSeManager>();
+	std::shared_ptr<BgmManager> pbgm = std::make_shared<BgmManager>();
 	std::shared_ptr<UI> pui = std::make_shared<UI>();
 };
 

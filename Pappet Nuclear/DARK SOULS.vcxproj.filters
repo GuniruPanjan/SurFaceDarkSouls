@@ -103,6 +103,12 @@
     <Filter Include="ヘッダー ファイル\Character\Player\Item">
       <UniqueIdentifier>{650b44ba-4248-4196-8073-36173daf9f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Library">
+      <UniqueIdentifier>{dc094651-1312-4b72-bd32-e22e220cf562}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Library">
+      <UniqueIdentifier>{dd08e6d8-3ecd-4d34-8e1a-0d08709d382d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Template3D.cpp">
@@ -174,7 +180,7 @@
     <ClCompile Include="Character\Player\WeaponSummary.cpp">
       <Filter>ソース ファイル\Character\Player</Filter>
     </ClCompile>
-    <ClCompile Include="BGM・SE\BgmAndSeManager.cpp">
+    <ClCompile Include="BGM・SE\BgmManager.cpp">
       <Filter>ソース ファイル\BGM・SE</Filter>
     </ClCompile>
     <ClCompile Include="BGM・SE\SEManager.cpp">
@@ -266,7 +272,7 @@
     <ClInclude Include="Character\Player\WeaponSummary.h">
       <Filter>ヘッダー ファイル\Character\Player</Filter>
     </ClInclude>
-    <ClInclude Include="BGM・SE\BgmAndSeManager.h">
+    <ClInclude Include="BGM・SE\BgmManager.h">
       <Filter>ヘッダー ファイル\BGM・SE</Filter>
     </ClInclude>
     <ClInclude Include="BGM・SE\SEManager.h">
@@ -292,6 +298,12 @@
     </ClInclude>
     <ClInclude Include="UI\SelectManager.h">
       <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ObjectTag.h">
+      <Filter>ヘッダー ファイル\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\MyLibrary.h">
+      <Filter>ヘッダー ファイル\Library</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
