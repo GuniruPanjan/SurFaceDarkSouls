@@ -1,15 +1,24 @@
 #include "SceneManager.h"
 #include "SceneTitle.h"
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 SceneManager::SceneManager():
 	m_pScene(nullptr)
 {
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 SceneManager::~SceneManager()
 {
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void SceneManager::Init()
 {
 	//最初のシーンのメモリを解放する
@@ -18,6 +27,9 @@ void SceneManager::Init()
 	m_pScene->Init();
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
 void SceneManager::Update()
 {
 	std::shared_ptr<SceneBase> pNext = m_pScene->Update();
@@ -32,11 +44,17 @@ void SceneManager::Update()
 	}
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
 void SceneManager::Draw()
 {
 	m_pScene->Draw();
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void SceneManager::End()
 {
 	m_pScene->End();

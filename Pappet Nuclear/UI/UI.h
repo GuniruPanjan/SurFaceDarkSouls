@@ -1,5 +1,5 @@
 #pragma once
-#include "UIManager.h"
+#include "UIBase.h"
 
 class Player;
 class Enemy;
@@ -7,22 +7,53 @@ class Equipment;
 class Map;
 class ItemManager;
 
-class UI : public UIManager
+/// <summary>
+/// UI関係のクラス
+/// </summary>
+class UI : public UIBase
 {
 public:
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
 	UI();
+
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
 	virtual ~UI();
 
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	/// <param name="player">プレイヤーの呼び出し</param>
+	/// <param name="enemy">エネミーの呼び出し</param>
 	void Init(Player& player, Enemy& enemy);
+
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	/// <param name="player">プレイヤーの呼び出し</param>
+	/// <param name="enemy">エネミーの呼び出し</param>
+	/// <param name="eq">装備の呼び出し</param>
+	/// <param name="map">マップの呼び出し</param>
+	/// <param name="item">アイテムの呼び出し</param>
 	void Draw(Player& player, Enemy& enemy, Equipment& eq, Map& map, ItemManager& item);
+
+	/// <summary>
+	/// 死んだときの描画
+	/// </summary>
 	void DiedDraw();
+
+	/// <summary>
+	/// 終了処理
+	/// </summary>
 	void End();
 
-	int MyLoadGraph(const char* FileName, int XSize, int YSize);
-
 private:
-	unsigned int m_hpColor = 0xff0000;
-	unsigned int m_staminaColor = 0x00ff00;
+	unsigned int m_hpColor = 0xff0000;    //HPカラー
+	unsigned int m_staminaColor = 0x00ff00;       //スタミナカラー
+	//プレイヤーのUI関係変数
 	float m_hpCover;
 	float m_staminaCover;
 	float m_hpExpressionDivide1;
@@ -41,14 +72,6 @@ private:
 	float m_staminaPosY2;
 	float m_staminaPosY3;
 	float m_staminaPosY4;
-	float m_ItemColumn1X1;
-	float m_ItemColumn1X2;
-	float m_ItemColumn1Y1;
-	float m_ItemColumn1Y2;
-	float m_ItemColumn2X1;
-	float m_ItemColumn2X2;
-	float m_ItemColumn2Y1;
-	float m_ItemColumn2Y2;
 	int m_equipmentUI;
 	int m_youDied;
 

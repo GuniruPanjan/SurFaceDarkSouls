@@ -180,7 +180,7 @@
     <ClCompile Include="BGM・SE\SEManager.cpp">
       <Filter>ソース ファイル\BGM・SE</Filter>
     </ClCompile>
-    <ClCompile Include="UI\UIManager.cpp">
+    <ClCompile Include="UI\UIBase.cpp">
       <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
     <ClCompile Include="Character\Player\Equipment\Equipment.cpp">
@@ -275,7 +275,7 @@
     <ClInclude Include="Character\Player\Equipment\Equipment.h">
       <Filter>ヘッダー ファイル\Character\Player\Equipment</Filter>
     </ClInclude>
-    <ClInclude Include="UI\UIManager.h">
+    <ClInclude Include="UI\UIBase.h">
       <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
     <ClInclude Include="Icon\Icon.h">

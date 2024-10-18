@@ -7,7 +7,9 @@
 class SelectManager
 {
 public:
+	//コンストラクタ
 	SelectManager();
+	//デストラクタ
 	virtual ~SelectManager();
 
 	//選択するための列挙型
@@ -36,6 +38,7 @@ public:
 	//アイテムなどの選択用関数
 	void Item_Update();
 
+	//描画処理
 	void Draw();
 
 };

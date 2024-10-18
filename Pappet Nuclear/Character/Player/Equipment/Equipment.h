@@ -1,28 +1,42 @@
 #pragma once
-#include "UI/UIManager.h"
+#include "UI/UIBase.h"
 
-//struct RightEquipmentItem
-//{
-//
-//	int s_hand = 1;
-//	int s_sword = 0;
-//
-//}RightItem;
-
-class Equipment : public UIManager
+/// <summary>
+/// 装備を管理するクラス
+/// </summary>
+class Equipment : public UIBase
 {
 public:
+	//コンストラクタ
 	Equipment();
+
+	//デストラクタ
 	virtual ~Equipment();
 
+	//初期化処理
 	void Init();
+
+	//更新処理
 	void Update();
+
+	//右手の装備処理
 	void RightUpdate();
+
+	//左手の装備処理
 	void LeftUpdate();
+
+	//描画処理
 	void Draw();
+
+	//右手の装備描画処理
 	void RightDraw();
+
+	//左手の装備描画処理
 	void LeftDraw();
+
+	//終了処理
 	void End();
+
 
 	bool GetEquipment() { return m_equipmentLeave; }
 	bool GetRightEquipment() { return m_rightEquipmentOpen; }

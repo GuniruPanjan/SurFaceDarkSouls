@@ -25,6 +25,9 @@ namespace
 	auto& effect = Effect::GetInstance();
 }
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 Player::Player():
 	m_cameraAngle(0.0f),
 	m_updatePosX(485.0f),
@@ -105,6 +108,9 @@ Player::Player():
 	}
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 Player::~Player()
 {
 	//メモリ解放
@@ -127,6 +133,9 @@ Player::~Player()
 	handle.Clear();
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void Player::Init()
 {
 	m_button = 0;
@@ -212,8 +221,6 @@ void Player::Init()
 		m_animWeaponLeftWalk = handle.GetModelHandle("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponLeftWalk.mv1");
 		m_animTaking = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimTaking.mv1");
 
-		//55カウント
-
 		//アニメーションアタッチ
 		m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
 		m_animation[1] = MV1AttachAnim(m_handle, 1, m_animWalk, TRUE);
@@ -251,25 +258,11 @@ void Player::Init()
 
 	//アニメーションブレンド
 	MV1SetAttachAnimBlendRate(m_handle, m_animation[0], 1.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[1], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[2], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[3], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[4], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[5], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[6], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[7], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[8], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[9], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[10], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[11], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[12], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[13], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[14], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[15], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[16], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[17], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[18], 0.0f);
-	MV1SetAttachAnimBlendRate(m_handle, m_animation[19], 0.0f);
+
+	for (int i = 1; i < 20; i++)
+	{
+		MV1SetAttachAnimBlendRate(m_handle, m_animation[i], 0.0f);
+	}
 
 	m_playTime = 0.0f;
 	
@@ -340,16 +333,15 @@ void Player::Init()
 	{
 		m_animOne[i] = false;
 	}
-
-	//モデル全体のコリジョン情報のセットアップ
-	//MV1SetupCollInfo(map->GetCollisionMap(), -1);
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
 void Player::Update()
 {
 	m_colPos = Pos3(m_pos.x - 2.0f, m_pos.y + 35.0f, m_pos.z);
 	m_targetColPos = Pos3(m_pos.x, m_pos.y + 35.0f, m_pos.z);
-	//m_rectPos = Pos3(m_pos.x - 50.0f, m_pos.y + 35.0f, m_pos.z);
 
 	//初期化
 	if (m_notWeapon == false)
@@ -490,8 +482,6 @@ void Player::Update()
 
 			if (walkTime >= 30)
 			{
-				//a = PlaySoundMem(se->GetWalkSE(), DX_PLAYTYPE_BACK, true);
-
 				walkTime = 0;
 			}
 			
@@ -504,8 +494,6 @@ void Player::Update()
 
 			if (dashTime >= 20)
 			{
-				//PlaySoundMem(se->GetWalkSE(), DX_PLAYTYPE_BACK, true);
-
 				dashTime = 0;
 			}
 			
@@ -686,28 +674,6 @@ void Player::Update()
 
 	}
 
-	//if (m_playTime >= m_totalAnimTime[4] && m_animation[4] != -1)
-	//{
-	//	m_drawPos = m_pos;
-
-	//	//攻撃終了
-	//	m_moveAttack = false;
-	//}
-	//if (m_playTime >= m_totalAnimTime[5] && m_animation[5] != -1)
-	//{
-	//	m_drawPos = m_pos;
-
-	//	//攻撃終了
-	//	m_moveAttack = false;
-	//}
-	//if (m_playTime >= m_totalAnimTime[6] && m_animation[6] != -1)
-	//{
-	//	m_drawPos = m_pos;
-
-	//	//攻撃終了
-	//	m_moveAttack = false;
-	//}
-
 	//攻撃が当たった時モーションや判定を初期化する
 	if (m_hit == true && m_hitImpact == false)
 	{
@@ -773,6 +739,10 @@ void Player::Update()
 	}
 }
 
+/// <summary>
+/// 武器を持った時の更新処理
+/// </summary>
+/// <param name="eq">装備クラスを返す</param>
 void Player::WeaponUpdate(Equipment& eq)
 {
 
@@ -839,17 +809,23 @@ void Player::WeaponUpdate(Equipment& eq)
 
 }
 
+/// <summary>
+/// プレイヤーのSEの音量を変える
+/// </summary>
+/// <param name="volume">音量</param>
 void Player::PlaySE(int volume)
 {
 	se->Update(volume);
 }
 
+/// <summary>
+/// 他のキャラクターなどの影響を受ける
+/// </summary>
+/// <param name="outpush">エネミーがプレイヤーを押し出す距離</param>
+/// <param name="weakoutpush">ボスがプレイヤーを押し出す距離</param>
 void Player::OtherInfluence(VECTOR outpush, VECTOR weakoutpush)
 {
 	//他のキャラクターなどの影響を受ける
-	//m_drawPos = VSub(m_drawPos, outpush);
-	//m_drawPos = VSub(m_drawPos, weakoutpush);
-
 	m_pos = VAdd(m_pos, outpush);
 	m_pos = VAdd(m_pos, weakoutpush);
 }
@@ -858,17 +834,7 @@ void Player::OtherInfluence(VECTOR outpush, VECTOR weakoutpush)
 /// プレイヤーの行動に関する実装をまとめる関数
 /// </summary>
 void Player::Action()
-{
-	//PAD_INPUT_2はBボタン
-	//PAD_INPUT_3はXボタン
-	//PAD_INPUT_4はYボタン
-	//PAD_INPUT_5はLボタン
-	//PAD_INPUT_7はBackボタン
-	//PAD_INPUT_8はStartボタン
-	//PAD_INPUT_9はLスティック
-	//PAD_INPUT_10はRスティック
-
-	
+{	
 	//一段階目の攻撃
 	if (m_hp > 0.0f)
 	{
@@ -931,7 +897,7 @@ void Player::Action()
 	}
 	
 
-	//ZRボタンで強攻撃
+	//ZRボタンで必殺技
 	if (m_xpad.RightTrigger)
 	{
 		//DrawFormatString(0, 10, 0xffffff, "強攻撃");
@@ -1092,15 +1058,6 @@ void Player::Action()
 
 	}
 
-	//回避中に攻撃するため
-	//if (m_avoidance == true)
-	//{
-	//	if (m_pad & PAD_INPUT_6)
-	//	{
-	//		m_moveAttack = true;
-	//	}
-	//}
-
 	if (m_moveAttack == false)
 	{
 		//次の攻撃段階の初期化
@@ -1128,8 +1085,6 @@ void Player::Action()
 	}
 	else if (m_lockonTarget == true)
 	{
-		//DrawString(0, 100, "ロックオン", 0xffffff);
-
 		if (m_xpad.Buttons[7] == 1 && m_pushButton == true)
 		{
 			m_lockonTarget = false;
@@ -1150,8 +1105,6 @@ void Player::Action()
 			//一回だけ実行
 			if (m_effectOneHeel == false && m_recoveryNumber > 0)
 			{
-				//m_effectHeel = PlayEffekseer3DEffect(effect->GetHeelEffect());
-
 				effect.EffectCreate("Heal", m_pos);
 
 				PlaySoundMem(se->GetHeelSE(), DX_PLAYTYPE_BACK, true);
@@ -1183,9 +1136,6 @@ void Player::Action()
 		}
 
 	}
-
-	//回復エフェクトのポジション
-	//SetPosPlayingEffekseer3DEffect(m_effectHeel, m_pos.x, m_pos.y, m_pos.z);
 }
 
 /// <summary>
@@ -1732,6 +1682,11 @@ void Player::WeaponAnimation(float& time)
 
 }
 
+/// <summary>
+/// マップの当たり判定
+/// </summary>
+/// <param name="map">マップ呼び出し</param>
+/// <param name="item">アイテム呼び出し</param>
 void Player::HitObj(Map& map, ItemManager& item)
 {
 	int j;
@@ -1841,12 +1796,6 @@ void Player::HitObj(Map& map, ItemManager& item)
 					//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
 					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed / 2));
 
-					////走っていた場合
-					//if (m_dashMove == true)
-					//{
-					//	//当たっていたら規定距離分プレイヤーを法線方向に移動させる
-					//	m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed / 2.0f));
-					//}
 					//回避行動だった場合
 					if (m_avoidance == true)
 					{
@@ -1884,14 +1833,16 @@ void Player::HitObj(Map& map, ItemManager& item)
 
 	MapAction(map, item);
 
-	//エフェクト更新
-	//effect->Update();
-
 	//検出したプレイヤーの周囲のポリゴン情報を解放する
 	MV1CollResultPolyDimTerminate(HitDim);
 
 }
 
+/// <summary>
+/// マップのギミック管理
+/// </summary>
+/// <param name="map">マップを呼び出し</param>
+/// <param name="item">アイテムを呼び出し</param>
 void Player::MapAction(Map& map, ItemManager& item)
 {
 
@@ -1908,9 +1859,6 @@ void Player::MapAction(Map& map, ItemManager& item)
 			//一回だけ実行
 			if (m_effectActivation == false)
 			{
-				//エフェクトを再生
-				//m_effect = PlayEffekseer3DEffect(effect->GetRestEffect());
-
 				effect.EffectCreate("Rest", map.GetRestPos());
 
 				PlaySoundMem(se->GetRestSE(), DX_PLAYTYPE_BACK, true);
@@ -1926,10 +1874,6 @@ void Player::MapAction(Map& map, ItemManager& item)
 	{
 		m_effectActivation = false;
 	}
-
-	//休息するポイントのエフェクトポジション
-	//SetPosPlayingEffekseer3DEffect(m_effect, map.GetRestPos().x, map.GetRestPos().y, map.GetRestPos().z);
-
 
 	for (int i = 0; i < ITEM_NUMBER; i++)
 	{
@@ -1955,6 +1899,9 @@ void Player::MapAction(Map& map, ItemManager& item)
 	}
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
 void Player::Draw()
 {
 	//方向ベクトル
@@ -2094,12 +2041,12 @@ void Player::Draw()
 
 	//3Dモデル描画
 	MV1DrawModel(m_handle);
-
-	//攻撃された時のエフェクトのポジション
-	//SetPosPlayingEffekseer3DEffect(m_effectHit, m_pos.x, m_pos.y + 40.0f, m_pos.z);
-	//effect->Draw();
 }
 
+/// <summary>
+/// 武器描画
+/// </summary>
+/// <param name="eq">装備呼び出し</param>
 void Player::WeaponDraw(Equipment& eq)
 {
 	//剣を持った時
@@ -2114,6 +2061,9 @@ void Player::WeaponDraw(Equipment& eq)
 	}
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void Player::End()
 {
 	//メモリ解放
@@ -2136,6 +2086,12 @@ void Player::End()
 	handle.Clear();
 }
 
+/// <summary>
+/// カプセル動詞の当たり判定
+/// </summary>
+/// <param name="col">カプセル型１</param>
+/// <param name="col1">カプセル型2</param>
+/// <returns></returns>
 bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 {
 	bool isHit = m_capsuleCol.IsHitCapsule(col);
@@ -2208,6 +2164,12 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 	return isHit || isHitBoss;
 }
 
+/// <summary>
+/// 敵の攻撃との当たり判定
+/// </summary>
+/// <param name="col">球体</param>
+/// <param name="damage">ダメージ</param>
+/// <returns></returns>
 bool Player::isSphereHit(const SphereCol& col, float damage)
 {
 	bool isHit = m_capsuleCol.IsHitSphere(col);
@@ -2251,6 +2213,14 @@ bool Player::isSphereHit(const SphereCol& col, float damage)
 	return isHit;
 }
 
+/// <summary>
+/// ボス攻撃との当たり判定
+/// </summary>
+/// <param name="col1">球体１</param>
+/// <param name="col2">球体２</param>
+/// <param name="col3">球体３</param>
+/// <param name="bossdamage">ダメージ</param>
+/// <returns></returns>
 bool Player::isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage)
 {
 	bool isBossAttackHit1 = m_capsuleCol.IsHitSphere(col1);
@@ -2292,11 +2262,15 @@ bool Player::isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const
 	return isBossAttackHit1 || isBossAttackHit2 || isBossAttackHit3;
 }
 
+/// <summary>
+/// 球体と矩形との当たり判定
+/// </summary>
+/// <param name="col">球体</param>
+/// <param name="damage">ダメージ</param>
+/// <returns></returns>
 bool Player::isShieldHit(const SphereCol& col, float damage)
 {
 	bool isHit = m_rectCol.IsHitSphere(col);
-
-	//雑魚敵の攻撃が入っている
 
 	//ダメージを受けた判定
 	if (isHit)
@@ -2340,6 +2314,14 @@ bool Player::isShieldHit(const SphereCol& col, float damage)
 	return isHit;
 }
 
+/// <summary>
+/// 球体と矩形との当たり判定
+/// </summary>
+/// <param name="col1">球体１</param>
+/// <param name="col2">球体２</param>
+/// <param name="col3">球体３</param>
+/// <param name="bossdamage">ダメージ</param>
+/// <returns></returns>
 bool Player::isBossShieldHit(const SphereCol& col1, const SphereCol& col2, const SphereCol& col3, float bossdamage)
 {
 	bool isBossAttackHit1 = m_rectCol.IsHitSphere(col1);
@@ -2386,6 +2368,12 @@ bool Player::isBossShieldHit(const SphereCol& col1, const SphereCol& col2, const
 	return isBossAttackHit1 || isBossAttackHit2 || isBossAttackHit3;
 }
 
+/// <summary>
+/// 球体とカプセルとの当たり判定
+/// </summary>
+/// <param name="col">カプセル型</param>
+/// <param name="max">敵の最大数</param>
+/// <returns></returns>
 bool Player::isTargetHit(const CapsuleCol& col, int max)
 {
 	bool isHit = m_targetCunCol.IsHitCapsule(col);

@@ -11,9 +11,10 @@ namespace
 	auto& handle = HandleManager::GetInstance();
 }
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 SceneTitle::SceneTitle():
-	m_pad(0),
-	m_right(0),
 	m_start(0),
 	m_setting(0),
 	m_end(0),
@@ -22,7 +23,6 @@ SceneTitle::SceneTitle():
 	m_blend(false),
 	m_setButton(false),
 	m_waitTime(0),
-	m_analog(VGet(0.0f,0.0f,0.0f)),
 	m_cameraPos(VGet(0.0f,0.0f,0.0f)),
 	m_playerHandle(0),
 	m_anim(0),
@@ -40,6 +40,9 @@ SceneTitle::SceneTitle():
 	}
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 SceneTitle::~SceneTitle()
 {
 	//メモリ解放
@@ -56,12 +59,16 @@ SceneTitle::~SceneTitle()
 	handle.Clear();
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void SceneTitle::Init()
 {
-	m_backScene = MyLoadGraph("Data/SceneBack/PuppetNuclearTitleMini.png", 1, 1);     //144 KB (147,793 バイト)
-	m_start = MyLoadGraph("Data/UI/STARTButtonMini.png", 1, 1);                       //27.1 KB (27,851 バイト)
-	m_setting = MyLoadGraph("Data/UI/SettingButtonMini.png", 1, 1);                   //29.4 KB (30,170 バイト)
-	m_end = MyLoadGraph("Data/UI/EndButtonMini.png", 1, 1);                           //22.5 KB (23,109 バイト)
+	//メモリ読み込み
+	m_backScene = pui->MyLoadGraph("Data/SceneBack/PuppetNuclearTitleMini.png", 1, 1);     //144 KB (147,793 バイト)
+	m_start = pui->MyLoadGraph("Data/UI/STARTButtonMini.png", 1, 1);                       //27.1 KB (27,851 バイト)
+	m_setting = pui->MyLoadGraph("Data/UI/SettingButtonMini.png", 1, 1);                   //29.4 KB (30,170 バイト)
+	m_end = pui->MyLoadGraph("Data/UI/EndButtonMini.png", 1, 1);                           //22.5 KB (23,109 バイト)
 
 	m_playerHandle = handle.GetModelHandle("Data/Player/PuppetPlayerModel.mv1");
 	m_anim = handle.GetModelHandle("Data/PlayerAnimation/JumpingDown.mv1");
@@ -102,6 +109,10 @@ void SceneTitle::Init()
 	m_blend = false;
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <returns>シーンを返す</returns>
 std::shared_ptr<SceneBase> SceneTitle::Update()
 {
 	if (setting->GetSettingScene() == false)
@@ -240,6 +251,9 @@ void SceneTitle::SelectBlend(int select, int now, int other1, int other2)
 	}
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
 void SceneTitle::Draw()
 {
 
@@ -277,6 +291,9 @@ void SceneTitle::Draw()
 	}
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void SceneTitle::End()
 {
 	//メモリ解放

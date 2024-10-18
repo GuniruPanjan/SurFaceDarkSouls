@@ -15,15 +15,24 @@ namespace
 	auto& effect = Effect::GetInstance();
 }
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 SceneGame::SceneGame():
 	m_one(false)
 {
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 SceneGame::~SceneGame()
 {
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void SceneGame::Init()
 {
 
@@ -40,14 +49,14 @@ void SceneGame::Init()
 	bgmse->GameInit();
 	bgmse->GameBGM();
 	equipment->Init();
-	//effect->AllInit();
-	//effect.EffectLoad("Imapct", "Data/Effect/HitEffect.efkefc", 30, 7.0f);
-	//effect.EffectLoad("Item", "Data/Effect/Item.efkefc", 60, 5.0f);
-	//item->Init();
 
 	a = 0;
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <returns>シーンを返す</returns>
 std::shared_ptr<SceneBase> SceneGame::Update()
 {
 	item->Update();
@@ -207,6 +216,9 @@ std::shared_ptr<SceneBase> SceneGame::Update()
 	return shared_from_this();  //自身のポインタを返す
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
 void SceneGame::Draw()
 {
 
@@ -278,6 +290,9 @@ void SceneGame::Draw()
 	item->Draw();
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void SceneGame::End()
 {
 	player->End();
@@ -287,5 +302,4 @@ void SceneGame::End()
 	equipment->End();
 	setting->End();
 	bgmse->End();
-	//item->End();
 }

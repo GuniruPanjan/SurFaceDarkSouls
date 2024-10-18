@@ -169,7 +169,7 @@
     <ClCompile Include="UI\SelectManager.cpp" />
     <ClCompile Include="UI\Setting.cpp" />
     <ClCompile Include="UI\UI.cpp" />
-    <ClCompile Include="UI\UIManager.cpp" />
+    <ClCompile Include="UI\UIBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BGM・SE\BgmAndSeManager.h" />
@@ -202,7 +202,7 @@
     <ClInclude Include="UI\SelectManager.h" />
     <ClInclude Include="UI\Setting.h" />
     <ClInclude Include="UI\UI.h" />
-    <ClInclude Include="UI\UIManager.h" />
+    <ClInclude Include="UI\UIBase.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Icon\PuppetNuclear.ico" />

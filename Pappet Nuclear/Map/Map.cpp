@@ -11,6 +11,9 @@ namespace
 	auto& effect = Effect::GetInstance();
 }
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 Map::Map() :
 	m_handle(-1),
 	m_collisionHandle(-1),
@@ -42,6 +45,9 @@ Map::Map() :
 	}
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 Map::~Map()
 {
 	//メモリ解放
@@ -53,6 +59,9 @@ Map::~Map()
 	handle.Clear();
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void Map::Init()
 {
 	m_bossRoomEntered = false;
@@ -121,6 +130,9 @@ void Map::Init()
 	
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
 void Map::Update()
 {
 	for (int i = 0; i < ITEM_NUMBER; i++)
@@ -157,9 +169,6 @@ void Map::Update()
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			//アイテムのエフェクト再生
-			//m_itemModel[i] = PlayEffekseer3DEffect(ef.GetItemEffect());
-
 			effect.EffectCreate("Item", VGet(m_itemPos[i].x,m_itemPos[i].y,m_itemPos[i].z));
 
 			m_itemCol[i].Update(m_itemPos[i]);
@@ -178,7 +187,6 @@ void Map::Update()
 /// <param name="z">Z座標</param>
 void Map::ItemPos(int number, float x, float y, float z)
 {
-	//SetPosPlayingEffekseer3DEffect(m_itemModel[number], x, y, z);
 	m_itemPos[number] = Pos3(x, y, z);
 }
 
@@ -230,9 +238,11 @@ void Map::Draw()
 
 	//モデル描画
 	MV1DrawModel(m_handle);
-	//MV1DrawModel(m_collisionHandle);
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void Map::End()
 {
 	//メモリ解放
@@ -244,6 +254,11 @@ void Map::End()
 	handle.Clear();
 }
 
+/// <summary>
+/// 矩形のカプセルとの当たり判定
+/// </summary>
+/// <param name="col">カプセル型</param>
+/// <returns></returns>
 bool Map::CapsuleIsHit(const CapsuleCol& col)
 {
 	bool isHit = m_rectCol.IsHitCapsule(col);
@@ -262,6 +277,11 @@ bool Map::CapsuleIsHit(const CapsuleCol& col)
 	return isHit;
 }
 
+/// <summary>
+/// 球体のカプセル型の当たり判定
+/// </summary>
+/// <param name="col">カプセル型</param>
+/// <returns></returns>
 bool Map::CapsuleSaveHit(const CapsuleCol& col)
 {
 	bool isHit = m_sphereCol.IsHitCapsule(col);
@@ -282,6 +302,12 @@ bool Map::CapsuleSaveHit(const CapsuleCol& col)
 	return isHit;
 }
 
+/// <summary>
+/// アイテムの球体とカプセルの当たり判定
+/// </summary>
+/// <param name="col">カプセル型</param>
+/// <param name="max">アイテムの最大数</param>
+/// <returns></returns>
 bool Map::CapsuleItemHit(const CapsuleCol& col, int max)
 {
 	bool isHit = m_itemCol[max].IsHitCapsule(col);

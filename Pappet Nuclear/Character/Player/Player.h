@@ -159,7 +159,6 @@ private:
 
 	//スマートポインタ
 	std::shared_ptr<WeaponSummary> weapon = std::make_shared<WeaponSummary>();
-	//std::shared_ptr<Effect> effect = std::make_shared<Effect>();
 
 	//アニメーションブレンド
 	std::shared_ptr<BlendAnimation> pAnim = std::make_shared<BlendAnimation>();

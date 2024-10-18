@@ -1,7 +1,11 @@
-#include "UIManager.h"
+#include "UIBase.h"
 
-UIManager::UIManager()
+/// <summary>
+/// コンストラクタ
+/// </summary>
+UIBase::UIBase()
 {
+	//画像読み込み
 	m_heelStone = MyLoadGraph("Data/UI/HeelStoneMini.png", 6, 6);
 	m_fist = MyLoadGraph("Data/UI/FistUi.png", 4, 4);
 	m_eqFist = MyLoadGraph("Data/UI/FistUi.png", 7, 7);
@@ -11,8 +15,12 @@ UIManager::UIManager()
 	m_eqShield = MyLoadGraph("Data/UI/Shield.png", 7, 7);
 }
 
-UIManager::~UIManager()
+/// <summary>
+/// デストラクタ
+/// </summary>
+UIBase::~UIBase()
 {
+	//メモリ解放
 	DeleteGraph(m_heelStone);
 	DeleteGraph(m_fist);
 	DeleteGraph(m_sword);
@@ -20,10 +28,16 @@ UIManager::~UIManager()
 	DeleteGraph(m_eqFist);
 	DeleteGraph(m_eqSword);
 	DeleteGraph(m_eqShield);
-
 }
 
-int UIManager::MyLoadGraph(const char* FileName, int XSize, int YSize)
+/// <summary>
+/// 画像のサイズを変えてロードする関数
+/// </summary>
+/// <param name="FileName">画像のFileName</param>
+/// <param name="XSize">画像の横幅を割る数</param>
+/// <param name="YSize">画像の縦幅を割る数</param>
+/// <returns>サイズを変えた画像を返す</returns>
+int UIBase::MyLoadGraph(const char* FileName, int XSize, int YSize)
 {
 	int handle = LoadGraph(FileName);  //画像のロード
 	if (handle != -1)  //画像のロードに成功した場合

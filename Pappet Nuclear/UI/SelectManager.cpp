@@ -7,16 +7,29 @@ namespace
 	bool itemOne = false;   //一度だけ行う
 }
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 SelectManager::SelectManager():
 	NowSelect()
 {
 }
 
+/// <summary>
+///デストラクタ
+/// </summary>
 SelectManager::~SelectManager()
 {
 }
 
-
+/// <summary>
+/// メニューなどのセレクト
+/// </summary>
+/// <param name="stick">スティック入力</param>
+/// <param name="one">一回だけ行う</param>
+/// <param name="button">ボタン入力</param>
+/// <param name="decision">決定したときに返す変数</param>
+/// <param name="now">選択の数</param>
 void SelectManager::Menu_Update(int stick, bool& one, int button, int& decision, int now)
 {
 	//一度だけ初期化
@@ -31,12 +44,12 @@ void SelectManager::Menu_Update(int stick, bool& one, int button, int& decision,
 	//上選択or左選択
 	if (stick > 0 && one == false)
 	{
-		//NowSelectがEightだった場合
+		//NowSelectがNowだった場合
 		if (NowSelect == now)
 		{
 			NowSelect = (NowSelect = Ten);    //選択肢を一番下にする
 		}
-		//NowSelectがEight以上だった場合
+		//NowSelectがNow以上だった場合
 		else if (NowSelect > now)
 		{
 			NowSelect = (NowSelect - 1);   //選択肢を一つ上げる
@@ -118,6 +131,9 @@ void SelectManager::Item_Update()
 {
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
 void SelectManager::Draw()
 {
 #if _DEBUG

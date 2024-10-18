@@ -11,6 +11,9 @@ namespace
 	auto& handle = HandleManager::GetInstance();
 }
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 WeaponSummary::WeaponSummary():
 	m_weaponHandle(-1),
 	m_weaponSize(0.0f),
@@ -24,6 +27,9 @@ WeaponSummary::WeaponSummary():
 	m_weaponMatrixZ = MGetRotZ(1.795f);
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 WeaponSummary::~WeaponSummary()
 {
 	//メモリ解放
@@ -34,6 +40,9 @@ WeaponSummary::~WeaponSummary()
 	handle.Clear();
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void WeaponSummary::Init()
 {
 	m_weaponSize = 0.5f;
@@ -58,6 +67,10 @@ void WeaponSummary::Init()
 	pshield->m_weaponMatrixZ = MGetRotZ(0.0f);
 }
 
+/// <summary>
+/// 右手の装備の更新処理
+/// </summary>
+/// <param name="mat">右手の行列</param>
 void WeaponSummary::RightUpdate(MATRIX mat)
 {
 	MV1SetMatrix(m_weaponHandle, MGetIdent());
@@ -80,6 +93,10 @@ void WeaponSummary::RightUpdate(MATRIX mat)
 	MV1SetMatrix(m_weaponHandle, m_mixMatrix);
 }
 
+/// <summary>
+/// 左手の更新処理
+/// </summary>
+/// <param name="mat">左手の行列</param>
 void WeaponSummary::LeftUpdate(MATRIX mat)
 {
 	MV1SetMatrix(pshield->m_shieldHandle, MGetIdent());
@@ -102,18 +119,27 @@ void WeaponSummary::LeftUpdate(MATRIX mat)
 	MV1SetMatrix(pshield->m_shieldHandle, pshield->m_mixMatrix);
 }
 
+/// <summary>
+/// 右手の装備の描画処理
+/// </summary>
 void WeaponSummary::RightDraw()
 {
 	//モデル描画
 	MV1DrawModel(m_weaponHandle);
 }
 
+/// <summary>
+/// 左手の装備の描画処理
+/// </summary>
 void WeaponSummary::LeftDraw()
 {
 	//モデル描画
 	MV1DrawModel(pshield->m_shieldHandle);
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void WeaponSummary::End()
 {
 	//メモリ解放

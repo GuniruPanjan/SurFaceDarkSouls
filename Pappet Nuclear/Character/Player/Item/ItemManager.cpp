@@ -1,6 +1,9 @@
 #include "ItemManager.h"
 #include "DxLib.h"
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 ItemManager::ItemManager()
 {
 	for (int i = 0; i < ITEM_NUMBER; i++)
@@ -17,14 +20,23 @@ ItemManager::ItemManager()
 	s_item.SmallShield = 0;
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 ItemManager::~ItemManager()
 {
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void ItemManager::Init()
 {
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
 void ItemManager::Update()
 {
 	for (int i = 0; i < ITEM_NUMBER; i++)
@@ -61,6 +73,9 @@ void ItemManager::ItemGet(int array, int itemNumber, int& item)
 	}
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
 void ItemManager::Draw()
 {
 #if false
@@ -72,6 +87,9 @@ void ItemManager::Draw()
 #endif
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void ItemManager::End()
 {
 }

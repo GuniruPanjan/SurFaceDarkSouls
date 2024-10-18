@@ -8,16 +8,35 @@
 class Player;
 class Effect;
 
+/// <summary>
+/// マップを管理するクラス
+/// </summary>
 class Map
 {
 public:
+	//コンストラクタ
 	Map();
+	//デストラクタ
 	virtual ~Map();
 
+	//初期化処理
 	void Init();
+	//更新処理
 	void Update();
+
+	/// <summary>
+	/// アイテムのポジション設定
+	/// </summary>
+	/// <param name="number">アイテムのナンバー</param>
+	/// <param name="x">X座標</param>
+	/// <param name="y">Y座標</param>
+	/// <param name="z">Z座標</param>
 	void ItemPos(int number, float x, float y, float z);
+
+	//描画処理
 	void Draw();
+
+	//終了処理
 	void End();
 
 	/// <summary>
@@ -42,13 +61,25 @@ public:
 	/// <returns></returns>
 	bool CapsuleItemHit(const CapsuleCol& col, int max);
 
+	//マップのコリジョンハンドルを返す
 	int GetCollisionMap() { return m_collisionHandle; }
+
+	//マップのボス入り口に入ったか返す
 	bool GetRoomEntered() { return m_bossRoomEntered; }
+
+	//マップの休息場所を返す
 	bool GetSavePossible() { return m_saveSpot; }
+
+	//現在のアイテムの状態を返す
 	bool GetItem(int max) { return item->GetItem(max); }
+
+	//アイテムが取れるか返す
 	bool SetItemSpot(int max, bool set) { return m_itemSpot[max] = set; }
-	bool SetGetItem(int max, bool get) { return item->SetGetItem(max, get); }
+
+	//マップのポジションを返す
 	VECTOR GetVectorMapPos() { return m_MapPosition; }
+
+	//マップの休息ポイントを返す
 	VECTOR GetRestPos() { return m_restPos; }
 
 private:

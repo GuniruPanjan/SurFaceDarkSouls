@@ -2,17 +2,33 @@
 #include "DxLib.h"
 #include<memory>
 
+/// <summary>
+/// 武器を管理するクラス
+/// </summary>
 class WeaponSummary
 {
 public:
+	//コンストラクタ
 	WeaponSummary();
+	//デストラクタ
 	virtual ~WeaponSummary();
 
+	//初期化処理
 	void Init();
+
+	//右手の装備更新処理
 	void RightUpdate(MATRIX mat);
+
+	//左手の装備更新処理
 	void LeftUpdate(MATRIX mat);
+
+	//右手の装備の描画処理
 	void RightDraw();
+
+	//左手の装備の描画処理
 	void LeftDraw();
+
+	//終了処理
 	void End();
 
 private:

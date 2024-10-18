@@ -1,15 +1,17 @@
 #include "Setting.h"
 #include "UI/SelectManager.h"
+#include "UI/UIBase.h"
 
 namespace
 {
-	int updateVolume[5];
-
 	int selectDecision = 0;     //選択したものを決定する変数
 	int brightDecision = 0;     //明るさを決定する変数
 	int volumeDecision = 0;     //音量を決定する変数
 }
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 Setting::Setting():
 	m_black(0),
 	m_white(0),
@@ -34,50 +36,49 @@ Setting::Setting():
 {
 	for (int i = 0; i < 3; i++)
 	{
-		m_select[i] = 0;
 		m_menuSelect[i] = 0;
 		m_menuColor[i] = 0;
 	}
 
 	for (int i = 0; i < 5; i++)
 	{
-		m_volumeSelect[i] = 0;
 		m_brightColor[i] = 0;
 		m_volumeColor[i] = 0;
 	}
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 Setting::~Setting()
 {
+	//メモリ解放
 	DeleteGraph(m_black);
 	DeleteGraph(m_back);
 	DeleteGraph(m_white);
+	se->End();
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void Setting::Init()
 {
+	//画像読み込み
 	m_black = LoadGraph("Data/SceneBack/BlackMini.png");         //14.1 KB (14,532 バイト)
-	m_back = MyLoadGraph("Data/SceneBack/BlackMini.png", 1, 1);
+	m_back = ui->MyLoadGraph("Data/SceneBack/BlackMini.png", 1, 1);
 	m_white = LoadGraph("Data/SceneBack/WhiteMini.png");         //14.1 KB (14,529 バイト)
 
 	selectDecision = 0;
 
-	m_select[0] = 1;
-	m_select[1] = 0;
-	m_select[2] = 0;
-
+	//明るさ色初期化
 	m_brightColor[0] = 0xffffff;
 	m_brightColor[1] = 0xffffff;
 	m_brightColor[2] = 0xffff00;
 	m_brightColor[3] = 0xffffff;
 	m_brightColor[4] = 0xffffff;
 
-	m_volumeSelect[0] = updateVolume[0];
-	m_volumeSelect[1] = updateVolume[1];
-	m_volumeSelect[2] = updateVolume[2];
-	m_volumeSelect[3] = updateVolume[3];
-	m_volumeSelect[4] = updateVolume[4];
-
+	//音量色初期化
 	m_volumeColor[0] = 0xffffff;
 	m_volumeColor[1] = 0xffffff;
 	m_volumeColor[2] = 0xffff00;
@@ -88,6 +89,7 @@ void Setting::Init()
 	m_menuSelect[1] = 0;
 	m_menuSelect[2] = 0;
 
+	//音量サイズ
 	m_volumeSize = 130;
 
 	m_button = 0;
@@ -110,6 +112,9 @@ void Setting::Init()
 	se->SceneInit();
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
 void Setting::Update()
 {
 	//パッド入力所得
@@ -216,6 +221,9 @@ void Setting::Update()
 	
 }
 
+/// <summary>
+/// メニュー更新処理
+/// </summary>
 void Setting::MenuUpdate()
 {
 	//パッド入力所得
@@ -320,9 +328,12 @@ void Setting::MenuUpdate()
 
 }
 
+/// <summary>
+/// 描画
+/// </summary>
 void Setting::Draw()
 {
-
+	//背景の色を薄くする
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 	DrawGraph(0, 0, m_back, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -448,6 +459,10 @@ void Setting::VolumeColorDraw(int select, int now, int other1, int other2, int o
 	}
 }
 
+/// <summary>
+/// 設定の描画処理
+/// </summary>
+/// <param name="volume">音量</param>
 void Setting::SettingDraw(int volume)
 {
 	se->Update(volume);
@@ -551,42 +566,14 @@ void Setting::MenuDraw()
 	SetFontSize(40);
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void Setting::End()
 {
+	//メモリ解放
 	DeleteGraph(m_black);
 	DeleteGraph(m_back);
 	DeleteGraph(m_white);
 	se->End();
-}
-
-int Setting::MyLoadGraph(const char* FileName, int XSize, int YSize)
-{
-	int handle = LoadGraph(FileName);  //画像のロード
-	if (handle != -1)  //画像のロードに成功した場合
-	{
-		int SizeX, SizeY;  //画像サイズを格納するための変数を用意
-
-		GetGraphSize(handle, &SizeX, &SizeY);  //ロードした画像のサイズ取得
-
-		int NowScreen = GetDrawScreen();    //現在の描画対象画面を一時保存
-
-		SizeX /= XSize;
-		SizeY /= YSize;
-
-		int miniHandle = MakeScreen(SizeX, SizeY, TRUE);  //サイズ変更後のグラフィックハンドルを作成
-		if (miniHandle == -1)   //ハンドルの作成に失敗した場合
-		{
-			DeleteGraph(handle);   //メモリリークしないように、本来のグラフィックハンドルを削除
-		}
-		SetDrawScreen(miniHandle);   //描画対象画面を先ほど作ったサイズのグラフィックハンドルに変更
-		DrawExtendGraph(0, 0, SizeX, SizeY, handle, TRUE);   //ロードした画像を描画
-		DeleteGraph(handle);   //不要になった本来のサイズのグラフィックハンドルを削除
-		SetDrawScreen(NowScreen);  //現在の描画対象画面を元の画面に戻す
-
-		return miniHandle;  //縮めた画像のグラフィックハンドルを返す
-	}
-	else   //画像のロードに失敗した場合
-	{
-		return -1;   //エラー発生
-	}
 }
