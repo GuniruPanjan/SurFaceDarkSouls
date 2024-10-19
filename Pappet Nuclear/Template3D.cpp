@@ -23,7 +23,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//SetWindowSize(Height, Width);
 	// windowモード設定
 	SetGraphMode(1600, 1000, 32);
-	ChangeWindowMode(true);
+	ChangeWindowMode(false);
 
 	SetWindowIconID(IDI_ICON1);    //アイコンの設定
 
