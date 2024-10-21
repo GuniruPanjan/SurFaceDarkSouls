@@ -5,6 +5,7 @@ enum class ObjectTag
 {
 	Player,               //プレイヤー
 	Enemy,                //エネミー(まとめ)
+	Boss,                 //ボス(まとめ)
 	PlayerAttackSphere,   //プレイヤーの攻撃
 	EnemyAttackSphere,    //エネミーの攻撃
 	SearchSphere,         //エネミーの索敵
