@@ -29,6 +29,7 @@ namespace
 /// コンストラクタ
 /// </summary>
 Player::Player():
+	CharacterBase(Collidable::Priority::High, ObjectTag::Player),
 	m_cameraAngle(0.0f),
 	m_updatePosX(485.0f),
 	m_updatePosY(0.0f),
@@ -106,6 +107,13 @@ Player::Player():
 	{
 		m_targetNumber[i] = false;
 	}
+
+	//プレイヤーのカプセル型
+	auto collider = Collidable::AddCollider(MyLibrary::CollidableData::Kind::Capsule, false);
+	auto capsuleCol = dynamic_cast<MyLibrary::CollidableDataCapsule*>(collider.get());
+	capsuleCol->m_len = 40.0f;
+	capsuleCol->m_radius = 12.0f;
+	capsuleCol->m_vec = MyLibrary::LibVec3(0.0f, m_vec.y + 2.0f, 0.0f);
 }
 
 /// <summary>
@@ -2084,6 +2092,89 @@ void Player::End()
 
 	//メモリ削除
 	handle.Clear();
+}
+
+void Player::OnCollideEnter(const std::shared_ptr<Collidable>& collidable)
+{
+#if _DEBUG
+	std::string message = "プレイヤーが";
+#endif
+	auto tag = collidable->GetTag();
+	switch (tag)
+	{
+	case ObjectTag::Enemy:
+#if _DEBUG
+		message += "敵";
+#endif
+		break;
+	case ObjectTag::Attack:
+#if _DEBUG
+		message += "攻撃";
+#endif
+		break;
+	case ObjectTag::Search:
+#if _DEBUG
+		message += "索敵";
+#endif
+		break;
+	case ObjectTag::Item:
+#if _DEBUG
+		message += "アイテム";
+#endif
+		break;
+	case ObjectTag::BossEnter:
+#if _DEBUG
+		message += "ボス部屋の入口";
+#endif
+		break;
+	}
+
+#if _DEBUG
+	message += "と当たった\n";
+	printfDx(message.c_str());
+#endif
+}
+
+void Player::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
+{
+#if _DEBUG
+	std::string message = "プレイヤーが";
+#endif
+	auto tag = collidable->GetTag();
+	switch (tag)
+	{
+	case ObjectTag::Enemy:
+#if _DEBUG
+		message += "敵";
+#endif
+		break;
+	case ObjectTag::Attack:
+	{
+		//敵の攻撃が当たった時HPを減らす
+
+	}
+		break;
+	case ObjectTag::Search:
+	{
+		//敵の索敵が当たった時
+	}
+		break;
+	case ObjectTag::Item:
+	{
+		//アイテムが当たった時
+	}
+		break;
+	case ObjectTag::BossEnter:
+	{
+		//ボスの部屋の入口に当たった時
+	}
+		break;
+	}
+
+#if _DEBUG
+	message += "と当たった\n";
+	printfDx(message.c_str());
+#endif
 }
 
 /// <summary>

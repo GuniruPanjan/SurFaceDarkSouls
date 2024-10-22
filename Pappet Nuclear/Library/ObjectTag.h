@@ -5,11 +5,10 @@ enum class ObjectTag
 {
 	Player,               //プレイヤー
 	Enemy,                //エネミー(まとめ)
-	Boss,                 //ボス(まとめ)
-	PlayerAttackSphere,   //プレイヤーの攻撃
-	EnemyAttackSphere,    //エネミーの攻撃
-	SearchSphere,         //エネミーの索敵
-	ItemSphere,           //アイテムの所得範囲
-	RestSphere,           //休息できる範囲
-	BossEnterRect         //ボス部屋の入口
+	Attack,               //攻撃
+	Shield,         //プレイヤーの盾
+	Search,               //索敵
+	Item,           //アイテムの所得範囲
+	Rest,           //休息できる範囲
+	BossEnter         //ボス部屋の入口
 };

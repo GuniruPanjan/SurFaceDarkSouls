@@ -11,7 +11,7 @@ class EnemyBase : public CharacterBase
 
 public:
 	//コンストラクタ
-	EnemyBase();
+	EnemyBase(Priority priority);
 	//デストラクタ
 	virtual ~EnemyBase();
 
@@ -24,6 +24,16 @@ public:
 	void Draw() {};
 	//終了処理
 	virtual void End();
+
+protected:
+	//ほかのオブジェクトと押し出し判定をする当たり判定を作成
+	void InitCollision(MyLibrary::LibVec3 vec, float len, float radius);
+	//物理クラスの初期化
+	void InitRigidbody(bool isUseGravity = true);
+	//索敵判定をする当たり判定を作成
+	void InitSearch(float radius);
+	//ダメージを受けた時
+	void OnDamage(float damage);
 
 protected:
 	bool m_enemySearchFlag[ENEMY_NOW];  //敵の索敵フラグ

@@ -3,7 +3,8 @@
 /// <summary>
 /// コンストラクタ
 /// </summary>
-Enemy::Enemy()
+Enemy::Enemy() :
+	EnemyBase(Priority::Low)
 {
 }
 

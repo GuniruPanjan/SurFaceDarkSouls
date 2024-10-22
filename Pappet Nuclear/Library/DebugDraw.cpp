@@ -88,7 +88,7 @@ void MyLibrary::DebugDraw::AddDrawSphere(const LibVec3& center, const float& rad
 /// <param name="center">中心座標</param>
 /// <param name="size">サイズ</param>
 /// <param name="color">色</param>
-void MyLibrary::DebugDraw::AddDrawRect(const LibVec3& center, const LibVec3& size, const unsigned int& color)
+void MyLibrary::DebugDraw::AddDrawRect(const LibVec3& center, const LibVec3::Size& size, const unsigned int& color)
 {
 	RectInfo addInfo;
 	addInfo.center = center;

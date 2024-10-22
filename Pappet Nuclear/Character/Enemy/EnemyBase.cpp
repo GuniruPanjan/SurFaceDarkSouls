@@ -1,4 +1,6 @@
 #include "EnemyBase.h"
+#include "WeakEnemy.h"
+#include "BossEnemy.h"
 
 namespace
 {
@@ -9,7 +11,8 @@ namespace
 /// <summary>
 /// コンストラクタ
 /// </summary>
-EnemyBase::EnemyBase():
+EnemyBase::EnemyBase(Priority priority):
+	CharacterBase(priority, ObjectTag::Enemy),
 	m_bossModelHandle(-1),
 	m_core(0),
 	m_baseCore(0),

@@ -20,6 +20,7 @@ namespace
 /// コンストラクタ
 /// </summary>
 BossEnemy::BossEnemy() :
+	EnemyBase(Collidable::Priority::Static),
 	m_gameClear(false),
 	m_bossDistance(false),
 	m_bossBattle(false),

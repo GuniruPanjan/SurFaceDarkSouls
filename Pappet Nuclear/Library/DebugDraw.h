@@ -20,7 +20,7 @@ namespace MyLibrary
 		static void AddDrawSphere(const LibVec3& center, const float& radius, const unsigned int& color);
 
 		//矩形の描画リストに追加する
-		static void AddDrawRect(const LibVec3& center, const LibVec3& size, const unsigned int& color);
+		static void AddDrawRect(const LibVec3& center, const LibVec3::Size& size, const unsigned int& color);
 
 	private:
 		//カプセルの描画情報
@@ -45,7 +45,7 @@ namespace MyLibrary
 		struct RectInfo
 		{
 			LibVec3 center;      //中心座標
-			LibVec3 size;        //サイズ
+			LibVec3::Size size;        //サイズ
 			unsigned int color;  //色
 		};
 

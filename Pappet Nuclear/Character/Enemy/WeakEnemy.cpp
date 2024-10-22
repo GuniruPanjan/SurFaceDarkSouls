@@ -23,7 +23,8 @@ namespace
 /// <summary>
 /// コンストラクタ
 /// </summary>
-WeakEnemy::WeakEnemy()
+WeakEnemy::WeakEnemy() :
+	EnemyBase(Collidable::Priority::Low)
 {
 	for (int i = 0; i < ENEMY_NOW; i++)
 	{
@@ -50,6 +51,8 @@ WeakEnemy::WeakEnemy()
 		m_death[i] = false;
 		m_weakAnimBlendOne[i] = false;
 	}
+
+	
 }
 
 /// <summary>

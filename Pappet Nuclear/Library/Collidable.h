@@ -52,11 +52,11 @@ namespace MyLibrary
 		void RemoveIgnoreTag(ObjectTag tag);
 
 		//“–‚½‚è”»’è‚ğ–³‹‚·‚é‘ÎÛ‚©‚Ç‚¤‚©
-		bool IsIgnoreTarget(const std::shared_ptr<Collidable> target);
+		bool IsIgnoreTarget(const std::shared_ptr<Collidable> target) const;
 
 	protected:
 		//“–‚½‚è”»’è‚ğ’Ç‰Á
-		std::shared_ptr<CollidableData> AddCollider(const CollidableData::Kind kind, bool isTrigger);
+		std::shared_ptr<CollidableData> AddCollider(const CollidableData::Kind& kind, bool isTrigger);
 
 	protected:
 		//•¨—ƒf[ƒ^

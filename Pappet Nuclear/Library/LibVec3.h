@@ -110,6 +110,7 @@ namespace MyLibrary
 		//©g‚Ì³‹K‰»
 		LibVec3 Normalize()
 		{
+			LibVec3 ret;
 			float len = Length();
 			//’·‚³0‚Ìê‡
 			if (len == 0.0f)
@@ -118,10 +119,14 @@ namespace MyLibrary
 				x = 0.0f;
 				y = 0.0f;
 				z = 0.0f;
-				return;
+				return ret;
 			}
 
-			*this /= len;
+			ret.x = this->x / len;
+			ret.y = this->y / len;
+			ret.z = this->z / len;
+
+			return ret;
 		}
 
 		//³‹K‰»‚µ‚½Œ‹‰Ê‚ğæ“¾

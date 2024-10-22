@@ -24,6 +24,10 @@ public:
 	void WeaponDraw(Equipment& eq);
 	void End();
 
+	//Õ“Ë‚µ‚½‚Æ‚«
+	void OnCollideEnter(const std::shared_ptr<Collidable>& collidable)override;
+	void OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)override;
+
 	//ƒJƒvƒZƒ‹“¯m‚Ì“–‚½‚è”»’è
 	bool IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1);
 	bool isSphereHit(const SphereCol& col, float damage);

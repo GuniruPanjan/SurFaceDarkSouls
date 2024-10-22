@@ -153,8 +153,7 @@ void MyLibrary::Physics::Update()
 
 	for (auto& item : m_collidables)
 	{
-		if (item->GetTag() == ObjectTag::Player || item->GetTag() == ObjectTag::Enemy ||
-			item->GetTag() == ObjectTag::Boss)
+		if (item->GetTag() == ObjectTag::Player || item->GetTag() == ObjectTag::Enemy)
 		{
 			float rad = 0;
 			int madelHandle = -1;
@@ -318,6 +317,7 @@ bool MyLibrary::Physics::IsCollide(const Rigidbody& rigidA, const Rigidbody& rig
 	auto kindA = colliderA->GetKind();
 	auto kindB = colliderB->GetKind();
 
+	//カプセル同士の当たり判定
 	if (kindA == MyLibrary::CollidableData::Kind::Capsule && kindB == MyLibrary::CollidableData::Kind::Capsule)
 	{
 		auto colA = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderA);
@@ -326,8 +326,149 @@ bool MyLibrary::Physics::IsCollide(const Rigidbody& rigidA, const Rigidbody& rig
 		auto atob = rigidA.GetNextPos() - rigidB.GetNextPos();
 		auto atobLength = atob.Length();
 
-		//お互いの距離が、それぞれ半径を足したものより小さければ当たる
-		isCollide = (atobLength < colA->m_radius + colB->m_radius);
+		//自身の向いてる方向に伸びているベクトルを作成
+		LibVec3 sDirVec = colA->m_vec.GetNormalized() * colA->m_len * 0.5f;
+		//対象の向いてる方向に伸びているベクトルを作成
+		LibVec3 tDirVec = colB->m_vec.GetNormalized() * colB->m_len * 0.5f;
+
+		//相対ベクトル
+		LibVec3 vec = rigidA.GetPos() - rigidB.GetPos();
+
+		//法線ベクトル
+		LibVec3 norm = norm.Cross(sDirVec, tDirVec);
+
+		//平行判定
+		bool isParallel = norm.SqLength() < 0.001f;
+
+		float s, t;
+		//平行でない場合
+		if (!isParallel)
+		{
+			//単位行列
+			LibMatrix3 mat;
+			mat.Init();
+
+			//値の代入
+			mat.SetLine(0, sDirVec);
+			mat.SetLine(1, tDirVec.Reverse());
+			mat.SetLine(2, norm);
+
+			//逆行列
+			mat = mat.GetInverse();
+
+			s = norm.Dot(mat.GetRow(0), vec);
+			t = norm.Dot(mat.GetRow(1), vec);
+		}
+		//平行の場合
+		else
+		{
+			s = norm.Dot(sDirVec, vec) / sDirVec.SqLength();
+			t = norm.Dot(tDirVec, vec) / tDirVec.SqLength();
+		}
+
+		//範囲の制限
+		if (s < -1.0f) s = -1.0f;   //下限
+		if (s > 1.0f) s = 1.0f;     //上限
+		if (t < -1.0f) t = -1.0f;   //下限
+		if (t > 1.0f) t = 1.0f;     //上限
+
+		//線分上での最短距離
+		LibVec3 minPos1 = sDirVec * s + rigidA.GetPos();
+		LibVec3 minPos2 = tDirVec * t + rigidB.GetPos();
+		//大きさ2乗
+		float sqLen = (minPos1 - minPos2).SqLength();
+		//それぞれの半径の合計の2乗
+		float ar = colA->m_radius + colB->m_radius;
+
+		ar = ar * ar;
+
+		isCollide = sqLen > ar;
+	}
+	//カプセルと球体の当たり判定
+	else if(kindA == MyLibrary::CollidableData::Kind::Capsule && kindB == MyLibrary::CollidableData::Kind::Sphere)
+	{
+		auto colA = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderA);
+		auto colB = dynamic_cast<MyLibrary::CollidableDataSphere*>(colliderB);
+
+		//自身の向いてる方向に伸びているベクトルを作成
+		LibVec3 dirVec = colA->m_vec.GetNormalized() * colA->m_len * 0.5f;
+
+		//相対ベクトル
+		LibVec3 vec = rigidA.GetPos() - rigidB.GetPos();
+
+		//相対ベクトルと正面ベクトルの内積
+		float dot = vec.Dot(vec, dirVec);
+		//方向ベクトルの大きさを取得(2乗)
+		float sqLen = dirVec.SqLength();
+
+		//線分上のどこにあるかを確かめる
+		float t = dot / sqLen;
+		//範囲の制限
+		if (t < -1.0f) t = -1.0f; //下限
+		if (t > 1.0f) t = 1.0f;   //上限
+
+		//線分上での点までの最短距離
+		LibVec3::Pos3 minPos = dirVec * t + rigidA.GetPos();
+
+		//最短座標と円の座標のベクトル大きさ(2乗)を取得
+		sqLen = (minPos - rigidB.GetPos()).SqLength();
+		//半径の合計の2乗
+		float radius = colA->m_radius + colB->m_radius;
+		radius = radius * radius;
+
+		isCollide = sqLen < radius;
+	}
+	//矩形とカプセルの当たり判定
+	else if (kindA == MyLibrary::CollidableData::Kind::Rect && kindB == MyLibrary::CollidableData::Kind::Capsule)
+	{
+		auto colA = dynamic_cast<MyLibrary::CollidableDataRect*>(colliderA);
+		auto colB = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderB);
+
+		//相対ベクトル
+		LibVec3 vec = rigidA.GetPos() - rigidB.GetPos();
+
+		//値の絶対化
+		vec.x = fabs(vec.x);
+		vec.y = fabs(vec.y);
+		vec.z = fabs(vec.z);
+
+		float trw = colB->m_radius + (colA->m_size.width * 0.5f);
+		float trh = colB->m_radius + (colA->m_size.height * 0.5f);
+		float trd = colB->m_radius + (colA->m_size.depth * 0.5f);
+
+		//各成分の判定
+		bool isHitX = vec.x < trw;
+		bool isHitY = vec.y < trh;
+		bool isHitZ = vec.z < trd;
+
+		//判定
+		isCollide = isHitX && isHitY && isHitZ;
+	}
+	//矩形と球体の当たり判定
+	else if (kindA == MyLibrary::CollidableData::Kind::Rect && kindB == MyLibrary::CollidableData::Kind::Sphere)
+	{
+		auto colA = dynamic_cast<MyLibrary::CollidableDataRect*>(colliderA);
+		auto colB = dynamic_cast<MyLibrary::CollidableDataSphere*>(colliderB);
+
+		//相対ベクトル
+		LibVec3 vec = rigidA.GetPos() - rigidB.GetPos();
+
+		//値の絶対化
+		vec.x = fabs(vec.x);
+		vec.y = fabs(vec.y);
+		vec.z = fabs(vec.z);
+
+		float trw = colB->m_radius + (colA->m_size.width * 0.5f);
+		float trh = colB->m_radius + (colA->m_size.height * 0.5f);
+		float trd = colB->m_radius + (colA->m_size.depth * 0.5f);
+
+		//各成分の判定
+		bool isHitX = vec.x < trw;
+		bool isHitY = vec.y < trh;
+		bool isHitZ = vec.z < trd;
+
+		//判定
+		isCollide = isHitX && isHitY && isHitZ;
 	}
 
 	return isCollide;

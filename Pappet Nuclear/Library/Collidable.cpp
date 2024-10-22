@@ -81,7 +81,7 @@ void MyLibrary::Collidable::RemoveIgnoreTag(ObjectTag tag)
 /// </summary>
 /// <param name="target">無視する対象か確認したい当たり判定</param>
 /// <returns></returns>
-bool MyLibrary::Collidable::IsIgnoreTarget(const std::shared_ptr<Collidable> target)
+bool MyLibrary::Collidable::IsIgnoreTarget(const std::shared_ptr<Collidable> target) const
 {
 	//確認したい当たり判定のタグが無視するタグのリストに含まれているかどうか調べる
 	bool found = (std::find(ignoreTags.begin(), ignoreTags.end(), target->GetTag()) != ignoreTags.end());
@@ -94,7 +94,7 @@ bool MyLibrary::Collidable::IsIgnoreTarget(const std::shared_ptr<Collidable> tar
 /// <param name="kind">当たり判定の種類</param>
 /// <param name="isTrigger">押し出し判定をするかどうか</param>
 /// <returns></returns>
-std::shared_ptr<MyLibrary::CollidableData> MyLibrary::Collidable::AddCollider(const CollidableData::Kind kind, bool isTrigger)
+std::shared_ptr<MyLibrary::CollidableData> MyLibrary::Collidable::AddCollider(const CollidableData::Kind& kind, bool isTrigger)
 {
 	std::shared_ptr<CollidableData> add;
 

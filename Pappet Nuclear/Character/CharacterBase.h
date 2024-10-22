@@ -6,6 +6,7 @@
 #include "Col/RectCol.h"
 #include "Singleton/HandleManager.h"
 #include "Animation/BlendAnimation.h"
+#include "Library/MyLibrary.h"
 #include<memory>
 //だいたいのアニメーション
 #define  ANIMATION   30
@@ -19,72 +20,88 @@ class ItemManager;    //アイテムマネージャークラス
 /// <summary>
 /// キャラクターの基底クラス
 /// </summary>
-class CharacterBase
+class CharacterBase : public MyLibrary::Collidable
 {
 public:
-	//コンストラクタ
-	CharacterBase() :
-		m_hp(0.0f),
-		m_attack(0.0f),
-		m_handle(-1),
-		m_modelSize(0.0f),
-		m_angle(0.0f),
-		m_speed(0.0f),
-		m_bounceDis(0.0f),
-		m_death(false),
-		m_oneInit(false),
-		m_posX(0.0f),
-		m_posY(0.0f),
-		m_posZ(0.0f),
-		m_moveflag(false),
-		m_moveAttack(false),
-		m_moveAttackEnd(true),
-		m_damageReceived(false),
-		m_attackNumber(0),
-		m_playTime(0.0f),
-		m_animStand(-1),
-		m_animWalk(-1),
-		m_animRun(-1),
-		m_animRoll(-1),
-		m_animHit(-1),
-		m_animDeath(-1),
-		m_animAttack1(-1),
-		m_animAttack2(-1),
-		m_animAttack3(-1),
-		m_len(0.0f),
-		m_capsuleRadius(0.0f),
-		m_sphereRadius(0.0f),
-		m_move(VGet(0.0f, 0.0f, 0.0f)),
-		m_pos(VGet(m_posX, m_posY, m_posZ)),
-		m_drawPos(VGet(0.0f, 0.0f, 0.0f)),
-		m_prevPos(VGet(0.0f, 0.0f, 0.0f)),
-		m_nowPos(VGet(0.0f, 0.0f, 0.0f)),
-		m_moveVector(VGet(0.0f, 0.0f, 0.0f)),
-		m_mapHitColl(VGet(0.0f,0.0f,0.0f)),
-		m_HitFlag(false),
-		m_WallNum(0),
-		m_FloorNum(0),
-		m_HitDimNum(0),
-		m_effectActivation(false),
-		m_playerDif(VGet(0.0f,0.0f,0.0f)),
-		m_shieldDif(VGet(0.0f,0.0f,0.0f)),
-		m_animBlend(1.0f),
-		m_animBlendOne(false),
-		HitDim(),
-		m_Wall(),
-		m_Floor(),
-		m_Poly()
+	//ステータスの構造体
+	struct Status
 	{
-		for (int i = 0; i < ANIMATION; i++)
-		{
-			m_animation[i] = -1;
-			m_totalAnimTime[i] = 0.0f;
-			m_animOne[i] = false;
-		}
-	}
+		int s_hp;       //体力
+		int s_stamina;  //スタミナ
+		int s_attack;   //攻撃力
+		int s_muscle;   //筋力
+		int s_skill;    //技量
+		int s_defense;  //防御力
+		int s_speed;    //速度
+	};
+
+
+	//コンストラクタ
+	//CharacterBase() :
+	//	m_hp(0.0f),
+	//	m_attack(0.0f),
+	//	m_handle(-1),
+	//	m_modelSize(0.0f),
+	//	m_angle(0.0f),
+	//	m_speed(0.0f),
+	//	m_bounceDis(0.0f),
+	//	m_death(false),
+	//	m_oneInit(false),
+	//	m_posX(0.0f),
+	//	m_posY(0.0f),
+	//	m_posZ(0.0f),
+	//	m_moveflag(false),
+	//	m_moveAttack(false),
+	//	m_moveAttackEnd(true),
+	//	m_damageReceived(false),
+	//	m_attackNumber(0),
+	//	m_playTime(0.0f),
+	//	m_animStand(-1),
+	//	m_animWalk(-1),
+	//	m_animRun(-1),
+	//	m_animRoll(-1),
+	//	m_animHit(-1),
+	//	m_animDeath(-1),
+	//	m_animAttack1(-1),
+	//	m_animAttack2(-1),
+	//	m_animAttack3(-1),
+	//	m_len(0.0f),
+	//	m_capsuleRadius(0.0f),
+	//	m_sphereRadius(0.0f),
+	//	m_move(VGet(0.0f, 0.0f, 0.0f)),
+	//	m_pos(VGet(m_posX, m_posY, m_posZ)),
+	//	m_drawPos(VGet(0.0f, 0.0f, 0.0f)),
+	//	m_prevPos(VGet(0.0f, 0.0f, 0.0f)),
+	//	m_nowPos(VGet(0.0f, 0.0f, 0.0f)),
+	//	m_moveVector(VGet(0.0f, 0.0f, 0.0f)),
+	//	m_mapHitColl(VGet(0.0f,0.0f,0.0f)),
+	//	m_HitFlag(false),
+	//	m_WallNum(0),
+	//	m_FloorNum(0),
+	//	m_HitDimNum(0),
+	//	m_effectActivation(false),
+	//	m_playerDif(VGet(0.0f,0.0f,0.0f)),
+	//	m_shieldDif(VGet(0.0f,0.0f,0.0f)),
+	//	m_animBlend(1.0f),
+	//	m_animBlendOne(false),
+	//	HitDim(),
+	//	m_Wall(),
+	//	m_Floor(),
+	//	m_Poly()
+	//{
+	//	for (int i = 0; i < ANIMATION; i++)
+	//	{
+	//		m_animation[i] = -1;
+	//		m_totalAnimTime[i] = 0.0f;
+	//		m_animOne[i] = false;
+	//	}
+	//}
+
+	//コンストラクタ
+	CharacterBase(Priority priority, ObjectTag tag);
 
 	//デストラクタ
-	virtual ~CharacterBase(){}
+	virtual ~CharacterBase();
 
 	//virtualで継承先を呼び出す
 
@@ -94,6 +111,9 @@ public:
 	//更新処理
 	virtual void Update(){};
 
+	//衝突したとき
+	virtual void OnCollideEnter(const std::shared_ptr<Collidable>& col) = 0;
+
 	//描画処理
 	virtual void Draw(){};
 
@@ -101,6 +121,18 @@ public:
 	virtual void End(){};
 
 protected:
+	//アニメーション更新管理
+	bool UpdateAnimation(int attachNo, float time = 0.0f);
+	//アニメーション変更管理
+	void ChangeAnimation(int animIndex, float changeSpeed = 0.5f);
+
+protected:
+	//物理クラスのポインタ
+	std::shared_ptr<MyLibrary::Physics> m_pPhysics;
+
+	//ステータス
+	Status m_status;
+
 	float m_hp;  //キャラのHP
 	float m_attack;  //キャラの攻撃力
 	int m_handle;  //キャラのモデルハンドル
@@ -139,6 +171,9 @@ protected:
 	VECTOR m_prevPos;  //キャラのアニメーションで移動しているフレームの座標取得
 	VECTOR m_nowPos;  //キャラのアニメーション後の座標を取得する
 	VECTOR m_moveVector;  //キャラのアニメーションでの座標移動値を入れる
+
+	//アニメーション関係
+	float m_animTime;            //アニメーション再生速度
 
 	//エフェクトに関する変数
 	bool m_effectActivation;     //エフェクトを発動する

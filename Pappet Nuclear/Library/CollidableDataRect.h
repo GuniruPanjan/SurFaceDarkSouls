@@ -11,7 +11,7 @@ namespace MyLibrary
 		CollidableDataRect(bool isTrigger);
 
 		//ÉTÉCÉY
-		LibVec3 m_size;
+		LibVec3::Size m_size;
 	};
 }
 
