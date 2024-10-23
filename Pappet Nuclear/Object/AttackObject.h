@@ -13,16 +13,22 @@ public:
 
 	void Finalize(std::shared_ptr<MyLibrary::Physics> physics) override;
 
+	void CollisionEnd();
+
 	void OnTriggerEnter(const std::shared_ptr<Collidable>& collidable) override;
 
 	bool GetIsTrigger();
 
-	void IsTriggerReset();
+	const int GetAttack() const { return m_attack; }
 
 private:
 	std::shared_ptr<MyLibrary::Physics> m_pPhysics;
 
 	bool m_isEnemy = false;
-	bool m_isTriggerEnter = false;
+
+	//“–‚½‚è”»’è‚ÌØ‚è‘Ö‚¦
+	bool m_isCollisionOn = false;
+
+	int m_attack;
 };
 

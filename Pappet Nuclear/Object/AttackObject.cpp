@@ -3,7 +3,7 @@
 AttackObject::AttackObject(float radius) :
 	ObjectBase(Priority::Middle, ObjectTag::Attack),
 	m_isEnemy(false),
-	m_isTriggerEnter(false)
+	m_isCollisionOn(false)
 {
 	//当たり判定の設定
 	auto collider = Collidable::AddCollider(MyLibrary::CollidableData::Kind::Sphere, true);
@@ -17,6 +17,7 @@ AttackObject::~AttackObject()
 
 void AttackObject::Init(std::shared_ptr<MyLibrary::Physics> physics, MyLibrary::LibVec3 pos, bool isEnemy)
 {
+	m_isCollisionOn = true;
 	m_pPhysics = physics;
 	m_isEnemy = isEnemy;
 
@@ -36,6 +37,15 @@ void AttackObject::Finalize(std::shared_ptr<MyLibrary::Physics> physics)
 	Collidable::Finalize(physics);
 }
 
+void AttackObject::CollisionEnd()
+{
+	if (m_isCollisionOn)
+	{
+		m_isCollisionOn = false;
+		Finalize(m_pPhysics);
+	}
+}
+
 void AttackObject::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 {
 	//アタッチしたオブジェクトが敵じゃないなら
@@ -44,7 +54,8 @@ void AttackObject::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 		auto tag = collidable->GetTag();
 		if (tag == ObjectTag::Enemy)
 		{
-			m_isTriggerEnter = true;
+			CollisionEnd();
+			m_isCollisionOn = false;
 		}
 	}
 	//アタッチしたオブジェクトが敵なら
@@ -53,17 +64,13 @@ void AttackObject::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 		auto tag = collidable->GetTag();
 		if (tag == ObjectTag::Player)
 		{
-			m_isTriggerEnter = true;
+			CollisionEnd();
+			m_isCollisionOn = false;
 		}
 	}
 }
 
 bool AttackObject::GetIsTrigger()
 {
-	return m_isTriggerEnter;
-}
-
-void AttackObject::IsTriggerReset()
-{
-	m_isTriggerEnter = false;
+	return m_isCollisionOn;
 }

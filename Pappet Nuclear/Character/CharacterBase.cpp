@@ -8,7 +8,11 @@
 CharacterBase::CharacterBase(Priority priority, ObjectTag tag):
 	Collidable(priority, tag),
 	m_handle(-1),
-	m_animTime(0.5f)
+	m_prevAnimNo(-1),
+	m_nowAnimNo(-1),
+	m_animBlendRate(1.0f),
+	m_animTime(0.5f),
+	m_isHit(false)
 {
 }
 
@@ -58,5 +62,25 @@ bool CharacterBase::UpdateAnimation(int attachNo, float time)
 /// <param name="changeSpeed">変更したアニメーションの再生速度</param>
 void CharacterBase::ChangeAnimation(int animIndex, float changeSpeed)
 {
+	//古いアニメーションがアタッチされている場合はこの時点で決しておく
+	if (m_prevAnimNo != -1)
+	{
+		MV1DetachAnim(m_handle, m_prevAnimNo);
+	}
 
+	//現在再生中のアニメーションは変更目のアニメーションの扱い
+	m_prevAnimNo = m_nowAnimNo;
+
+	//変更後のアニメーションを改めて設定する
+	m_nowAnimNo = MV1AttachAnim(m_handle, animIndex);
+
+	//切り替えの瞬間は変更前のアニメーションが再生される状態にする
+	m_animBlendRate = 0.0f;
+
+	m_animTime = changeSpeed;
+
+	//変更前のアニメーション100%
+	MV1SetAttachAnimBlendRate(m_handle, m_prevAnimNo, 1.0f - m_animBlendRate);
+	//変更後のアニメーション0%
+	MV1SetAttachAnimBlendRate(m_handle, m_nowAnimNo, m_animBlendRate);
 }

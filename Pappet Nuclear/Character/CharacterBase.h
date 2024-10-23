@@ -5,9 +5,13 @@
 #include "Col/SphereCol.h"
 #include "Col/RectCol.h"
 #include "Singleton/HandleManager.h"
+#include "Effect/Effect.h"
 #include "Animation/BlendAnimation.h"
 #include "Library/MyLibrary.h"
-#include<memory>
+#include <memory>
+#include <map>
+#include <string>
+
 //だいたいのアニメーション
 #define  ANIMATION   30
 #define D2R(deg) ((deg)*DX_PI_F/180.0f)
@@ -128,6 +132,14 @@ protected:
 protected:
 	//物理クラスのポインタ
 	std::shared_ptr<MyLibrary::Physics> m_pPhysics;
+	//モデル座標
+	MyLibrary::LibVec3 m_modelPos;
+	//モデルの中心座標
+	MyLibrary::LibVec3 m_centerPos;
+	//当たり判定座標
+	MyLibrary::LibVec3 m_collisionPos;
+	//移動ベクトル
+	MyLibrary::LibVec3 m_moveVec;
 
 	//ステータス
 	Status m_status;
@@ -137,6 +149,7 @@ protected:
 	float m_angle;  //キャラのアングル
 	float m_bounceDis;    //キャラを押し出す距離
 	bool m_death;   //キャラの死亡判定
+	bool m_isHit;    //攻撃を受けたかどうか判定
 	bool m_oneInit;     //一回だけ初期化する
 	float m_posX;  //キャラのX座標
 	float m_posY;  //キャラのY座標
@@ -169,6 +182,10 @@ protected:
 	VECTOR m_moveVector;  //キャラのアニメーションでの座標移動値を入れる
 
 	//アニメーション関係
+	std::map<std::string, int> m_animIdx;
+	int m_nowAnimNo;             //現在のアニメーション
+	int m_prevAnimNo;            //変更前のアニメーション
+	float m_animBlendRate;       //アニメーションのブレンド率
 	float m_animTime;            //アニメーション再生速度
 
 	//エフェクトに関する変数

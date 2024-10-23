@@ -1,11 +1,16 @@
 #include "EnemyBase.h"
 #include "WeakEnemy.h"
 #include "BossEnemy.h"
+#include "Object/AttackObject.h"
+#include "Object/SearchObject.h"
+#include "Character/Effect/Effect.h"
+
 
 namespace
 {
 	//シングルトン
 	auto& handle = HandleManager::GetInstance();
+	auto& effect = Effect::GetInstance();
 }
 
 /// <summary>
@@ -138,30 +143,126 @@ EnemyBase::~EnemyBase()
 
 }
 
-/// <summary>
-/// 終了処理
-/// </summary>
-void EnemyBase::End()
+void EnemyBase::Init(std::shared_ptr<MyLibrary::Physics> physics)
 {
-	//メモリ解放
-	MV1DeleteModel(m_handle);
-	MV1DeleteModel(m_bossModelHandle);
-	MV1DeleteModel(m_animStand);
-	MV1DeleteModel(m_animHit);
-	MV1DeleteModel(m_animDeath);
-	MV1DeleteModel(m_animWalk);
-	MV1DeleteModel(m_animLeftWalking);
-	MV1DeleteModel(m_animRightWalking);
-	MV1DeleteModel(m_animAttack1);
-	MV1DeleteModel(m_bossAnimStand);
-	MV1DeleteModel(m_bossAnimDeath);
-	MV1DeleteModel(m_bossAnimWalk);
-	MV1DeleteModel(m_bossAnimAttack1);
-	MV1DeleteModel(m_bossAnimAttack2);
-	MV1DeleteModel(m_bossAnimAttack3);
-	MV1DeleteModel(m_bossAnimTurnRight);
-	MV1DeleteModel(m_bossAnimTurnLeft);
+}
 
-	//メモリ削除
-	handle.Clear();
+void EnemyBase::End(std::shared_ptr<MyLibrary::Physics> physics)
+{
+	Collidable::Finalize(physics);
+	m_pAttack->Finalize(m_pPhysics);
+	m_pSearch->Finalize(m_pPhysics);
+}
+
+bool EnemyBase::GetIsHit()
+{
+	bool log = m_isHit;
+	m_isHit = false;
+	return log;
+}
+
+/// <summary>
+/// 他のオブジェクトと押し出し判定をする当たり判定を作成
+/// </summary>
+/// <param name="vec">ベクター</param>
+/// <param name="len">長さ</param>
+/// <param name="radius">半径</param>
+void EnemyBase::InitCollision(MyLibrary::LibVec3 vec, float len, float radius)
+{
+	auto collider = Collidable::AddCollider(MyLibrary::CollidableData::Kind::Capsule, false);
+	auto capsuleCol = dynamic_cast<MyLibrary::CollidableDataCapsule*>(collider.get());
+	capsuleCol->m_vec = vec;
+	capsuleCol->m_len = len;
+	capsuleCol->m_radius = radius;
+}
+
+/// <summary>
+/// モデルを読み込む
+/// </summary>
+/// <param name="name">モデルパス</param>
+void EnemyBase::LoadModel(std::string name)
+{
+	m_handle = handle.GetModelHandle(name);
+}
+
+/// <summary>
+/// 物理クラスの初期化
+/// </summary>
+/// <param name="isUseGravity">true重力を与えるfalse重力を与えない</param>
+void EnemyBase::InitRigidbody(bool isUseGravity)
+{
+	rigidbody.Init(isUseGravity);
+	//rigidbody.SetPos()
+	rigidbody.SetNextPos(rigidbody.GetPos());
+}
+
+/// <summary>
+/// モデルの中心座標を計算
+/// </summary>
+/// <param name="modeldefaultSize">モデルのもとのサイズ</param>
+/// <param name="modelSize">モデルの拡大率</param>
+void EnemyBase::CenterPos(float modeldefaultSize, float modelSize)
+{
+	m_centerPos = rigidbody.GetPos();
+	m_centerPos.y += (modeldefaultSize * modelSize) / 2.0f;
+}
+
+/// <summary>
+/// モデル座標を設定
+/// </summary>
+/// <param name="offset">差分</param>
+void EnemyBase::SetModelPos(float offset)
+{
+	m_modelPos = m_collisionPos;
+	m_modelPos.y -= offset;
+}
+
+/// <summary>
+/// 索敵判定をする当たり判定を作成
+/// </summary>
+/// <param name="radius">半径</param>
+void EnemyBase::InitSearch(float radius)
+{
+	m_pSearch = std::make_shared<SearchObject>(radius);
+	m_pSearch->Init(m_pPhysics, m_modelPos, true);
+}
+
+/// <summary>
+/// 攻撃判定をする当たり判定を作成
+/// </summary>
+/// <param name="radius">半径</param>
+/// <param name="pos">ポジション</param>
+void EnemyBase::InitAttack(float radius, MyLibrary::LibVec3 pos)
+{
+	m_pAttack = std::make_shared<AttackObject>(radius);
+	m_pAttack->Init(m_pPhysics, pos, true);
+}
+
+/// <summary>
+/// ダメージを受けた時
+/// </summary>
+/// <param name="damage"></param>
+void EnemyBase::OnDamage(float damage)
+{
+	//HPを減らす
+	m_status.s_hp -= damage - (m_status.s_defense / 10.0f);
+
+	//敵の近くにエフェクトを表示
+	auto pos = m_centerPos;
+	effect.EffectCreate("Imapct", pos.ConversionToVECTOR());
+
+}
+
+/// <summary>
+/// 死亡したとき
+/// </summary>
+void EnemyBase::Death()
+{
+	if (!m_death)
+	{
+		m_death = true;
+		EnemyBase::Finalize(m_pPhysics);
+
+		m_allCore += m_core;
+	}
 }

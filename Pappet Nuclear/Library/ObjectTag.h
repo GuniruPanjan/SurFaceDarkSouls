@@ -6,6 +6,7 @@ enum class ObjectTag
 	Player,               //プレイヤー
 	Enemy,                //エネミー(まとめ)
 	Attack,               //攻撃
+	Hit,                  //攻撃を受ける判定
 	Shield,         //プレイヤーの盾
 	Search,               //索敵
 	Item,           //アイテムの所得範囲

@@ -148,10 +148,12 @@
     <ClCompile Include="Character\Enemy\BossEnemy.cpp" />
     <ClCompile Include="Character\Enemy\Enemy.cpp" />
     <ClCompile Include="Character\Enemy\EnemyBase.cpp" />
+    <ClCompile Include="Character\Enemy\EnemyOne.cpp" />
     <ClCompile Include="Character\Enemy\WeakEnemy.cpp" />
     <ClCompile Include="Character\Player\Equipment\Equipment.cpp" />
     <ClCompile Include="Character\Player\Item\ItemManager.cpp" />
     <ClCompile Include="Character\Player\LevelUp.cpp" />
+    <ClCompile Include="Character\Player\NewPlayer.cpp" />
     <ClCompile Include="Character\Player\Player.cpp" />
     <ClCompile Include="Character\Player\WeaponSummary.cpp" />
     <ClCompile Include="Col\CapsuleCol.cpp" />
@@ -159,6 +161,7 @@
     <ClCompile Include="Col\RectCol.cpp" />
     <ClCompile Include="Col\SphereCol.cpp" />
     <ClCompile Include="Col\Vec3.cpp" />
+    <ClCompile Include="External\CsvLoad.cpp" />
     <ClCompile Include="Game\GameManager.cpp" />
     <ClCompile Include="Library\Collidable.cpp" />
     <ClCompile Include="Library\CollidableData.cpp" />
@@ -170,6 +173,7 @@
     <ClCompile Include="Library\Rigidbody.cpp" />
     <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Object\AttackObject.cpp" />
+    <ClCompile Include="Object\HitObject.cpp" />
     <ClCompile Include="Object\ObjectBase.cpp" />
     <ClCompile Include="Object\RectObject.cpp" />
     <ClCompile Include="Object\SearchObject.cpp" />
@@ -195,10 +199,12 @@
     <ClInclude Include="Character\Enemy\BossEnemy.h" />
     <ClInclude Include="Character\Enemy\Enemy.h" />
     <ClInclude Include="Character\Enemy\EnemyBase.h" />
+    <ClInclude Include="Character\Enemy\EnemyOne.h" />
     <ClInclude Include="Character\Enemy\WeakEnemy.h" />
     <ClInclude Include="Character\Player\Equipment\Equipment.h" />
     <ClInclude Include="Character\Player\Item\ItemManager.h" />
     <ClInclude Include="Character\Player\LevelUp.h" />
+    <ClInclude Include="Character\Player\NewPlayer.h" />
     <ClInclude Include="Character\Player\Player.h" />
     <ClInclude Include="Character\Player\WeaponSummary.h" />
     <ClInclude Include="Col\CapsuleCol.h" />
@@ -206,6 +212,7 @@
     <ClInclude Include="Col\RectCol.h" />
     <ClInclude Include="Col\SphereCol.h" />
     <ClInclude Include="Col\Vec3.h" />
+    <ClInclude Include="External\CsvLoad.h" />
     <ClInclude Include="Game\GameManager.h" />
     <ClInclude Include="Icon\Icon.h" />
     <ClInclude Include="Library\Collidable.h" />
@@ -222,6 +229,7 @@
     <ClInclude Include="Library\Rigidbody.h" />
     <ClInclude Include="Map\Map.h" />
     <ClInclude Include="Object\AttackObject.h" />
+    <ClInclude Include="Object\HitObject.h" />
     <ClInclude Include="Object\ObjectBase.h" />
     <ClInclude Include="Object\RectObject.h" />
     <ClInclude Include="Object\SearchObject.h" />

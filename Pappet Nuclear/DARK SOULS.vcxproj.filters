@@ -121,6 +121,12 @@
     <Filter Include="ヘッダー ファイル\Object">
       <UniqueIdentifier>{82595e4f-626d-4332-b699-26a08a9bd912}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\External">
+      <UniqueIdentifier>{04a51247-d0eb-4e30-ac65-e781c876ba60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\External">
+      <UniqueIdentifier>{d77d3d9c-2ea8-4919-8b88-571b3556e6a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Template3D.cpp">
@@ -257,6 +263,18 @@
     </ClCompile>
     <ClCompile Include="Character\Player\LevelUp.cpp">
       <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Enemy\EnemyOne.cpp">
+      <Filter>ソース ファイル\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\HitObject.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\NewPlayer.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="External\CsvLoad.cpp">
+      <Filter>ソース ファイル\External</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -406,6 +424,18 @@
     </ClInclude>
     <ClInclude Include="Character\Player\LevelUp.h">
       <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Enemy\EnemyOne.h">
+      <Filter>ヘッダー ファイル\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\HitObject.h">
+      <Filter>ヘッダー ファイル\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\NewPlayer.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="External\CsvLoad.h">
+      <Filter>ヘッダー ファイル\External</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
