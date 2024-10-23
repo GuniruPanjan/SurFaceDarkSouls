@@ -6,6 +6,17 @@
 class Player : public CharacterBase
 {
 public:
+	//レベル関係の構造体
+	struct LevelUpStatus
+	{
+		int sl_hp;         //体力
+		int sl_stamina;    //スタミナ
+		int sl_muscle;     //筋力
+		int sl_skill;      //技量
+		int sl_all;        //すべてのレベル
+
+	}m_levelStatus;
+
 	Player();
 	virtual ~Player();
 
@@ -44,10 +55,10 @@ public:
 	float GetPosZ() { return m_pos.z; }
 	float SetAngle(float lockangle) { return m_lockAngle = lockangle; }
 	VECTOR GetShieldPos() { return VGet(m_rectPos.x, m_rectPos.y, m_rectPos.z); }
-	float GetDamage() { return m_attack; }
+	float GetDamage() { return m_status.s_attack; }
 	float GetAngle() { return m_angle; }
 	float GetBounceDis() { return m_bounceDis; }
-	float GetSpeed() { return m_speed; }
+	float GetSpeed() { return m_status.s_speed; }
 	VECTOR GetBounceMove() { return m_bounceMove; }
 	CapsuleCol GetCapsuleCol() { return m_capsuleCol; }
 	SphereCol GetSphereCol() { return m_sphereCol; }
@@ -67,8 +78,8 @@ public:
 	bool GetTarget(int max) { return m_targetNumber[max]; }
 
 	//UIに必要な変数
-	float GetHp() { return m_hp; }
-	float GetStamina() { return m_stamina; }
+	float GetHp() { return m_status.s_hp; }
+	float GetStamina() { return m_status.s_stamina; }
 	int GetRecoveryNumber() { return m_recoveryNumber; }
 
 private:
@@ -77,7 +88,6 @@ private:
 	float m_updatePosY;   //Y座標更新用変数
 	float m_updatePosZ;   //Z座標更新用変数
 	float m_lockAngle;    //ロックオンした時のアングル 
-	float m_stamina;      //スタミナ
 	float m_swordRadius;   //剣の当たり判定の半径
 	float m_targetRadius;   //ターゲットの当たり判定の半径
 	int m_recoveryNumber;     //回復できる回数変数
@@ -143,6 +153,7 @@ private:
 	int m_animWeaponRun;       //武器を持った時の走っているアニメーション
 	int m_animShieldStand;     //盾を構えた時の立ってるアニメーション
 	int m_animTaking;          //アイテムの所得アニメーション
+	int m_animTouch;           //何かに触れる時のアニメーション
 	bool m_hit;           //怯み判定
 	bool m_weaponMoveRight;     //武器を持った時の右歩きアニメーションにするための判定
 	bool m_hitImpact;     //盾受け判定

@@ -26,15 +26,14 @@ public:
 	//ステータスの構造体
 	struct Status
 	{
-		int s_hp;       //体力
-		int s_stamina;  //スタミナ
-		int s_attack;   //攻撃力
-		int s_muscle;   //筋力
-		int s_skill;    //技量
-		int s_defense;  //防御力
-		int s_speed;    //速度
+		float s_hp;       //体力
+		float s_stamina;  //スタミナ
+		float s_attack;   //攻撃力
+		int s_muscle;     //筋力
+		int s_skill;      //技量
+		float s_defense;  //防御力
+		float s_speed;    //速度
 	};
-
 
 	//コンストラクタ
 	//CharacterBase() :
@@ -133,12 +132,9 @@ protected:
 	//ステータス
 	Status m_status;
 
-	float m_hp;  //キャラのHP
-	float m_attack;  //キャラの攻撃力
 	int m_handle;  //キャラのモデルハンドル
 	float m_modelSize;  //キャラのモデルサイズ
 	float m_angle;  //キャラのアングル
-	float m_speed;  //キャラのスピード
 	float m_bounceDis;    //キャラを押し出す距離
 	bool m_death;   //キャラの死亡判定
 	bool m_oneInit;     //一回だけ初期化する

@@ -82,7 +82,7 @@ public:
 	float GetPosX(int max) { return m_weakEnemyPos[max].x; }            //エネミーのポジション所得X座標
 	float GetPosY(int max) { return m_weakEnemyPos[max].y; }            //エネミーのポジション所得Y座標
 	float GetPosZ(int max) { return m_weakEnemyPos[max].z; }            //エネミーのポジション所得Z座標
-	float GetDamage() { return m_attack; }                              //エネミーの攻撃力所得
+	float GetDamage() { return m_status.s_attack; }                     //エネミーの攻撃力所得
 	float GetWeakHp(int max) { return m_weakEnemyHp[max]; }             //エネミーのHP所得
 	VECTOR GetOutPush(int max) { return m_outPush[max]; }               //プレイヤーを押し出すベクター
 	const CapsuleCol GetCol(int max) { return m_weakCapsuleCol[max]; }  //エネミーのカプセル所得
@@ -90,7 +90,7 @@ public:
 	bool GetPlayerHit(int max) { return m_playerHit[max]; }             //プレイヤーに攻撃が当たった判定
 
 	//コア所得
-	int GetCore() { return m_baseCore; }
+	int GetCore() { return m_core; }
 
 
 private:

@@ -35,7 +35,6 @@ Player::Player():
 	m_updatePosY(0.0f),
 	m_updatePosZ(-800.0f),
 	m_lockAngle(0.0f),
-	m_stamina(0.0f),
 	m_lockonTarget(false),
 	m_moveAnimFrameIndex(0),
 	m_moveAnimFrameRight(0),
@@ -91,6 +90,7 @@ Player::Player():
 	m_animWeaponLeftWalk(0),
 	m_animWeaponRun(0),
 	m_animTaking(0),
+	m_animTouch(0),
 	m_weaponMoveRight(false),
 	m_hitImpact(false),
 	m_weaponAnimOne(false),
@@ -114,6 +114,12 @@ Player::Player():
 	capsuleCol->m_len = 40.0f;
 	capsuleCol->m_radius = 12.0f;
 	capsuleCol->m_vec = MyLibrary::LibVec3(0.0f, m_vec.y + 2.0f, 0.0f);
+
+	//レベルの初期化
+	m_levelStatus.sl_hp = 1;
+	m_levelStatus.sl_stamina = 1;
+	m_levelStatus.sl_muscle = 1;
+	m_levelStatus.sl_skill = 1;
 }
 
 /// <summary>
@@ -151,19 +157,21 @@ void Player::Init()
 	m_oneAvoidance = false;
 
 	//プレイヤーHPの初期化
-	m_hp = 150.0f;
+	m_status.s_hp = 150.0f;
+	m_status.s_hp = m_status.s_hp * m_levelStatus.sl_hp;
 
 	//プレイヤーのスタミナ初期化
-	m_stamina = 100.0f;
+	m_status.s_stamina = 100.0f;
+	m_status.s_stamina = m_status.s_stamina * m_levelStatus.sl_stamina;
 
 	//プレイヤースピード初期化
-	m_speed = 2.0f;
+	m_status.s_speed = 2.0f;
 
 	//プレイヤーを押し出す距離
 	m_bounceDis = 3.0f;
 
 	//プレイヤーの攻撃力初期化
-	m_attack = 10.0f;
+	m_status.s_attack = 10.0f;
 
 	//プレイヤーのロックオン初期化
 	m_lockonTarget = false;
@@ -228,6 +236,7 @@ void Player::Init()
 		m_animRight = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimRightWalk.mv1");
 		m_animWeaponLeftWalk = handle.GetModelHandle("Data/PlayerAnimation/WeaponAnim/PlayerAnimWeaponLeftWalk.mv1");
 		m_animTaking = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimTaking.mv1");
+		m_animTouch = handle.GetModelHandle("Data/PlayerAnimation/PlayerAnimTouch.mv1");
 
 		//アニメーションアタッチ
 		m_animation[0] = MV1AttachAnim(m_handle, 1, m_animStand, TRUE);
@@ -250,10 +259,11 @@ void Player::Init()
 		m_animation[17] = MV1AttachAnim(m_handle, 0, m_animRight, TRUE);
 		m_animation[18] = MV1AttachAnim(m_handle, 0, m_animWeaponLeftWalk, TRUE);
 		m_animation[19] = MV1AttachAnim(m_handle, 1, m_animTaking, TRUE);
+		m_animation[20] = MV1AttachAnim(m_handle, 0, m_animTouch, TRUE);
 
 
 		//アタッチしたアニメーションの総再生時間を取得する
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 21; i++)
 		{
 			m_totalAnimTime[i] = MV1GetAttachAnimTotalTime(m_handle, m_animation[i]);
 
@@ -362,7 +372,8 @@ void Player::Update()
 		}
 
 		//素手の攻撃力
-		m_attack = 10.0f;
+		m_status.s_attack = 10.0f;
+		m_status.s_attack = m_status.s_attack + (m_status.s_attack * (m_levelStatus.sl_muscle / 10));
 	}
 
 	//アニメーションで移動しているフレームの番号を検索する
@@ -392,7 +403,7 @@ void Player::Update()
 	float SetAngleY = 0.0f;
 
 	if (m_avoidance == false && m_moveAttack == false && m_recoberyAction == false &&
-		m_hit == false && m_hp >= 0.0f && m_hitImpact == false && m_itemTakingNow == false)
+		m_hit == false && m_status.s_hp >= 0.0f && m_hitImpact == false && m_itemTakingNow == false)
 	{
 		GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
 
@@ -437,12 +448,12 @@ void Player::Update()
 
 	//速度が決定できるので移動ベクトルに反映する
 	m_move = VNorm(m_move);
-	float speed = m_speed * rate;
+	float speed = m_status.s_speed * rate;
 
 	m_move = VScale(m_move, speed);
 
 	m_bounceMove = VNorm(m_bounceMove);
-	float bounceDis = m_speed * bounceRate;
+	float bounceDis = m_status.s_speed * bounceRate;
 
 	m_bounceMove = VScale(m_bounceMove, bounceDis);
 
@@ -456,7 +467,7 @@ void Player::Update()
 	//移動方向からプレイヤーへの向く方向を決定する
 	//移動していない場合(ゼロベクトル)の場合は変更しない
 	if (VSquareSize(m_move) > 0.0f && m_moveAttack == false && m_recoberyAction == false &&
-		m_hit == false && m_hp >= 0.0f && m_hitImpact == false && m_itemTakingNow == false)
+		m_hit == false && m_status.s_hp >= 0.0f && m_hitImpact == false && m_itemTakingNow == false)
 	{
 		//ロックオンしてない時と走った時のアングル
 		if (m_lockonTarget == false || m_dashMove == true && m_avoidance == false)
@@ -518,7 +529,7 @@ void Player::Update()
 	}
 
 	//プレイヤーが生きている時だけ
-	if (m_hp > 0.0f)
+	if (m_status.s_hp > 0.0f)
 	{
 		m_pos = VAdd(m_pos, m_move);
 
@@ -617,24 +628,24 @@ void Player::Update()
 		if (m_xpad.Buttons[12] == 1 && m_staminaBroke == false && m_recoberyAction == false &&
 			m_moveAttack == false && m_hit == false && m_hitImpact == false)
 		{
-			if (m_a > 50 && m_stamina >= 0.1f)
+			if (m_a > 50 && m_status.s_stamina >= 0.1f)
 			{
 				m_avoidance = false;
 
 				//ダッシュ中
 				m_dashMove = true;
 
-				m_speed = 3.0f;
+				m_status.s_speed = 3.0f;
 
 				//スタミナ消費
-				m_stamina -= 0.1f;
+				m_status.s_stamina -= 0.1f;
 			}
 			//回避する
-			else if (m_stamina >= 10.0f && m_avoidance == false)
+			else if (m_status.s_stamina >= 10.0f && m_avoidance == false)
 			{
 				m_playTime = 0.0f;
 
-				m_stamina = m_stamina - 10.0f;
+				m_status.s_stamina = m_status.s_stamina - 10.0f;
 
 				m_avoidance = true;
 			}
@@ -648,7 +659,7 @@ void Player::Update()
 		{
 			m_dashMove = false;
 
-			m_speed = 2.0f;
+			m_status.s_speed = 2.0f;
 
 			m_a = 0;
 		}
@@ -692,12 +703,12 @@ void Player::Update()
 	}
 
 	//スタミナ切れ
-	if (m_stamina <= 0.1f)
+	if (m_status.s_stamina <= 0.1f)
 	{
 		m_staminaBroke = true;
 	}
 	//動けるようになる
-	else if (m_stamina >= 20.0f)
+	else if (m_status.s_stamina >= 20.0f)
 	{
 		m_staminaBroke = false;
 	}
@@ -706,16 +717,16 @@ void Player::Update()
 	{
 		if (m_shieldNow == true)
 		{
-			if (m_stamina <= 100.0f)
+			if (m_status.s_stamina <= 100.0f)
 			{
-				m_stamina += 0.1f;
+				m_status.s_stamina += 0.1f;
 			}
 		}
 		else
 		{
-			if (m_stamina <= 100.0f)
+			if (m_status.s_stamina <= 100.0f)
 			{
-				m_stamina += 0.3f;
+				m_status.s_stamina += 0.3f;
 			}
 		}
 		
@@ -768,6 +779,10 @@ void Player::WeaponUpdate(Equipment& eq)
 		{
 			m_sphereCol.Init(m_initializationPos, m_swordRadius);
 
+			//剣の攻撃力
+			m_status.s_attack = 30.0f;
+			m_status.s_attack = m_status.s_attack + (m_status.s_attack * (m_levelStatus.sl_muscle / 10) + (m_levelStatus.sl_skill / 10));
+
 			m_swordCol = true;
 		}
 
@@ -780,9 +795,6 @@ void Player::WeaponUpdate(Equipment& eq)
 		{
 			m_fistCol = false;
 		}
-
-		//剣の攻撃力
-		m_attack = 30.0f;
 	}
 	else
 	{
@@ -844,7 +856,7 @@ void Player::OtherInfluence(VECTOR outpush, VECTOR weakoutpush)
 void Player::Action()
 {	
 	//一段階目の攻撃
-	if (m_hp > 0.0f)
+	if (m_status.s_hp > 0.0f)
 	{
 		//Rボタンで攻撃
 		//一回だけ反応するようにする
@@ -857,37 +869,28 @@ void Player::Action()
 				if (m_staminaBroke == false && m_recoberyAction == false && m_avoidance == false &&
 					m_hit == false && m_hitImpact == false)
 				{
-					if (m_attackNumber == 0 && m_stamina >= 10.0f)
+					if (m_attackNumber == 0 && m_status.s_stamina >= 10.0f)
 					{
-						//攻撃力初期化
-						m_attack = 10.0f;
-
 						//スタミナ消費
-						m_stamina = m_stamina - 10.0f;
+						m_status.s_stamina = m_status.s_stamina - 10.0f;
 
 						m_attackNumber = 1;
 
 						m_moveAttack = true;
 					}
-					else if (m_nextAttack1 == true && m_stamina >= 10.0f)
+					else if (m_nextAttack1 == true && m_status.s_stamina >= 10.0f)
 					{
-						//攻撃力初期化
-						m_attack = 10.0f;
-
 						//スタミナ消費
-						m_stamina = m_stamina - 10.0f;
+						m_status.s_stamina = m_status.s_stamina - 10.0f;
 
 						m_attackNumber = 2;
 
 						m_moveAttack = true;
 					}
-					else if (m_nextAttack2 == true && m_stamina >= 10.0f)
+					else if (m_nextAttack2 == true && m_status.s_stamina >= 10.0f)
 					{
-						//攻撃力初期化
-						m_attack = 10.0f;
-
 						//スタミナ消費
-						m_stamina = m_stamina - 10.0f;
+						m_status.s_stamina = m_status.s_stamina - 10.0f;
 
 						m_attackNumber = 3;
 
@@ -1136,11 +1139,11 @@ void Player::Action()
 	if (m_recoveryNumber >= 0 && m_recoberyAction == true && m_moveAttack == false && m_avoidance == false)
 	{
 		//HP回復
-		if (m_hp < 150.0f && m_heel < 100.0f)
+		if (m_status.s_hp < 150.0f && m_heel < 100.0f)
 		{
 			m_heel += 0.1f;
 
-			m_hp += m_heel;
+			m_status.s_hp = m_status.s_hp + m_heel;
 		}
 
 	}
@@ -1174,7 +1177,7 @@ void Player::NotWeaponAnimation(float& time)
 	m_weaponAnimOne = false;
 
 	//プレイヤーが生きている時
-	if (m_hp >= 0.0f)
+	if (m_status.s_hp >= 0.0f)
 	{
 		//怯んでないとき
 		if (m_hit == false)
@@ -1263,7 +1266,7 @@ void Player::Animation(float& time, VECTOR& pos)
 	for (int i = 0; i < 20; i++)
 	{
 		//プレイヤーが死んだ時
-		if (m_hp <= 0.0f)
+		if (m_status.s_hp <= 0.0f)
 		{
 			if (i != 8)
 			{
@@ -1273,7 +1276,7 @@ void Player::Animation(float& time, VECTOR& pos)
 			m_weaponMoveRight = false;
 		}
 		//プレイヤーが生きていたら
-		else if (m_hp > 0.0f)
+		else if (m_status.s_hp > 0.0f)
 		{
 
 			//怯み
@@ -1319,7 +1322,7 @@ void Player::Animation(float& time, VECTOR& pos)
 						if (i != 4 && i != 5 && i != 6 && i != 8)
 						{
 							//一段階目の攻撃力
-							m_attack = m_attack * 1.0f;
+							m_status.s_attack = m_status.s_attack * 1.0f;
 
 							pAnim->AnimationBlend(time, m_handle, m_animation[4], m_animation[i], m_animBlend, m_animOne[i], m_animOne[4], m_animBlendOne);
 						}
@@ -1334,7 +1337,7 @@ void Player::Animation(float& time, VECTOR& pos)
 						if (i == 4)
 						{
 							//2段階目の攻撃力
-							m_attack = m_attack * 1.2f;
+							m_status.s_attack = m_status.s_attack * 1.2f;
 
 							pAnim->AnimationBlend(time, m_handle, m_animation[5], m_animation[i], m_animBlend, m_animOne[i], m_animOne[5], m_animBlendOne);
 						}
@@ -1349,7 +1352,7 @@ void Player::Animation(float& time, VECTOR& pos)
 						if (i == 5)
 						{
 							//3段階目の攻撃力
-							m_attack = m_attack * 1.5f;
+							m_status.s_attack = m_status.s_attack * 1.5f;
 
 							pAnim->AnimationBlend(time, m_handle, m_animation[6], m_animation[i], m_animBlend, m_animOne[i], m_animOne[6], m_animBlendOne);
 						}
@@ -1558,7 +1561,7 @@ void Player::WeaponAnimation(float& time)
 	m_notWeaponAnimOne = false;
 
 	//プレイヤーが生きている時
-	if (m_hp >= 0.0f)
+	if (m_status.s_hp >= 0.0f)
 	{
 		for (int i = 0; i < 20; i++)
 		{
@@ -1802,21 +1805,21 @@ void Player::HitObj(Map& map, ItemManager& item)
 					if (HitCheck_Capsule_Triangle(m_mapHitColl, VAdd(m_mapHitColl, VGet(0.0f, m_len, 0.0f)), m_capsuleRadius, m_Poly->Position[0], m_Poly->Position[1], m_Poly->Position[2]) == false) continue;
 
 					//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
-					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed / 2));
+					m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_status.s_speed / 2));
 
 					//回避行動だった場合
 					if (m_avoidance == true)
 					{
 						//当たっていたら規定距離分プレイヤーを法線方向に移動させる
 						m_drawPos = VAdd(m_drawPos, VScale(m_Poly->Normal, m_bounceDis));
-						m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed));
+						m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_status.s_speed));
 					}
 					//攻撃中だった場合
 					if (m_moveAttack == true)
 					{
 						//当たっていたら規定距離分プレイヤーを法線方向に移動させる
 						m_drawPos = VAdd(m_drawPos, VScale(m_Poly->Normal, m_bounceDis));
-						m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_speed));
+						m_pos = VAdd(m_pos, VScale(m_Poly->Normal, m_status.s_speed));
 
 					}
 
@@ -2195,7 +2198,7 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 		m_color = 0xffff00;
 
 		//当たっていたら規定距離分プレイヤーを法線方向に移動させる
-		m_pos = VAdd(m_pos, VScale(m_bounceMove, m_speed / 2));
+		m_pos = VAdd(m_pos, VScale(m_bounceMove, m_status.s_speed / 2));
 
 		//回避行動だった場合
 		//m_posが動いている
@@ -2227,7 +2230,7 @@ bool Player::IsCapsuleHit(const CapsuleCol& col, const CapsuleCol& col1)
 	if (isHitBoss)
 	{
 		//当たっていたら規定距離分プレイヤーを法線方向に移動させる
-		m_pos = VAdd(m_pos, VScale(m_bounceMove, m_speed / 2));
+		m_pos = VAdd(m_pos, VScale(m_bounceMove, m_status.s_speed / 2));
 
 		//回避行動だった場合
 		//m_posが動いている
@@ -2285,7 +2288,7 @@ bool Player::isSphereHit(const SphereCol& col, float damage)
 
 				effect.EffectCreate("Imapct", VGet(m_pos.x, m_pos.y + 40.0f, m_pos.z));
 
-				m_hp = m_hp - damage;
+				m_status.s_hp = m_status.s_hp - damage;
 
 				m_hit = true;
 			}
@@ -2335,7 +2338,7 @@ bool Player::isBossSphereHit(const SphereCol& col1, const SphereCol& col2, const
 				
 				effect.EffectCreate("Imapct", VGet(m_pos.x, m_pos.y + 40.0f, m_pos.z));
 
-				m_hp = m_hp - bossdamage;
+				m_status.s_hp = m_status.s_hp - bossdamage;
 
 				m_hit = true;
 			}
@@ -2375,12 +2378,12 @@ bool Player::isShieldHit(const SphereCol& col, float damage)
 			//攻撃を一回だけ与える
 			if (m_damageReceived == false)
 			{
-				m_stamina = m_stamina - damage * 1.2f;
+				m_status.s_stamina = m_status.s_stamina - damage * 1.2f;
 
 				//スタミナを0以下にさせない
-				if (m_stamina < 0.0f)
+				if (m_status.s_stamina < 0.0f)
 				{
-					m_stamina = 0.0f;
+					m_status.s_stamina = 0.0f;
 				}
 
 				//盾受け判定
@@ -2430,12 +2433,12 @@ bool Player::isBossShieldHit(const SphereCol& col1, const SphereCol& col2, const
 			if (m_damageReceived == false)
 			{
 
-				m_stamina = m_stamina - bossdamage * 1.2f;
+				m_status.s_stamina = m_status.s_stamina - bossdamage * 1.2f;
 
 				//スタミナを0以下にさせない
-				if (m_stamina < 0.0f)
+				if (m_status.s_stamina < 0.0f)
 				{
-					m_stamina = 0.0f;
+					m_status.s_stamina = 0.0f;
 				}
 
 				//盾受け判定

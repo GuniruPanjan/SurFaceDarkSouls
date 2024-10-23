@@ -77,10 +77,10 @@ void WeakEnemy::Init(int max)
 	m_weakEnemyHp[max] = 200.0f;
 
 	//敵の攻撃力初期化
-	m_attack = 10.0f;
+	m_status.s_attack = 10.0f;
 
 	//敵のスピード初期化
-	m_speed = 0.01f;
+	m_status.s_speed = 0.01f;
 
 	m_weakPlayTime[max] = 0.0f;
 
@@ -295,13 +295,13 @@ void WeakEnemy::Update(Player& player, int max, int volume)
 		m_weakEnemyPos[max] = VGet(0.0f, -10000.0f, 0.0f);
 
 		//一回だけ実行
-		if (m_death[max] == false)
-		{
-			//コアを手に入れる
-			m_baseCore = m_baseCore + m_core;
+		//if (m_death[max] == false)
+		//{
+		//	//コアを手に入れる
+		//	m_baseCore = m_baseCore + m_core;
 
-			m_death[max] = true;
-		}
+		//	m_death[max] = true;
+		//}
 	}
 	else
 	{
@@ -360,9 +360,9 @@ void WeakEnemy::Action(Player& player, int max)
 
 		if (m_enemyWait[max] == false && m_weakEnemyMoveAttack[max] == false)
 		{
-			m_speed = 0.01f;
+			m_status.s_speed = 0.01f;
 
-			m_weakEnemyMove[max] = VScale(tracking, m_speed);
+			m_weakEnemyMove[max] = VScale(tracking, m_status.s_speed);
 
 			//攻撃の当たり判定初期化
 			m_colAttack[max].Update(Pos3(1000.0f, -1000.0f, 1000.0f));
@@ -372,9 +372,9 @@ void WeakEnemy::Action(Player& player, int max)
 		{
 			m_weakEnemyMove[max] = VNorm(tracking);
 
-			m_speed = 0.3f;
+			m_status.s_speed = 0.3f;
 
-			m_weakEnemyMove[max] = VScale(m_weakEnemyMove[max], m_speed);
+			m_weakEnemyMove[max] = VScale(m_weakEnemyMove[max], m_status.s_speed);
 
 			//ランダムで0が出たら左周り
 			if (m_randomAction[max] == 0)

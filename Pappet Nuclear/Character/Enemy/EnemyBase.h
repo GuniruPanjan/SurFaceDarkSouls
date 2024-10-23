@@ -46,7 +46,6 @@ protected:
 	bool m_weakAnimOne[ANIMATION][ENEMY_NOW];            //敵のアニメーションを一回だけ実行
 	float m_weakAnimBlend[ENEMY_NOW];                    //敵のアニメーションブレンド率
 	int m_core;               //倒したときにもらえるコア
-	int m_baseCore;           //コアをまとめる変数
 	float m_weakEnemyTotalAnimationTime[ANIMATION][ENEMY_NOW];    //敵のアニメーションの総時間
 	float m_searchRadius;  //円の当たり判定
 	float m_distanceRadius;  //円の半径

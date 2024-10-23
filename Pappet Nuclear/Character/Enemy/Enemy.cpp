@@ -4,7 +4,7 @@
 /// コンストラクタ
 /// </summary>
 Enemy::Enemy() :
-	EnemyBase(Priority::Low)
+	m_baseCore(0)
 {
 }
 

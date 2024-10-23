@@ -55,13 +55,13 @@ BossEnemy::~BossEnemy()
 void BossEnemy::Init()
 {
 	//“G‚ÌHP‰Šú‰»
-	m_hp = 1000.0f;
+	m_status.s_hp = 1000.0f;
 
 	//“G‚ÌUŒ‚—Í‰Šú‰»
-	m_attack = 30.0f;
+	m_status.s_attack = 30.0f;
 
 	//“G‚ÌƒXƒs[ƒh‹­‰»
-	m_speed = 0.01f;
+	m_status.s_speed = 0.01f;
 
 	m_posX = -600.0f;
 	m_posY = 0.0f;
@@ -257,15 +257,15 @@ void BossEnemy::Update(Player& player, Map& map, int volume)
 	}
 
 	//“G‚ª€–S‚µ‚½‚ç
-	if (m_hp <= 0.0f)
+	if (m_status.s_hp <= 0.0f)
 	{
-		//ˆê‰ñ‚¾‚¯Às
-		if (m_death == false)
-		{
-			m_baseCore = m_baseCore + m_core;
+		////ˆê‰ñ‚¾‚¯Às
+		//if (m_death == false)
+		//{
+		//	m_baseCore = m_baseCore + m_core;
 
-			m_death = true;
-		}
+		//	m_death = true;
+		//}
 	}
 	else
 	{
@@ -319,9 +319,9 @@ void BossEnemy::Action(Player& player)
 	//ƒ{ƒX‚Ìí“¬ó‘Ô
 	if (m_bossBattle == true && m_bossDistance == false && m_bossMoveAttack == false && m_turnLeft == false && m_turnRight == false)
 	{
-		m_speed = 0.01f;
+		m_status.s_speed = 0.01f;
 
-		m_move = VScale(tracking, m_speed);
+		m_move = VScale(tracking, m_status.s_speed);
 	}
 	//Ë’ö‹——£‚É“ü‚Á‚½
 	if (m_bossDistance == true && m_turnLeft == false && m_turnRight == false)
@@ -437,7 +437,7 @@ void BossEnemy::Animation(float& time)
 		m_animBlend += 0.1f;
 	}
 	//“G‚ª€‚ñ‚¾‚Æ‚«‚ÌƒAƒjƒ[ƒVƒ‡ƒ“
-	if (m_hp <= 0.0f)
+	if (m_status.s_hp <= 0.0f)
 	{
 		pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[0], m_animBlend, m_bossAnimOne[0], m_bossAnimOne[2], m_animBlendOne);
 		pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[2], m_bossAnimation[3], m_animBlend, m_bossAnimOne[3], m_bossAnimOne[2], m_animBlendOne);
@@ -505,7 +505,7 @@ void BossEnemy::Animation(float& time)
 				}
 
 				//UŒ‚—Í
-				m_attack = 50.0f;
+				m_status.s_attack = 50.0f;
 
 				pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[4], m_bossAnimation[0], m_animBlend, m_bossAnimOne[0], m_bossAnimOne[4], m_animBlendOne);
 				pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[4], m_bossAnimation[3], m_animBlend, m_bossAnimOne[3], m_bossAnimOne[4], m_animBlendOne);
@@ -530,7 +530,7 @@ void BossEnemy::Animation(float& time)
 				}
 
 				//UŒ‚—Í
-				m_attack = 30.0f;
+				m_status.s_attack = 30.0f;
 
 				pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[5], m_bossAnimation[0], m_animBlend, m_bossAnimOne[0], m_bossAnimOne[5], m_animBlendOne);
 				pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[5], m_bossAnimation[3], m_animBlend, m_bossAnimOne[3], m_bossAnimOne[5], m_animBlendOne);
@@ -548,7 +548,7 @@ void BossEnemy::Animation(float& time)
 				m_bossAttack3 = true;
 
 				//UŒ‚—Í
-				m_attack = 80.0f;
+				m_status.s_attack = 80.0f;
 
 				pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[6], m_bossAnimation[0], m_animBlend, m_bossAnimOne[0], m_bossAnimOne[6], m_animBlendOne);
 				pAnim->AnimationBlend(time, m_bossModelHandle, m_bossAnimation[6], m_bossAnimation[3], m_animBlend, m_bossAnimOne[3], m_bossAnimOne[6], m_animBlendOne);
@@ -926,7 +926,7 @@ bool BossEnemy::isSphereHit(const SphereCol& col, float damage)
 
 			effect.EffectCreate("Imapct", VGet(m_pos.x, m_pos.y + 70.0f, m_pos.z));
 
-			m_hp = m_hp - damage;
+			m_status.s_hp = m_status.s_hp - damage;
 
 			m_damageReceived = true;
 		}

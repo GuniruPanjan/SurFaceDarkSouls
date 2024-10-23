@@ -71,7 +71,7 @@ public:
 	/// <returns></returns>
 	bool isCapsuleHit(const CapsuleCol& col);
 
-	float GetDamage() { return m_attack; }
+	float GetDamage() { return m_status.s_attack; }
 	bool GameClear() { return m_gameClear; }
 	bool GetBattle() { return m_bossBattle; }
 	bool GetPlayerHit() { return m_playerHit; }
@@ -80,7 +80,7 @@ public:
 	float GetPosY() { return m_pos.y; }
 	float GetPosZ() { return m_pos.z; }
 	VECTOR GetOutPush() { return m_outPush; }
-	float GetHp() { return m_hp; }
+	float GetHp() { return m_status.s_hp; }
 
 	CapsuleCol GetCol() const { return m_capsuleCol; }
 	SphereCol GetAttackCol1() { return m_colBossAttackSphere1; }
@@ -88,7 +88,7 @@ public:
 	SphereCol GetAttackCol3() { return m_colBossAttackSphere3; }
 
 	//ÉRÉAèäìæ
-	int GetCore() { return m_baseCore; }
+	int GetCore() { return m_core; }
 
 
 private:

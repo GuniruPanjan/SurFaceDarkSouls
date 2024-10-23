@@ -151,6 +151,7 @@
     <ClCompile Include="Character\Enemy\WeakEnemy.cpp" />
     <ClCompile Include="Character\Player\Equipment\Equipment.cpp" />
     <ClCompile Include="Character\Player\Item\ItemManager.cpp" />
+    <ClCompile Include="Character\Player\LevelUp.cpp" />
     <ClCompile Include="Character\Player\Player.cpp" />
     <ClCompile Include="Character\Player\WeaponSummary.cpp" />
     <ClCompile Include="Col\CapsuleCol.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Character\Enemy\WeakEnemy.h" />
     <ClInclude Include="Character\Player\Equipment\Equipment.h" />
     <ClInclude Include="Character\Player\Item\ItemManager.h" />
+    <ClInclude Include="Character\Player\LevelUp.h" />
     <ClInclude Include="Character\Player\Player.h" />
     <ClInclude Include="Character\Player\WeaponSummary.h" />
     <ClInclude Include="Col\CapsuleCol.h" />

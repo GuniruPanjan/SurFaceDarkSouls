@@ -1,5 +1,4 @@
 #pragma once
-#include "EnemyBase.h"
 #include "WeakEnemy.h"
 #include "BossEnemy.h"
 
@@ -7,7 +6,7 @@
 /// <summary>
 /// 敵の挙動や仕様をまとめる関数
 /// </summary>
-class Enemy : public EnemyBase
+class Enemy
 {
 public:
 	//コンストラクタ
@@ -76,5 +75,6 @@ private:
 	//スマートポインタ
 	std::shared_ptr<WeakEnemy> enemy = std::make_shared<WeakEnemy>();
 	std::shared_ptr<BossEnemy> boss = std::make_shared<BossEnemy>();
+	int m_baseCore;                       //敵から取得したコアをまとめる変数
 };
 

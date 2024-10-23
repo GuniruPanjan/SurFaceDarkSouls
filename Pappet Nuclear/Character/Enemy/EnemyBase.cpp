@@ -15,7 +15,6 @@ EnemyBase::EnemyBase(Priority priority):
 	CharacterBase(priority, ObjectTag::Enemy),
 	m_bossModelHandle(-1),
 	m_core(0),
-	m_baseCore(0),
 	m_bossSize(0.0f),
 	m_searchRadius(0.0f),
 	m_distanceRadius(0.0f),

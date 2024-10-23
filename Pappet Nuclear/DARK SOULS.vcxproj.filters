@@ -255,6 +255,9 @@
     <ClCompile Include="Object\RectObject.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Character\Player\LevelUp.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneBase.h">
@@ -400,6 +403,9 @@
     </ClInclude>
     <ClInclude Include="Object\RectObject.h">
       <Filter>ヘッダー ファイル\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\LevelUp.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
