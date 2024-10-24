@@ -37,6 +37,7 @@ public:
 		int s_skill;      //技量
 		float s_defense;  //防御力
 		float s_speed;    //速度
+		int s_core;       //落とすコア
 	};
 
 	//コンストラクタ
