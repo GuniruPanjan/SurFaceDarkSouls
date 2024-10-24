@@ -70,6 +70,12 @@ private:
 	bool m_notShield;     //盾を持ってない状態
 	bool m_fistCol;       //拳の当たり判定初期化
 	bool m_swordCol;      //剣の当たり判定初期化判定
+	bool m_hit;           //怯み判定
+	bool m_weaponMoveRight;     //武器を持った時の右歩きアニメーションにするための判定
+	bool m_hitImpact;     //盾受け判定
+	bool m_shield;        //防御のアニメーション判定
+	bool m_itemTaking;         //アイテム所得アニメーション判定
+	bool m_itemTakingNow;      //アイテム所得中のアニメーション判定
 	VECTOR m_nowPos;   //現在のフレームの座標を取得する
 
 	//スマートポインタ

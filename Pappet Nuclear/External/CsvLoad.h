@@ -23,6 +23,7 @@ namespace DataLoad
 	enum CsvEnemyStage : int
 	{
 		ID,         //“GID
+		max,        //“G‚ÌÅ‘åoŒ»”
 		x,          //“G‚ÌXÀ•W
 		y,          //“G‚ÌYÀ•W
 		z,          //“G‚ÌZÀ•W

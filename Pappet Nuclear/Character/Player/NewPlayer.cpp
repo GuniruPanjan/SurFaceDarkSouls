@@ -38,6 +38,10 @@ NewPlayer::NewPlayer() :
 	m_notShield(true),
 	m_fistCol(true),
 	m_swordCol(false),
+	m_hit(false),
+	m_shield(false),
+	m_itemTaking(false),
+	m_itemTakingNow(false),
 	m_nowPos(VGet(0.0f,0.0f,0.0f))
 {
 	//当たり判定設定
@@ -67,10 +71,28 @@ NewPlayer::NewPlayer() :
 
 NewPlayer::~NewPlayer()
 {
+	//メモリ解放
+	MV1DeleteModel(m_handle);
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
+/// <param name="physics">物理クラスのポインタ</param>
 void NewPlayer::Init(std::shared_ptr<MyLibrary::Physics> physics)
 {
+	m_pPhysics = physics;
+
+	Collidable::Init(m_pPhysics);
+
+
+	//プレイヤーの初期位置設定
+	rigidbody.Init(true);
+	rigidbody.SetPos(MyLibrary::LibVec3(0.0f, 1.0f * cModelSizeScale, 0.0f));
+	rigidbody.SetNextPos(rigidbody.GetPos());
+	m_collisionPos = rigidbody.GetPos();
+	SetModelPos();
+	MV1SetPosition(m_handle, m_modelPos.ConversionToVECTOR());
 }
 
 void NewPlayer::Finalize()
