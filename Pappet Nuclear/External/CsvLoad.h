@@ -23,7 +23,7 @@ namespace DataLoad
 	enum CsvEnemyStage : int
 	{
 		ID,         //敵ID
-		max,        //敵の最大出現数
+		map,        //敵の出現マップ
 		x,          //敵のX座標
 		y,          //敵のY座標
 		z,          //敵のZ座標
