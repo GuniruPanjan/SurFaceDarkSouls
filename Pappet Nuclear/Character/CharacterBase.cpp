@@ -9,10 +9,13 @@ CharacterBase::CharacterBase(Priority priority, ObjectTag tag):
 	Collidable(priority, tag),
 	m_handle(-1),
 	m_prevAnimNo(-1),
+	m_nowAnimIdx(-1),
 	m_nowAnimNo(-1),
 	m_animBlendRate(1.0f),
 	m_animTime(0.5f),
-	m_isHit(false)
+	m_isAnimationFinish(false),
+	m_isHit(false),
+	m_attackRadius(0.0f)
 {
 }
 
@@ -21,6 +24,39 @@ CharacterBase::CharacterBase(Priority priority, ObjectTag tag):
 /// </summary>
 CharacterBase::~CharacterBase()
 {
+}
+
+/// <summary>
+/// モデルの中心座標を計算
+/// </summary>
+/// <param name="modeldefaultSize">モデルのもともとのサイズ</param>
+/// <param name="modelSize">モデルの拡大率</param>
+void CharacterBase::CalculationCenterPos(float modeldefaultSize, float modelSize)
+{
+	m_centerPos = rigidbody.GetPos();
+	m_centerPos.y += (modeldefaultSize * modelSize) / 2;
+}
+
+/// <summary>
+/// ダメージ判定をする当たり判定を作成
+/// </summary>
+/// <param name="radius">半径</param>
+/// <param name="len">長さ</param>
+/// <param name="vec">ベクター</param>
+void CharacterBase::InitHitBox(float radius, float len, MyLibrary::LibVec3 vec, bool isEnemy)
+{
+	phit = std::make_shared<HitObject>(radius, len, vec);
+	phit->Init(m_pPhysics, m_centerPos, isEnemy);
+}
+
+/// <summary>
+/// 攻撃判定をする当たり判定を作成
+/// </summary>
+/// <param name="radius">半径</param>
+void CharacterBase::InitAttackBox(float radius, MyLibrary::LibVec3 pos, bool isEnemy)
+{
+	pattack = std::make_shared<AttackObject>(radius);
+	pattack->Init(m_pPhysics, pos, isEnemy);
 }
 
 /// <summary>

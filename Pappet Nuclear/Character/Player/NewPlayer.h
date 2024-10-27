@@ -27,7 +27,10 @@ public:
 	void Init(std::shared_ptr<MyLibrary::Physics> physics);
 	void Finalize();
 	void Update(std::shared_ptr<Equipment> eq);
-	void Animation();
+	void Action();
+	void NotWeaponAnimation();
+	void AllAnimation();
+	void WeaponAnimation();
 	void Draw(std::shared_ptr<Equipment> eq);
 
 	//衝突した時
@@ -61,6 +64,7 @@ private:
 	bool m_oneAvoidance;   //一回だけ回避の方向を判定する
 	bool m_nextAttack1;  //次の攻撃判定
 	bool m_nextAttack2;  //次の攻撃判定
+	bool m_avoidance;   //回避入力を判断するための変数
 	bool m_avoidanceNow;   //回避できるフレーム中か判断する変数
 	bool m_restAction;    //回復ができるようになる判定
 	bool m_dashMove;     //ダッシュしてる判断用変数
@@ -71,6 +75,7 @@ private:
 	bool m_fistCol;       //拳の当たり判定初期化
 	bool m_swordCol;      //剣の当たり判定初期化判定
 	bool m_hit;           //怯み判定
+	bool m_isDead;        //死亡判定
 	bool m_weaponMoveRight;     //武器を持った時の右歩きアニメーションにするための判定
 	bool m_hitImpact;     //盾受け判定
 	bool m_shield;        //防御のアニメーション判定

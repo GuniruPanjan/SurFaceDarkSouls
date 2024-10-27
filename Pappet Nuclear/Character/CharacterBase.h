@@ -8,6 +8,8 @@
 #include "Effect/Effect.h"
 #include "Animation/BlendAnimation.h"
 #include "Library/MyLibrary.h"
+#include "Object/AttackObject.h"
+#include "Object/HitObject.h"
 #include <memory>
 #include <map>
 #include <string>
@@ -112,6 +114,15 @@ public:
 	//初期化処理
 	virtual void Init(){};
 
+	//モデルの中心座標を計算
+	virtual void CalculationCenterPos(float modeldefaultSize, float modelSize);
+
+	//ダメージ判定をする当たり判定を作成
+	virtual void InitHitBox(float radius, float len, MyLibrary::LibVec3 vec, bool isEnemy);
+
+	//攻撃判定をする当たり判定を作成
+	virtual void InitAttackBox(float radius, MyLibrary::LibVec3 pos, bool isEnemy);
+
 	//更新処理
 	virtual void Update(){};
 
@@ -139,8 +150,13 @@ protected:
 	MyLibrary::LibVec3 m_centerPos;
 	//当たり判定座標
 	MyLibrary::LibVec3 m_collisionPos;
+	//攻撃の判定座標
+	MyLibrary::LibVec3 m_attackPos;
 	//移動ベクトル
 	MyLibrary::LibVec3 m_moveVec;
+	
+	//攻撃の半径
+	float m_attackRadius;
 
 	//ステータス
 	Status m_status;
@@ -184,10 +200,12 @@ protected:
 
 	//アニメーション関係
 	std::map<std::string, int> m_animIdx;
+	int m_nowAnimIdx;
 	int m_nowAnimNo;             //現在のアニメーション
 	int m_prevAnimNo;            //変更前のアニメーション
 	float m_animBlendRate;       //アニメーションのブレンド率
 	float m_animTime;            //アニメーション再生速度
+	bool m_isAnimationFinish;    //アニメーションが終わったかどうか
 
 	//エフェクトに関する変数
 	bool m_effectActivation;     //エフェクトを発動する
@@ -220,4 +238,6 @@ protected:
 
 	//スマートポインタ
 	std::shared_ptr<SEManager> se = std::make_shared<SEManager>();
+	std::shared_ptr<HitObject> phit = std::make_shared<HitObject>();
+	std::shared_ptr<AttackObject> pattack = std::make_shared<AttackObject>();
 };
